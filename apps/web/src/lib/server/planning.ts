@@ -74,7 +74,7 @@ export async function loadPlanningInput(depot: DepotId, runDate: string, x: Exec
 
 // ─────────────────────────────────────────────────────────────── persistence
 function tripCode(runDate: string, vehicleId: string, n: number) {
-  return `R${runDate.slice(5, 7)}${runDate.slice(8, 10)}-${vehicleId.slice(3)}-${n}`;
+  return `R${runDate.slice(8, 10)}${vehicleId.slice(3)}${n}`; // e.g. R230021 = 23rd, VEH002, trip 1
 }
 
 async function writeTrips(tx: Executor, planId: string, runDate: string, plan: Pick<Plan, "timed">) {
