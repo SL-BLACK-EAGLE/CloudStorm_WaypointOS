@@ -10,6 +10,9 @@
 @import "shadcn/tailwind.css";
 @import "@clerk/ui/themes/shadcn.css";
 
+/* explicit source: keeps class detection reliable for newly created files on Windows */
+@source "../";
+
 @custom-variant dark (&:is(.dark *));
 @custom-variant sunlight (&:is(.sunlight *));
 
