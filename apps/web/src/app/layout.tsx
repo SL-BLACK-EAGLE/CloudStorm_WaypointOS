@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Noto_Sans_Sinhala, Noto_Sans_Tamil } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/ui/themes";
+import { SerwistProvider } from "@serwist/turbopack/react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ROLE_THEME, type ThemeName } from "@/lib/roles";
@@ -53,7 +54,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full">
         <ClerkProvider appearance={{ theme: shadcn }}>
-          <TooltipProvider delayDuration={300}>{children}</TooltipProvider>
+          <SerwistProvider swUrl="/serwist/sw.js" disable={process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_SW_DEV !== "1"}>
+            <TooltipProvider delayDuration={300}>{children}</TooltipProvider>
+          </SerwistProvider>
           <Toaster position="top-center" richColors closeButton theme={theme === "dark" ? "dark" : "light"} />
         </ClerkProvider>
       </body>

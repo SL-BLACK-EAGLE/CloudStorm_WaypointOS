@@ -37,6 +37,27 @@ services:
       timeout: 3s
       retries: 30
 
+  # Upstash Redis stand-in: Redis + the Upstash-compatible REST proxy the SDK talks to
+  redis:
+    image: redis:7.4-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  redis-rest:
+    image: hiett/serverless-redis-http:0.0.10
+    environment:
+      SRH_MODE: env
+      SRH_TOKEN: local-srh-token
+      SRH_CONNECTION_STRING: redis://redis:6379
+    ports:
+      - "8079:80"
+    depends_on:
+      redis:
+        condition: service_healthy
+
 volumes:
   pgdata:
   s3data:

@@ -1,5 +1,6 @@
 import { resolve } from "node:path";
 import { loadEnvConfig } from "@next/env";
+import { withSerwist } from "@serwist/turbopack";
 import type { NextConfig } from "next";
 
 // One .env at the repo root serves the app, docker compose and the seed scripts.
@@ -26,4 +27,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSerwist(nextConfig);
