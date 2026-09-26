@@ -1,7 +1,7 @@
 # Waypoint Delivery OS - complete local stack.
 #   docker compose up          -> http://localhost:3000
 # Services mirror the cloud stack one-for-one (see docs/architecture.md):
-#   postgres  ~ Neon Postgres         minio  ~ Neon Object Storage
+#   postgres  ~ Neon Postgres         s3     ~ Neon Object Storage (SeaweedFS)
 #   redis+srh ~ Upstash Redis         qstash ~ Upstash QStash
 #   convex    ~ Convex Cloud          web    = Next.js app, seed = one-shot seeding job
 name: waypoint
@@ -23,5 +23,20 @@ services:
       timeout: 3s
       retries: 20
 
+  # S3-compatible object storage (local stand-in for Neon Object Storage): PoD photos, signatures
+  s3:
+    image: chrislusf/seaweedfs:4.47
+    command: server -dir=/data -s3 -s3.port=9000 -master.volumeSizeLimitMB=64 -volume.max=0 -ip.bind=0.0.0.0
+    ports:
+      - "9000:9000"
+    volumes:
+      - s3data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:9000/status || exit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
 volumes:
   pgdata:
+  s3data:

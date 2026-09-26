@@ -37,3 +37,9 @@ export function duration(min: number) {
   const h = Math.floor(m / 60);
   return h > 0 ? `${h} h ${m % 60} m` : `${m} m`;
 }
+
+/** A real event timestamp as Sri Lanka wall-clock time, e.g. "15:42". */
+export function colombo(ts: Date | string | null | undefined) {
+  if (!ts) return "--:--";
+  return new Date(ts).toLocaleTimeString("en-GB", { timeZone: "Asia/Colombo", hour: "2-digit", minute: "2-digit" });
+}
