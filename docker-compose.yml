@@ -1,0 +1,27 @@
+# Waypoint Delivery OS - complete local stack.
+#   docker compose up          -> http://localhost:3000
+# Services mirror the cloud stack one-for-one (see docs/architecture.md):
+#   postgres  ~ Neon Postgres         minio  ~ Neon Object Storage
+#   redis+srh ~ Upstash Redis         qstash ~ Upstash QStash
+#   convex    ~ Convex Cloud          web    = Next.js app, seed = one-shot seeding job
+name: waypoint
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: waypoint
+      POSTGRES_PASSWORD: waypoint
+      POSTGRES_DB: waypoint
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U waypoint -d waypoint"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgdata:

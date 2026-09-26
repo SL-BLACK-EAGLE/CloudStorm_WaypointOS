@@ -1,0 +1,35 @@
+{
+  "name": "@waypoint/db",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Neon Postgres schema (Drizzle), client and seed for Waypoint Delivery OS",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate": "tsx src/migrate.ts",
+    "seed": "tsx src/seed/index.ts",
+    "studio": "drizzle-kit studio",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clerk/backend": "3.20.1",
+    "@neondatabase/serverless": "1.1.0",
+    "@waypoint/planner": "workspace:*",
+    "csv-parse": "6.1.0",
+    "dotenv": "17.2.3",
+    "drizzle-orm": "0.45.3",
+    "pg": "8.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/pg": "8.15.6",
+    "drizzle-kit": "0.31.11",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  }
+}
