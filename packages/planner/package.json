@@ -1,0 +1,23 @@
+{
+  "name": "@waypoint/planner",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Waypoint delivery planning engine - TypeScript port of the flowchart (F1-F9), parity-tested against the Python oracle",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "highs": "1.15.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "typescript": "5.9.3",
+    "vitest": "5.0.2"
+  }
+}

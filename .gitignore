@@ -1,0 +1,42 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+.next/
+out/
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# env - never commit secrets
+.env
+.env.*
+!.env.example
+
+# competition data - confidential (booklet p.22). Place CSVs locally in seed-data/.
+seed-data/*
+!seed-data/README.md
+
+# tests
+coverage/
+playwright-report/
+test-results/
+tests/e2e/.auth/
+
+# python oracle
+__pycache__/
+.venv/
+.pytest_cache/
+
+# os / editors
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# local services data
+.docker-data/
