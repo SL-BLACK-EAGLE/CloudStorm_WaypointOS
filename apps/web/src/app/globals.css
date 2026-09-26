@@ -1,26 +1,405 @@
+/*
+ * Waypoint Delivery OS · design tokens ("Quiet Ink")
+ * Source: Designathon DS-00 token table + DS-01/02/03 style guides.
+ * Each variable is defined three times: :root (Light), .dark (Dark), .sunlight (Sunlight).
+ * Mode follows the workplace: Dark for the dispatcher at night, Light for the store counter,
+ * Sunlight for drivers and loaders (2 px borders, solid fills, >= 7:1 contrast).
+ */
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@clerk/ui/themes/shadcn.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
+@custom-variant sunlight (&:is(.sunlight *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans), var(--font-noto-sinhala), var(--font-noto-tamil), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: var(--radius);
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-4xl: 24px;
+
+  /* semantic: status (pill + icon), temperature (icon-led tag), brand (square monogram) */
+  --color-planned: var(--status-planned);
+  --color-planned-bg: var(--status-planned-bg);
+  --color-planned-border: var(--status-planned-border);
+  --color-loading: var(--status-loading);
+  --color-loading-bg: var(--status-loading-bg);
+  --color-loading-border: var(--status-loading-border);
+  --color-en-route: var(--status-en-route);
+  --color-en-route-bg: var(--status-en-route-bg);
+  --color-en-route-border: var(--status-en-route-border);
+  --color-delivered: var(--status-delivered);
+  --color-delivered-bg: var(--status-delivered-bg);
+  --color-delivered-border: var(--status-delivered-border);
+  --color-deferred: var(--status-deferred);
+  --color-deferred-bg: var(--status-deferred-bg);
+  --color-deferred-border: var(--status-deferred-border);
+  --color-late-risk: var(--status-late-risk);
+  --color-late-risk-bg: var(--status-late-risk-bg);
+  --color-late-risk-border: var(--status-late-risk-border);
+  --color-conflict: var(--status-conflict);
+  --color-conflict-bg: var(--status-conflict-bg);
+  --color-conflict-border: var(--status-conflict-border);
+  --color-exception: var(--status-exception);
+  --color-exception-bg: var(--status-exception-bg);
+  --color-exception-border: var(--status-exception-border);
+  --color-offline: var(--status-offline);
+  --color-offline-bg: var(--status-offline-bg);
+  --color-offline-border: var(--status-offline-border);
+  --color-syncing: var(--status-syncing);
+  --color-syncing-bg: var(--status-syncing-bg);
+  --color-syncing-border: var(--status-syncing-border);
+  --color-chilled: var(--temp-chilled);
+  --color-chilled-bg: var(--temp-chilled-bg);
+  --color-chilled-border: var(--temp-chilled-border);
+  --color-ambient: var(--temp-ambient);
+  --color-ambient-bg: var(--temp-ambient-bg);
+  --color-ambient-border: var(--temp-ambient-border);
+  --color-brand-fresh: var(--brand-fresh);
+  --color-brand-fresh-foreground: var(--brand-fresh-foreground);
+  --color-brand-style: var(--brand-style);
+  --color-brand-style-foreground: var(--brand-style-foreground);
+  --color-brand-tech: var(--brand-tech);
+  --color-brand-tech-foreground: var(--brand-tech-foreground);
+  --color-violation: var(--constraint-violation);
+  --color-violation-bg: var(--constraint-violation-bg);
+  --color-violation-border: var(--constraint-violation-border);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─────────────────────────────── Light · store counter, daylight planning */
+:root {
+  --radius: 0.5rem;
+  --bw: 1px;
+  --background: #f7f8fa;
+  --foreground: #0e1116;
+  --card: #ffffff;
+  --card-foreground: #0e1116;
+  --popover: #ffffff;
+  --popover-foreground: #0e1116;
+  --primary: #0e1116;
+  --primary-foreground: #f7f8fa;
+  --secondary: #eceef2;
+  --secondary-foreground: #0e1116;
+  --muted: #eff1f4;
+  --muted-foreground: #535b66;
+  --accent: #e6e9ee;
+  --accent-foreground: #0e1116;
+  --destructive: #c0262d;
+  --destructive-foreground: #ffffff;
+  --border: #dce0e6;
+  --input: #c9cfd7;
+  --ring: #6b7480;
+  --chart-1: #4d7c0f; /* Fresh */
+  --chart-2: #a21a5b; /* Style */
+  --chart-3: #1e3a8a; /* Tech */
+  --chart-4: #0e7490; /* reefer */
+  --chart-5: #6b7480; /* capacity */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0e1116;
+  --sidebar-primary: #0e1116;
+  --sidebar-primary-foreground: #f7f8fa;
+  --sidebar-accent: #eceef2;
+  --sidebar-accent-foreground: #0e1116;
+  --sidebar-border: #dce0e6;
+  --sidebar-ring: #6b7480;
+
+  --status-planned: rgb(63 71 82);
+  --status-planned-bg: rgb(238 240 243);
+  --status-planned-border: rgb(205 210 217);
+  --status-loading: rgb(67 56 202);
+  --status-loading-bg: rgb(238 237 253);
+  --status-loading-border: rgb(199 195 246);
+  --status-en-route: rgb(29 78 216);
+  --status-en-route-bg: rgb(233 240 254);
+  --status-en-route-border: rgb(188 208 250);
+  --status-delivered: rgb(19 119 58);
+  --status-delivered-bg: rgb(232 246 237);
+  --status-delivered-border: rgb(181 226 196);
+  --status-deferred: rgb(126 34 206);
+  --status-deferred-bg: rgb(244 236 252);
+  --status-deferred-border: rgb(220 196 245);
+  --status-late-risk: rgb(162 83 10);
+  --status-late-risk-bg: rgb(254 243 224);
+  --status-late-risk-border: rgb(246 210 154);
+  --status-conflict: rgb(162 28 175);
+  --status-conflict-bg: rgb(251 234 251);
+  --status-conflict-border: rgb(239 192 240);
+  --status-exception: rgb(185 28 28);
+  --status-exception-bg: rgb(253 236 236);
+  --status-exception-border: rgb(245 192 192);
+  --status-offline: rgb(63 71 82);
+  --status-offline-bg: rgb(255 255 255);
+  --status-offline-border: rgb(138 147 158);
+  --status-syncing: rgb(63 71 82);
+  --status-syncing-bg: rgb(238 240 243);
+  --status-syncing-border: rgb(205 210 217);
+  --temp-chilled: rgb(14 116 144);
+  --temp-chilled-bg: rgb(230 245 248);
+  --temp-chilled-border: rgb(169 220 230);
+  --temp-ambient: rgb(87 83 78);
+  --temp-ambient-bg: rgb(243 242 240);
+  --temp-ambient-border: rgb(214 211 206);
+  --brand-fresh: rgb(77 124 15);
+  --brand-fresh-foreground: #ffffff;
+  --brand-style: rgb(162 26 91);
+  --brand-style-foreground: #ffffff;
+  --brand-tech: rgb(30 58 138);
+  --brand-tech-foreground: #ffffff;
+  --constraint-violation: rgb(185 28 28);
+  --constraint-violation-bg: rgb(253 236 236);
+  --constraint-violation-border: rgb(185 28 28);
+  --hatch-base: #ffffff;
+}
+
+/* ─────────────────────────────── Dark · dispatcher at night */
+.dark {
+  --background: #0b0e12;
+  --foreground: #e7eaee;
+  --card: #12161c;
+  --card-foreground: #e7eaee;
+  --popover: #161b22;
+  --popover-foreground: #e7eaee;
+  --primary: #e7eaee;
+  --primary-foreground: #0b0e12;
+  --secondary: #1d232b;
+  --secondary-foreground: #e7eaee;
+  --muted: #171c23;
+  --muted-foreground: #99a3af;
+  --accent: #222933;
+  --accent-foreground: #e7eaee;
+  --destructive: #d12f36;
+  --destructive-foreground: #ffffff;
+  --border: #262e38;
+  --input: #313a46;
+  --ring: #8b96a3;
+  --chart-1: #9bcb5a;
+  --chart-2: #ec7fb0;
+  --chart-3: #7ea2f0;
+  --chart-4: #4cc3db;
+  --chart-5: #8b96a3;
+  --sidebar: #12161c;
+  --sidebar-foreground: #e7eaee;
+  --sidebar-primary: #e7eaee;
+  --sidebar-primary-foreground: #0b0e12;
+  --sidebar-accent: #1d232b;
+  --sidebar-accent-foreground: #e7eaee;
+  --sidebar-border: #262e38;
+  --sidebar-ring: #8b96a3;
+
+  --status-planned: rgb(183 192 203);
+  --status-planned-bg: rgb(26 32 41);
+  --status-planned-border: rgb(54 64 76);
+  --status-loading: rgb(165 161 255);
+  --status-loading-bg: rgb(29 27 63);
+  --status-loading-border: rgb(59 55 134);
+  --status-en-route: rgb(127 168 255);
+  --status-en-route-bg: rgb(15 29 58);
+  --status-en-route-border: rgb(37 64 122);
+  --status-delivered: rgb(95 214 138);
+  --status-delivered-bg: rgb(14 38 24);
+  --status-delivered-border: rgb(31 86 52);
+  --status-deferred: rgb(201 155 250);
+  --status-deferred-bg: rgb(35 21 52);
+  --status-deferred-border: rgb(75 45 113);
+  --status-late-risk: rgb(245 180 82);
+  --status-late-risk-bg: rgb(42 28 7);
+  --status-late-risk-border: rgb(106 71 18);
+  --status-conflict: rgb(240 138 242);
+  --status-conflict-bg: rgb(46 15 47);
+  --status-conflict-border: rgb(107 42 109);
+  --status-exception: rgb(255 123 123);
+  --status-exception-bg: rgb(46 16 18);
+  --status-exception-border: rgb(116 38 42);
+  --status-offline: rgb(183 192 203);
+  --status-offline-bg: rgb(11 14 18);
+  --status-offline-border: rgb(107 116 128);
+  --status-syncing: rgb(183 192 203);
+  --status-syncing-bg: rgb(26 32 41);
+  --status-syncing-border: rgb(54 64 76);
+  --temp-chilled: rgb(92 207 230);
+  --temp-chilled-bg: rgb(11 40 48);
+  --temp-chilled-border: rgb(30 90 104);
+  --temp-ambient: rgb(196 189 179);
+  --temp-ambient-bg: rgb(31 29 26);
+  --temp-ambient-border: rgb(69 64 58);
+  --brand-fresh: rgb(155 203 90);
+  --brand-fresh-foreground: #0b0e12;
+  --brand-style: rgb(236 127 176);
+  --brand-style-foreground: #0b0e12;
+  --brand-tech: rgb(126 162 240);
+  --brand-tech-foreground: #0b0e12;
+  --constraint-violation: rgb(255 123 123);
+  --constraint-violation-bg: rgb(46 16 18);
+  --constraint-violation-border: rgb(255 123 123);
+  --hatch-base: #12161c;
+}
+
+/* ─────────────────────────────── Sunlight · drivers and loaders outdoors */
+.sunlight {
+  --bw: 2px;
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+  --secondary: #e5e5e5;
+  --secondary-foreground: #000000;
+  --muted: #f0f0f0;
+  --muted-foreground: #262626;
+  --accent: #e5e5e5;
+  --accent-foreground: #000000;
+  --destructive: #a30000;
+  --destructive-foreground: #ffffff;
+  --border: #000000;
+  --input: #000000;
+  --ring: #0034b8;
+  --chart-1: #2e5a00;
+  --chart-2: #8a0045;
+  --chart-3: #002b8f;
+  --chart-4: #005a73;
+  --chart-5: #404040;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #000000;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e5e5e5;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #000000;
+  --sidebar-ring: #0034b8;
+
+  --status-planned: #000000;
+  --status-planned-bg: #ffffff;
+  --status-planned-border: #000000;
+  --status-loading: #ffffff;
+  --status-loading-bg: rgb(43 31 163);
+  --status-loading-border: rgb(43 31 163);
+  --status-en-route: #ffffff;
+  --status-en-route-bg: rgb(0 52 184);
+  --status-en-route-border: rgb(0 52 184);
+  --status-delivered: #ffffff;
+  --status-delivered-bg: rgb(10 92 39);
+  --status-delivered-border: rgb(10 92 39);
+  --status-deferred: #ffffff;
+  --status-deferred-bg: rgb(94 13 168);
+  --status-deferred-border: rgb(94 13 168);
+  --status-late-risk: #000000;
+  --status-late-risk-bg: rgb(255 176 0);
+  --status-late-risk-border: #000000;
+  --status-conflict: #ffffff;
+  --status-conflict-bg: rgb(130 0 122);
+  --status-conflict-border: rgb(130 0 122);
+  --status-exception: #ffffff;
+  --status-exception-bg: rgb(163 0 0);
+  --status-exception-border: rgb(163 0 0);
+  --status-offline: #000000;
+  --status-offline-bg: #ffffff;
+  --status-offline-border: #000000;
+  --status-syncing: #000000;
+  --status-syncing-bg: rgb(229 229 229);
+  --status-syncing-border: #000000;
+  --temp-chilled: #ffffff;
+  --temp-chilled-bg: rgb(0 90 115);
+  --temp-chilled-border: rgb(0 90 115);
+  --temp-ambient: #000000;
+  --temp-ambient-bg: #ffffff;
+  --temp-ambient-border: #000000;
+  --brand-fresh: rgb(46 90 0);
+  --brand-fresh-foreground: #ffffff;
+  --brand-style: rgb(138 0 69);
+  --brand-style-foreground: #ffffff;
+  --brand-tech: rgb(0 43 143);
+  --brand-tech-foreground: #ffffff;
+  --constraint-violation: rgb(163 0 0);
+  --constraint-violation-bg: rgb(255 229 229);
+  --constraint-violation-border: rgb(163 0 0);
+  --hatch-base: #ffffff;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "ss01";
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  html {
+    @apply font-sans;
+  }
+  /* Sunlight: every hairline becomes a 2 px rule */
+  .sunlight .border,
+  .sunlight .border-b,
+  .sunlight .border-t,
+  .sunlight .border-l,
+  .sunlight .border-r {
+    border-width: var(--bw);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* A constraint violation is a hatched outline (DS-01 §02), readable in greyscale. */
+  .hatch-violation {
+    color: var(--constraint-violation);
+    border: var(--bw) solid var(--constraint-violation-border);
+    background: repeating-linear-gradient(
+      135deg,
+      var(--constraint-violation-bg) 0 6px,
+      var(--hatch-base) 6px 12px
+    );
+  }
+  /* IDs, times and quantities: Geist Mono with tabular figures */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Offline / not-live data uses a dashed edge */
+  .edge-offline {
+    border-style: dashed;
+  }
 }

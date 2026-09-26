@@ -26,10 +26,10 @@ export const DEPOTS = [
 
 /** Demo accounts, one per role (booklet: four seeded accounts). */
 export const DEMO_USERS = [
-  { role: "dispatcher", name: "Nirmala Perera", email: "dispatcher@waypoint-demo.lk", depotId: null, outletId: null, vehicleId: null },
-  { role: "loader", name: "Suresh Kumar", email: "loader@waypoint-demo.lk", depotId: "Peliyagoda", outletId: null, vehicleId: null },
-  { role: "driver", name: "Ruwan Bandara", email: "driver@waypoint-demo.lk", depotId: "Peliyagoda", outletId: null, vehicleId: "VEH034" },
-  { role: "store_manager", name: "Fathima Rizwan", email: "store@waypoint-demo.lk", depotId: "Peliyagoda", outletId: "OUT006", vehicleId: null },
+  { role: "dispatcher", name: "Nirmala Perera", email: "dispatcher+clerk_test@waypoint-demo.lk", depotId: null, outletId: null, vehicleId: null },
+  { role: "loader", name: "Suresh Kumar", email: "loader+clerk_test@waypoint-demo.lk", depotId: "Peliyagoda", outletId: null, vehicleId: null },
+  { role: "driver", name: "Ruwan Bandara", email: "driver+clerk_test@waypoint-demo.lk", depotId: "Peliyagoda", outletId: null, vehicleId: "VEH034" },
+  { role: "store_manager", name: "Fathima Rizwan", email: "store+clerk_test@waypoint-demo.lk", depotId: "Peliyagoda", outletId: "OUT006", vehicleId: null },
 ] as const;
 
 export const DEMO_PASSWORD = "Waypoint-Demo-2026";

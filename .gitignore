@@ -40,3 +40,4 @@ Thumbs.db
 
 # local services data
 .docker-data/
+.dev.log

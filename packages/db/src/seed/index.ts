@@ -302,6 +302,11 @@ async function main() {
   const opsOnly = process.argv.includes("--ops-only");
   const db = createDb();
   const t = Date.now();
+  if (process.argv.includes("--users-only")) {
+    await seedUsers(db);
+    await closeDb(db);
+    return;
+  }
   if (!opsOnly) {
     console.log("seeding reference data…");
     await seedReference(db);
