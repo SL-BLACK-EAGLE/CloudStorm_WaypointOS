@@ -18,7 +18,7 @@ export async function DispatchHeader({
 }) {
   const clock = await now();
   return (
-    <header className="sticky top-0 z-20 flex min-h-16 flex-wrap items-center gap-x-4 gap-y-2 border-b bg-background/95 px-6 py-3 backdrop-blur">
+    <header className="sticky top-0 z-20 flex min-h-16 print:hidden flex-wrap items-center gap-x-4 gap-y-2 border-b bg-background/95 px-6 py-3 backdrop-blur">
       <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 gap-y-1">
         <h1 className="text-lg font-semibold tracking-tight">{title}</h1>
         {context && <p className="text-sm text-muted-foreground">{context}</p>}

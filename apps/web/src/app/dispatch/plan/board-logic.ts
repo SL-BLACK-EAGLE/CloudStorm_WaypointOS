@@ -9,6 +9,7 @@ import {
   tripMinutes,
   window as budgetWindow,
   capabilityCost,
+  schedule,
   type DayContext,
   type Order,
   type OrderInput,
@@ -116,6 +117,54 @@ export class Board {
         out.push({ vehicleId: v.id, tripNo: "new", label: `${v.id} new trip ${ts.length + 1}`, rank: 10 + capabilityCost(v) });
     }
     return out.sort((a, b) => a.rank - b.rank).slice(0, limit);
+  }
+
+  /** A vehicle's day with `outId` replaced by `inId` on the same trip (D-04 "serve instead"). */
+  proposeSwap(inId: string, outId: string): { vehicleId: string; day: Order[][] } | null {
+    const inO = this.orders.get(inId);
+    const vehicleId = this.vehicleOf(outId);
+    if (!inO || !vehicleId) return null;
+    const day = (this.day.get(vehicleId) ?? []).map((t) => (t.some((o) => o.ref === outId) ? [...t.filter((o) => o.ref !== outId), inO] : t));
+    return { vehicleId, day };
+  }
+
+  checkSwap(inId: string, outId: string): Verdict & { vehicleId: string | null } {
+    const p = this.proposeSwap(inId, outId);
+    if (!p) return { ok: false, code: "GONE", title: "no longer on a trip", detail: "", vehicleId: null };
+    const chk = checkVehicleDay(this.R, p.vehicleId, p.day, this.input.ctx, "LIVE", this.input.fuelUsed[p.vehicleId] ?? 0);
+    return chk.ok
+      ? { ok: true, code: null, title: "Fits", detail: "", vehicleId: p.vehicleId }
+      : { ok: false, code: chk.code, ...describe(chk.code ?? "", this.orders.get(inId)!, this.R.vehicles.get(p.vehicleId)!), vehicleId: p.vehicleId };
+  }
+
+  /** Planned arrival, window margin, load and budget if `orderId` were served on `day` of `vehicleId`. */
+  preview(orderId: string, vehicleId: string, day: Order[][]) {
+    const chk = checkVehicleDay(this.R, vehicleId, day, this.input.ctx, "LIVE", this.input.fuelUsed[vehicleId] ?? 0);
+    if (!chk.ok || !chk.timed) return null;
+    const v = this.R.vehicles.get(vehicleId)!;
+    for (let k = 0; k < chk.timed.length; k++) {
+      const [stops, t0] = chk.timed[k]!;
+      const i = stops.findIndex((o) => o.ref === orderId);
+      if (i < 0 || t0 === null) continue;
+      const { legs } = schedule(this.R, stops, t0, this.input.ctx, "planned", true);
+      const leg = legs[i]!;
+      const kgSum = stops.reduce((s, o) => s + o.kg, 0);
+      const used = { Fresh: 0, Day: 0 };
+      for (const t of day) used[budgetWindow(t[0]!.outlet.brand)] += tripMinutes(this.R, t[0]!.outlet.brand, t[0]!.outlet.district, t.map((o) => o.outlet.dock));
+      return {
+        tripNo: k + 1,
+        departure: t0,
+        sequence: legs.map((l) => ({ outletId: l.outletId, arrive: l.arrive })),
+        arrive: leg.arrive,
+        close: leg.close,
+        margin: leg.close - leg.arrive,
+        kg: kgSum,
+        capKg: v.capKg,
+        minutes: budgetWindow(stops[0]!.outlet.brand) === "Fresh" ? used.Fresh : used.Day,
+        budget: budgetWindow(stops[0]!.outlet.brand) === "Fresh" ? 270 : 480,
+      };
+    }
+    return null;
   }
 
   /** Budget minutes a vehicle uses in each window. */

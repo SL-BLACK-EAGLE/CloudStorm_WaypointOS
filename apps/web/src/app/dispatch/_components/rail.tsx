@@ -46,7 +46,7 @@ export function DispatchRail() {
   return (
     <nav
       aria-label="Dispatcher"
-      className="sticky top-0 flex h-dvh w-[76px] shrink-0 flex-col items-center gap-1 border-r bg-sidebar px-1.5 py-3"
+      className="sticky top-0 flex h-dvh w-[76px] print:hidden shrink-0 flex-col items-center gap-1 border-r bg-sidebar px-1.5 py-3"
     >
       <Link href="/dispatch" className="mb-3" aria-label="Control tower">
         <WMark size={36} />

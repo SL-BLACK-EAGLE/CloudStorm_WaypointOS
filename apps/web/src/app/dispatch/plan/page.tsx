@@ -3,15 +3,13 @@ import { Play } from "lucide-react";
 import { ActionButton } from "@/components/wp/action-button";
 import { Panel } from "@/components/wp/panel";
 import { dayLabel } from "@/lib/format";
-import { loadReference } from "@waypoint/db";
-import { db } from "@/lib/server/db";
-import { currentPlan, loadPlanningInput } from "@/lib/server/planning";
-import { planView } from "@/lib/server/queries/plan-view";
+import { boardData } from "@/lib/server/board-data";
+import { currentPlan } from "@/lib/server/planning";
 import { runs } from "@/lib/server/runs";
 import { DispatchHeader } from "../_components/header";
 import { autoPlanAction } from "../actions";
 import { currentDepot } from "../depot";
-import { PlanningBoard, type BoardData } from "./board";
+import { PlanningBoard } from "./board";
 
 export const metadata: Metadata = { title: "D-03 Planning board" };
 
@@ -44,53 +42,7 @@ export default async function PlanningBoardPage() {
     );
   }
 
-  const [input, view, refInput] = await Promise.all([loadPlanningInput(depot, planning), planView(plan.id), loadReference(db())]);
-  const outletsHere = new Set(input.orders.map((o) => o.outletId));
-  const data: BoardData = {
-    planId: plan.id,
-    planStatus: plan.status as "draft" | "published",
-    version: plan.version,
-    depot,
-    runDate: planning,
-    ref: {
-      outlets: refInput.outlets.filter((o) => o.depot === depot || outletsHere.has(o.id)),
-      vehicles: refInput.vehicles.filter((v) => v.depot === depot),
-      districts: refInput.districts,
-      allowance: refInput.allowance,
-      speed: refInput.speed.filter((s) => refInput.districts.some((d) => d.name === s.district && d.depot === depot)),
-    },
-    ctx: input.ctx,
-    status: input.status,
-    fuelUsed: input.fuelUsed,
-    orders: input.orders.map((o) => ({
-      ref: o.ref,
-      outletId: o.outletId,
-      temp: o.temp,
-      units: o.units,
-      kg: o.kg,
-      m3: o.m3,
-      deferredYesterday: o.deferredYesterday,
-      daysSinceLastServed: o.daysSinceLastServed,
-    })),
-    trips: view.trips.map((tr) => ({
-      id: tr.id,
-      code: tr.code,
-      vehicleId: tr.vehicleId,
-      tripNo: tr.tripNo,
-      status: tr.status,
-      departureMin: tr.departureMin,
-      orderIds: tr.stops.map((s) => s.orderId),
-      arrivals: Object.fromEntries(tr.stops.map((s) => [s.orderId, s.plannedArrive ?? 0])),
-      lateRisk: tr.stops.filter((s) => s.lateRisk).map((s) => s.orderId),
-    })),
-    deferrals: view.deferrals.map((d) => ({
-      orderId: d.orderId,
-      kind: d.kind,
-      reasonCode: d.reasonCode,
-      explanation: d.explanation,
-      lostToOrderId: d.lostToOrderId,
-    })),
-  };
+  const { data } = await boardData(plan);
 
   return (
     <>
