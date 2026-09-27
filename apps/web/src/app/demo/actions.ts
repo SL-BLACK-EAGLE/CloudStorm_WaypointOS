@@ -49,6 +49,24 @@ export async function driveVehicleAction(form: FormData): Promise<Result> {
   return { ok: true, message: `${target.name} now drives ${v.id} (${v.temp} ${v.type}, ${v.depotId}).` };
 }
 
+/** Judge panel: point the demo store manager at another outlet (e.g. one the demo driver just delivered to). */
+export async function storeOutletAction(form: FormData): Promise<Result> {
+  const user = await requireUser();
+  const outletId = z.string().regex(/^OUT\d{3}$/).safeParse(form.get("outletId"));
+  if (!outletId.success) return { ok: false, error: "Choose an outlet" };
+  const [o] = await db().select().from(t.outlets).where(eq(t.outlets.id, outletId.data));
+  if (!o) return { ok: false, error: "Unknown outlet" };
+  const [target] =
+    user.role === "store_manager"
+      ? [user]
+      : await db().select().from(t.users).where(and(eq(t.users.role, "store_manager"), eq(t.users.email, "store+clerk_test@waypoint-demo.lk")));
+  if (!target) return { ok: false, error: "No demo store account" };
+  const [updated] = await db().update(t.users).set({ outletId: o.id, depotId: o.depotId }).where(eq(t.users.id, target.id)).returning();
+  if (updated) await syncClerkMetadata(updated).catch(() => undefined);
+  refresh();
+  return { ok: true, message: `${target.name} now manages ${o.id} (${o.brand}, ${o.district}).` };
+}
+
 /** Judge panel: restore the 22-23 Dec demo day (orders, fleet status, clock, demo users). */
 export async function resetDemoAction(): Promise<Result> {
   const user = await requireUser();

@@ -1,4 +1,4 @@
-import { ArrowLeft, Clock, RotateCcw, Truck } from "lucide-react";
+import { ArrowLeft, Clock, RotateCcw, Store, Truck } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { and, eq, inArray } from "@waypoint/db/orm";
@@ -12,7 +12,7 @@ import { now } from "@/lib/server/clock";
 import { db, t } from "@/lib/server/db";
 import { requireUser } from "@/lib/server/session";
 import { cn } from "@/lib/utils";
-import { driveVehicleAction, resetDemoAction, setClockAction } from "./actions";
+import { driveVehicleAction, resetDemoAction, setClockAction, storeOutletAction } from "./actions";
 import { ClockForm } from "./clock-form";
 
 export const metadata: Metadata = { title: "Judge demo panel" };
@@ -39,6 +39,26 @@ export default async function DemoPage() {
         .where(inArray(t.trips.planId, plans.map((p) => p.id)))
     : [];
   const [driver] = await db().select().from(t.users).where(and(eq(t.users.role, "driver"), eq(t.users.email, "driver+clerk_test@waypoint-demo.lk")));
+  const [store] = await db().select().from(t.users).where(and(eq(t.users.role, "store_manager"), eq(t.users.email, "store+clerk_test@waypoint-demo.lk")));
+  // outlets on the published plans, delivered ones first - those are ready for SM-05 receipt
+  const stops = plans.length
+    ? await db()
+        .select({ outletId: t.orders.outletId, status: t.tripStops.status, vehicleId: t.trips.vehicleId })
+        .from(t.tripStops)
+        .innerJoin(t.trips, eq(t.trips.id, t.tripStops.tripId))
+        .innerJoin(t.orders, eq(t.orders.id, t.tripStops.orderId))
+        .where(inArray(t.trips.planId, plans.map((p) => p.id)))
+    : [];
+  const outlets = new Map<string, { delivered: number; total: number; vehicles: Set<string> }>();
+  for (const s of stops) {
+    const e = outlets.get(s.outletId) ?? { delivered: 0, total: 0, vehicles: new Set<string>() };
+    e.total++;
+    if (s.status === "delivered") e.delivered++;
+    e.vehicles.add(s.vehicleId);
+    outlets.set(s.outletId, e);
+  }
+  if (!outlets.has("OUT006")) outlets.set("OUT006", { delivered: 0, total: 0, vehicles: new Set() });
+  const outletList = [...outlets].sort((a, b) => b[1].delivered - a[1].delivered || (a[0] < b[0] ? -1 : 1)).slice(0, 24);
   const byVehicle = new Map<string, typeof trips>();
   for (const tr of trips) byVehicle.set(tr.vehicleId, [...(byVehicle.get(tr.vehicleId) ?? []), tr]);
 
@@ -94,6 +114,26 @@ export default async function DemoPage() {
                 <span className="num font-semibold">{v}</span>
                 <span className="text-[11px] font-normal opacity-80">
                   {ts[0]!.depotId} · {ts.map((x) => `${x.district} ${hhmm(x.departureMin)}`).join(", ")}
+                </span>
+              </ActionButton>
+            ))}
+          </div>
+        </div>
+      </Panel>
+
+      <Panel>
+        <PanelHeader title={<span className="flex items-center gap-2"><Store className="size-4" /> Demo store&apos;s outlet</span>} aside={store ? `${store.name} manages ${store.outletId ?? "nothing"}` : ""} />
+        <div className="space-y-3 p-4">
+          <p className="text-sm text-muted-foreground">
+            The store account starts at OUT006 (ordering before the cutoff). After the demo driver delivers somewhere, switch the store to that outlet to confirm
+            receipt against the driver&apos;s proof of delivery.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {outletList.map(([id, e]) => (
+              <ActionButton key={id} action={storeOutletAction} fields={{ outletId: id }} variant={store?.outletId === id ? "default" : "outline"} size="sm" className="h-auto flex-col items-start gap-0 py-1.5">
+                <span className="num font-semibold">{id}</span>
+                <span className="text-[11px] font-normal opacity-80">
+                  {e.total ? `${e.delivered}/${e.total} delivered · ${[...e.vehicles].join(", ")}` : "ordering"}
                 </span>
               </ActionButton>
             ))}

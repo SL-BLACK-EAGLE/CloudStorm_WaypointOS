@@ -65,3 +65,8 @@ export async function writeClock(next: Partial<Pick<ClockSetting, "at" | "runnin
 export function addDaysIso(date: string, days: number) {
   return new Date(Date.parse(`${date}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10);
 }
+
+/** The business clock as a real instant (Asia/Colombo is a fixed +05:30), for timestamps shown to users. */
+export function businessDate(c: BusinessNow) {
+  return new Date(`${c.iso}+05:30`);
+}

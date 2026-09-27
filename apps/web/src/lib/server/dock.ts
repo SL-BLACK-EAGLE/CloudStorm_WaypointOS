@@ -1,6 +1,7 @@
 import "server-only";
 import { and, asc, eq, inArray } from "@waypoint/db/orm";
 import { dockSignoff } from "@waypoint/planner";
+import { businessDate, now } from "./clock";
 import { db, t } from "./db";
 import { audit, emit, notify } from "./events";
 import { publishedPlan, type DepotId } from "./planning";
@@ -175,7 +176,7 @@ export async function setLoaded(opts: { tripId: string; orderId: string; loaded:
       await tx
         .insert(t.loadChecks)
         .values({ tripId: opts.tripId, orderId: opts.orderId, loadedUnits: order.units, checkedBy: opts.userId })
-        .onConflictDoUpdate({ target: [t.loadChecks.tripId, t.loadChecks.orderId], set: { loadedUnits: order.units, checkedAt: new Date() } });
+        .onConflictDoUpdate({ target: [t.loadChecks.tripId, t.loadChecks.orderId], set: { loadedUnits: order.units, checkedAt: businessDate(await now()) } });
       await tx.update(t.trips).set({ status: "loading" }).where(and(eq(t.trips.id, opts.tripId), eq(t.trips.status, "planned")));
       await tx.update(t.orders).set({ status: "loading", updatedAt: new Date() }).where(eq(t.orders.id, opts.orderId));
     } else {
@@ -239,7 +240,7 @@ export async function decideShortfall(opts: { shortfallId: string; decision: "HO
   await db().transaction(async (tx) => {
     await tx
       .update(t.shortfalls)
-      .set({ decision: opts.decision, decisionNote: opts.note, decidedBy: opts.userId, decidedAt: new Date(), status: opts.decision === "SEND_AND_WARN" ? "decided" : "open" })
+      .set({ decision: opts.decision, decisionNote: opts.note, decidedBy: opts.userId, decidedAt: businessDate(await now()), status: opts.decision === "SEND_AND_WARN" ? "decided" : "open" })
       .where(eq(t.shortfalls.id, s.id));
     if (opts.decision === "HOLD") await tx.update(t.trips).set({ status: "held" }).where(eq(t.trips.id, s.tripId));
     if (opts.decision === "SEND_AND_WARN") {
@@ -295,7 +296,7 @@ export async function signOff(opts: { tripId: string; userId: string; depotId: s
   if (state === "LOCKED") throw new Error(`Sign-off blocked · ${undecided.length} shortfall unresolved`);
   if (open.some((s) => s.decision === "HOLD")) throw new Error("The dispatcher chose to hold: mark the units found first");
   await db().transaction(async (tx) => {
-    await tx.insert(t.dockSignoffs).values({ tripId: opts.tripId, state, signedBy: opts.userId });
+    await tx.insert(t.dockSignoffs).values({ tripId: opts.tripId, state, signedBy: opts.userId, signedAt: businessDate(await now()) });
     await tx.update(t.trips).set({ status: "ready" }).where(eq(t.trips.id, opts.tripId));
     await notify(tx, {
       type: "dock.signed_off",

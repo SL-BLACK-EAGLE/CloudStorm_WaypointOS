@@ -3,6 +3,7 @@ import { and, eq, inArray, ne } from "@waypoint/db/orm";
 import { checkVehicleDay, weight } from "@waypoint/planner";
 import { explainDeferral, explainForStore, type DeferralKind } from "@/lib/explain";
 import { dayLabel, hhmm } from "@/lib/format";
+import { businessDate, now } from "./clock";
 import { db, t } from "./db";
 import { audit, emit, notify } from "./events";
 import { rewriteInPlace, type MoveResult } from "./plan-edit";
@@ -109,7 +110,7 @@ export async function publishPlan(opts: { planId: string; userId: string }): Pro
       .update(t.plans)
       .set({ status: "superseded" })
       .where(and(eq(t.plans.depotId, plan.depotId), eq(t.plans.runDate, plan.runDate), ne(t.plans.id, plan.id), inArray(t.plans.status, ["published", "draft"])));
-    await tx.update(t.plans).set({ status: "published", publishedAt: new Date(), publishedBy: opts.userId }).where(eq(t.plans.id, plan.id));
+    await tx.update(t.plans).set({ status: "published", publishedAt: businessDate(await now()), publishedBy: opts.userId }).where(eq(t.plans.id, plan.id));
 
     // drivers take their vehicle's trips
     for (const [vehicleId, driverId] of driverByVehicle) {
