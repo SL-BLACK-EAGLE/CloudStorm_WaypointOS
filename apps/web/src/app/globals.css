@@ -103,6 +103,9 @@
   --color-brand-style-foreground: var(--brand-style-foreground);
   --color-brand-tech: var(--brand-tech);
   --color-brand-tech-foreground: var(--brand-tech-foreground);
+  --color-chart-fresh: var(--chart-fresh);
+  --color-chart-style: var(--chart-style);
+  --color-chart-tech: var(--chart-tech);
   --color-violation: var(--constraint-violation);
   --color-violation-bg: var(--constraint-violation-bg);
   --color-violation-border: var(--constraint-violation-border);
@@ -187,6 +190,10 @@
   --brand-style-foreground: #ffffff;
   --brand-tech: rgb(30 58 138);
   --brand-tech-foreground: #ffffff;
+  /* chart series (validated: lightness band, CVD separation, contrast vs card) */
+  --chart-fresh: #4d7c0f;
+  --chart-style: #a21a5b;
+  --chart-tech: #2f55b5;
   --constraint-violation: rgb(185 28 28);
   --constraint-violation-bg: rgb(253 236 236);
   --constraint-violation-border: rgb(185 28 28);
@@ -270,6 +277,10 @@
   --brand-style-foreground: #0b0e12;
   --brand-tech: rgb(126 162 240);
   --brand-tech-foreground: #0b0e12;
+  /* chart series (validated: lightness band, CVD separation, contrast vs card) */
+  --chart-fresh: #72a035;
+  --chart-style: #d9679c;
+  --chart-tech: #6a8fe0;
   --constraint-violation: rgb(255 123 123);
   --constraint-violation-bg: rgb(46 16 18);
   --constraint-violation-border: rgb(255 123 123);
@@ -354,6 +365,10 @@
   --brand-style-foreground: #ffffff;
   --brand-tech: rgb(0 43 143);
   --brand-tech-foreground: #ffffff;
+  /* chart series (validated: lightness band, CVD separation, contrast vs card) */
+  --chart-fresh: #4d7c0f;
+  --chart-style: #a21a5b;
+  --chart-tech: #2f55b5;
   --constraint-violation: rgb(163 0 0);
   --constraint-violation-bg: rgb(255 229 229);
   --constraint-violation-border: rgb(163 0 0);
