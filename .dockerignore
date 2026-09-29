@@ -1,0 +1,16 @@
+**/node_modules
+**/.next
+**/.turbo
+**/dist
+**/coverage
+.git
+.env
+.env.*
+!.env.example
+*.log
+.dev.log
+# the competition dataset is confidential: it is mounted into the seed job at run time, never baked into an image
+seed-data
+tools/planner-oracle/**/__pycache__
+apps/web/public/sw.js
+apps/web/public/swe-worker-*.js

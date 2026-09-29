@@ -68,6 +68,7 @@ services:
       - "3211:3211" # HTTP actions
     environment:
       INSTANCE_NAME: waypoint
+      INSTANCE_SECRET: ${CONVEX_INSTANCE_SECRET:?set CONVEX_INSTANCE_SECRET in .env (openssl rand -hex 32)}
       CONVEX_CLOUD_ORIGIN: http://127.0.0.1:3210
       CONVEX_SITE_ORIGIN: http://127.0.0.1:3211
       DISABLE_BEACON: "true"
@@ -89,7 +90,86 @@ services:
       convex:
         condition: service_healthy
 
+  # one-shot: derive the Convex admin key (deterministic from instance name + secret) into a shared volume
+  convex-init:
+    image: ghcr.io/get-convex/convex-backend:latest
+    entrypoint: ["bash", "-c", "./generate_admin_key.sh | tail -1 > /keys/admin_key && echo admin key ready"]
+    environment:
+      INSTANCE_NAME: waypoint
+      INSTANCE_SECRET: ${CONVEX_INSTANCE_SECRET:?set CONVEX_INSTANCE_SECRET in .env (openssl rand -hex 32)}
+    volumes:
+      - convexkeys:/keys
+    depends_on:
+      convex:
+        condition: service_healthy
+
+  # one-shot: push the Convex functions (convex/) and the relay secret to the local backend
+  convex-push:
+    build: { context: ., target: tools }
+    working_dir: /repo/apps/web
+    command: >
+      sh -c 'export CONVEX_SELF_HOSTED_ADMIN_KEY="$$(cat /keys/admin_key)" &&
+      npx convex deploy -y &&
+      npx convex env set CONVEX_SERVER_SECRET "$$CONVEX_SERVER_SECRET"'
+    environment:
+      CONVEX_SELF_HOSTED_URL: http://convex:3210
+      CONVEX_SERVER_SECRET: ${CONVEX_SERVER_SECRET}
+    volumes:
+      - convexkeys:/keys:ro
+    depends_on:
+      convex-init:
+        condition: service_completed_successfully
+
+  # one-shot: migrations + seed (only on a fresh database). The dataset is mounted, never baked in.
+  seed:
+    build: { context: ., target: tools }
+    command: sh -c "pnpm --filter @waypoint/db migrate && pnpm --filter @waypoint/db seed --if-empty"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://waypoint:waypoint@postgres:5432/waypoint
+      DATABASE_URL_UNPOOLED: postgres://waypoint:waypoint@postgres:5432/waypoint
+      SEED_DATA_DIR: /repo/seed-data
+    volumes:
+      - ./seed-data:/repo/seed-data:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      target: runner
+      args:
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_CONVEX_URL: http://localhost:3210
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      APP_URL: http://localhost:3000
+      DATABASE_URL: postgres://waypoint:waypoint@postgres:5432/waypoint
+      DATABASE_URL_UNPOOLED: postgres://waypoint:waypoint@postgres:5432/waypoint
+      UPSTASH_REDIS_REST_URL: http://redis-rest:80
+      UPSTASH_REDIS_REST_TOKEN: local-srh-token
+      S3_ENDPOINT: http://s3:9000
+      S3_REGION: us-east-1
+      S3_BUCKET: waypoint-pod
+      S3_ACCESS_KEY_ID: waypoint
+      S3_SECRET_ACCESS_KEY: waypoint-secret
+      S3_FORCE_PATH_STYLE: "true"
+      CONVEX_URL: http://convex:3210
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+      convex-push:
+        condition: service_completed_successfully
+      s3:
+        condition: service_healthy
+      redis-rest:
+        condition: service_started
+
 volumes:
   pgdata:
   s3data:
   convexdata:
+  convexkeys:

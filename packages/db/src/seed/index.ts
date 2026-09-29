@@ -5,6 +5,7 @@
  *
  *   pnpm db:seed              full seed (reference + operations + users)
  *   pnpm db:seed --ops-only   reset operational data only (used by the /demo panel's reset)
+ *   pnpm db:seed --if-empty   seed only a fresh database (docker compose)
  */
 import { config } from "dotenv";
 import { sql } from "drizzle-orm";
@@ -302,6 +303,15 @@ async function main() {
   const opsOnly = process.argv.includes("--ops-only");
   const db = createDb();
   const t = Date.now();
+  if (process.argv.includes("--if-empty")) {
+    // docker compose runs the seed on every `up`; only a fresh database is seeded
+    const [row] = await db.select({ n: sql<number>`count(*)::int` }).from(s.outlets);
+    if ((row?.n ?? 0) > 0) {
+      console.log("database already seeded - skipping (run without --if-empty to reset)");
+      await closeDb(db);
+      return;
+    }
+  }
   if (process.argv.includes("--users-only")) {
     await seedUsers(db);
     await closeDb(db);

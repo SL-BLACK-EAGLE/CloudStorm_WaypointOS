@@ -26,7 +26,8 @@ export function channelsFor(topic: string, p: Record<string, unknown>): string[]
  * a failed batch stays pending with its error and is retried by the next kick or the scheduled sweep.
  */
 export async function triggerRelay(): Promise<{ relayed: number; skipped?: string }> {
-  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  // inside docker the server reaches Convex by service name; browsers use NEXT_PUBLIC_CONVEX_URL
+  const url = process.env.CONVEX_URL ?? process.env.NEXT_PUBLIC_CONVEX_URL;
   const secret = process.env.CONVEX_SERVER_SECRET;
   if (!url || !secret) return { relayed: 0, skipped: "convex not configured" };
   if (!(await claim("relay", 30))) return { relayed: 0, skipped: "another relay is running" };
