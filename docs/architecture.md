@@ -48,6 +48,20 @@ Waypoint Delivery OS is one Next.js 16 app serving four roles (dispatcher, loade
 
 Golden-file parity tests compare the TS output with the Python oracle on the same inputs (`packages/planner/test/parity.test.ts`), and the 2B allocation passes the organisers' `check_allocation.py`. Plans are stored as trips and stops. Every manual edit re-validates the vehicle-day with the same rules before it is saved.
 
+**Improvement pass** (`packages/planner/src/optimize.ts`). Auto-plan runs the flowchart algorithm, which stays identical to the oracle, then a deterministic local search on its result:
+- fit deferred orders into any trip that now has room;
+- ejection chains: move a lighter order to another vehicle so a deferred one takes its place;
+- freeing a capable vehicle: hand one of its whole trips to a less specialised vehicle, so a reefer or van can take the order that needs it;
+- merging same-brand, same-district trips to save trips and fuel.
+
+It only accepts a change that serves more priority weight, or the same weight in fewer trips. It never drops an order the baseline served, and every changed vehicle-day is re-checked with the full rule set. The board shows each change in plain language. On the booklet days it removes 2–5 trips on normal days and serves 1–2 more orders on constrained ones, in 1–4 ms.
+
+**Fairness.** An outlet skipped on the previous run gets a large priority boost. If it is deferred again anyway, it is flagged red in deferral review and on the tower, and publishing is blocked until the dispatcher records why.
+
+**Overrides.** The dispatcher can accept a timing or fuel overrun with a written reason: a late delivery window, the Fresh or day time budget, or the fuel quota. The reason is audited and shown at publish. Physical rules can never be overridden: vehicle type, weight, volume, one brand and district per trip, and two trips a day.
+
+**CI parity without the confidential data.** `tools/planner-oracle/export_synthetic.py` invents a two-depot operation with the same file layout. CI runs the Python oracle on it, fails if the committed fixtures in `packages/planner/test/synthetic/` differ, and then checks two things: the TypeScript planner reproduces them exactly, and the optimiser keeps every guarantee (`.github/workflows/ci.yml`).
+
 ## Offline driver app
 
 The driver app keeps working with no signal:

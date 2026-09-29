@@ -1,10 +1,19 @@
 "use client";
 
 import { liveQuery } from "dexie";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { driverDb, type OutboxRow } from "./db";
 import { flush, onServerPack, recordEvent } from "./sync";
 import type { PackStop, RunPack } from "./types";
+
+function subscribeOnline(cb: () => void) {
+  window.addEventListener("online", cb);
+  window.addEventListener("offline", cb);
+  return () => {
+    window.removeEventListener("online", cb);
+    window.removeEventListener("offline", cb);
+  };
+}
 
 const packKey = (p: RunPack) => `${p.vehicle?.id ?? "none"}|${p.runDate}`;
 
@@ -15,7 +24,7 @@ const packKey = (p: RunPack) => `${p.vehicle?.id ?? "none"}|${p.runDate}`;
 export function useDriver(serverPack: RunPack | null) {
   const [pack, setPack] = useState<RunPack | null>(serverPack);
   const [outbox, setOutbox] = useState<OutboxRow[]>([]);
-  const [online, setOnline] = useState(true);
+  const online = useSyncExternalStore(subscribeOnline, () => navigator.onLine, () => true);
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [previous, setPrevious] = useState<RunPack | null>(null);
 
@@ -57,19 +66,12 @@ export function useDriver(serverPack: RunPack | null) {
 
   // connectivity
   useEffect(() => {
-    const up = () => {
-      setOnline(true);
-      void flush();
-    };
-    const down = () => setOnline(false);
-    setOnline(navigator.onLine);
+    const up = () => void flush();
     window.addEventListener("online", up);
-    window.addEventListener("offline", down);
     const t = setInterval(() => navigator.onLine && void flush(), 20_000);
     if (navigator.onLine) void flush();
     return () => {
       window.removeEventListener("online", up);
-      window.removeEventListener("offline", down);
       clearInterval(t);
     };
   }, []);

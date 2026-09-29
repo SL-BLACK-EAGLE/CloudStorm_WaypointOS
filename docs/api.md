@@ -44,7 +44,7 @@ Every endpoint checks the caller's role and scope on the server (`requireUser` /
 
 | Screen | Actions |
 |---|---|
-| D-01 tower, D-03 board | `autoPlanAction`, `moveOrderAction` (re-validated against rules 1–7 before saving) |
+| D-01 tower, D-03 board | `autoPlanAction` (flowchart algorithm + improvement pass), `moveOrderAction` (re-validated against rules 1–7 before saving; an optional `override` reason accepts a timing or fuel overrun, which is audited) |
 | D-04 deferrals | `decideDeferralAction` (keep deferred with a reason, or swap with another order) |
 | D-05 publish | `publishAction` (pre-publish checks, then notifications to loaders, drivers and stores) |
 | D-06 live ops | `decideShortfallAction` (HOLD / SEND_AND_WARN), `warnStoreAction`, `warnTripStoresAction`, `deferStopAction`, `messageDriverAction`, `replyStoreAction`, `closeExceptionAction`, `markHandledAction` |

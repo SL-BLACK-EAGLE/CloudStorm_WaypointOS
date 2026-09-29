@@ -19,7 +19,7 @@ One plan, from the 16:00 order cutoff to the signature at the store door, for Wa
 - **Clerk**: sign-in and sign-up. New users request a role and a dispatcher approves it
 - **Upstash Redis** (rate limits, idempotency, relay lock) and **QStash** (signed, retried outbox sweep)
 - **Object storage** (S3 API: Neon Object Storage in the cloud, SeaweedFS locally) for signatures and photos
-- **Planner** (`packages/planner`): a TypeScript port of the team's Python delivery-planning algorithm, checked against it by golden-file parity tests
+- **Planner** (`packages/planner`): a TypeScript port of the team's Python delivery-planning algorithm, checked against it by golden-file parity tests (also in CI, on a synthetic operation). An improvement pass then fits more orders or saves trips, and every change is explained on the board.
 - **Offline driver app**: Serwist service worker, IndexedDB outbox, UUIDv7 idempotent sync, conflict detection by stop version
 - **Docker**: the whole stack, including Convex, starts with one command
 
@@ -72,8 +72,8 @@ The seeded operation is **Tue 23 Dec 2025**, the Christmas peak. The app runs on
 
 1. **Mon 14:30: the store orders.** Sign in as the **store manager**. SM-01 shows the 16:00 cutoff countdown. Choose **Place Tue's orders**, press **Typical order** on the dry and chilled tabs, review, and submit. You get two confirmed orders; dry and chilled are separate because chilled goods need a reefer.
 2. **Mon 16:05: the dispatcher plans.** Sign in as the **dispatcher**. The **Control tower** (D-01) shows demand against the scarce resources (reefers, vans, Fresh minutes, fuel). Press **Run auto-plan**: about 80 of 88 orders on 20 trips in well under a second.
-3. **Try to break a rule.** On the **Plan board** (D-03), drag a chilled order onto an ambient truck. The move is refused with the rule it breaks ("needs reefer, rule 2"). **Move to…** gives a keyboard alternative.
-4. **Explain the deferrals.** Open **Deferrals** (D-04). Every order that did not fit shows why (unavoidable, capacity-forced or chosen), with its fairness history. Keep one with a reason, or swap it with another order.
+3. **Try to break a rule.** On the **Plan board** (D-03), drag a chilled order onto an ambient truck. The move is refused with the rule it breaks ("needs reefer, rule 2"). **Move to…** gives a keyboard alternative. A timing or fuel overrun (for example "trip 2 too late") can be overridden with a written reason; physical rules never can. The **Improvement pass** note above the board lists what the optimiser changed after the flowchart algorithm.
+4. **Explain the deferrals.** Open **Deferrals** (D-04). Every order that did not fit shows why (unavoidable, capacity-forced or chosen), with its fairness history. Keep one with a reason, or swap it with another order. An outlet skipped two runs in a row is flagged red, and publishing waits for a recorded reason.
 5. **Publish** (D-05). Pre-publish checks run, then loaders get load lists, drivers get their runs, and stores get an arrival time or a plain-language deferral notice (store: SM-03 tracking / SM-04 notice).
 6. **Tue 01:30: the dock.** Sign in as the **loader**. The queue (L-01) → a load list in reverse stop order (L-02). Tick lines as loaded. Flag a **shortfall** with a photo (L-03), and sign-off locks. As the dispatcher, open **Live** (D-06) and choose **Send and warn store** or **Hold**. The loader can then sign off (L-04).
 7. **Tue 03:30: the driver, offline.** On the demo panel, give the demo driver the vehicle that carries OUT006's order. Sign in as the **driver** on a phone-sized window and open the run. Now go **offline** (DevTools → Network → Offline):
@@ -102,7 +102,8 @@ For development, point `DATABASE_URL` in `.env` at either the local Postgres (`l
 
 | Command | What it does |
 |---|---|
-| `pnpm test` | Planner unit, flowchart and parity tests |
+| `pnpm test` | Planner unit, flowchart, parity and optimiser tests (62) |
+| `python tools/planner-oracle/export_synthetic.py` | Regenerate the synthetic parity fixtures with the Python oracle (CI checks they match) |
 | `pnpm typecheck` | Strict TypeScript across the workspace |
 | `pnpm --filter @waypoint/db inspect` | Row counts per table |
 

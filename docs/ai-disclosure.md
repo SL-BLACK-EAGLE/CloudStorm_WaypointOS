@@ -23,7 +23,8 @@ Team CloudStorm used AI tools openly. This page says what was AI-assisted, what 
 
 | Area | AI-generated | Checked by |
 |---|---|---|
-| Planner (TS port) | Code and tests | Golden-file parity with the Python oracle on the same inputs; the 2B allocation passes the organisers' `check_allocation.py`; 47 unit and flowchart tests |
+| Planner (TS port) | Code and tests | Golden-file parity with the Python oracle on the same inputs; the 2B allocation passes the organisers' `check_allocation.py`; 62 unit, flowchart, parity and optimiser tests; parity also runs in CI on a synthetic operation, because the real data may not leave the team |
+| Improvement pass (optimiser) | Code and tests | Tested guarantees on every synthetic and real plan: never drops a served order, never lowers served priority, every vehicle-day passes every rule, deterministic |
 | Database schema, seed, migrations | Code | Seeding the booklet data locally and on Neon; `pnpm --filter @waypoint/db inspect` counts |
 | Screens and server actions | Code | TypeScript strict typecheck on every change; each flow driven in a real browser, with visible results (toasts, state changes, notifications on the other role's screen) |
 | Offline sync and conflicts | Code | Airplane-mode test: events queued offline, synced on reconnect, a replay returns `DUPLICATE`, and a stop changed while offline opens a DG-02 conflict |

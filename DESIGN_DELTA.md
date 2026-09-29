@@ -26,6 +26,9 @@ This file records where the running app departs from the Designathon screens (39
 | SM-01 "Next delivery" | Today's run | Today's run until it is settled, then the next run | At 14:30 on Monday the useful answer is Tuesday's delivery, not the one that already arrived. |
 | SM-05 count | Separate damaged and missing steppers | Missing units are derived from the count ("13 of 15" → 2 missing), and the server rejects mismatches | This prevents contradictory reports. |
 | Timestamps | Wall clock | The business (demo) clock | So "Placed 14:30" matches the walkthrough. |
+| D-03 blocked move | A rule break always blocks the drop | Physical rules still block. Timing and fuel overruns (late window, Fresh or day budget, fuel quota) can be overridden with a written reason, from the "can't drop" popover or "Move to…". The reason is audited and listed at publish. | Dispatchers sometimes know what the plan cannot, for example that a store agreed to take a late delivery. |
+| D-03 header | Not in the design | "Improvement pass" note: what the optimiser changed on top of the flowchart plan, each change in plain language | The optimiser's changes should be visible and explained, not silent. |
+| D-04 / D-01 fairness | Deferral history shown per order | "Skipped twice in a row" red chip, tab and KPI. Publishing is blocked until the dispatcher records why | The booklet's "same outlet skipped on consecutive runs" problem gets a hard stop, not just a column. |
 
 ## Realtime implementation note
 

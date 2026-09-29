@@ -18,7 +18,7 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,9 +37,18 @@ import { ackDriverNoticeAction, canDeliverAction } from "./actions";
 
 type View = { name: "run" } | { name: "stop"; stopId: string } | { name: "deliver"; stopId: string } | { name: "exception"; stopId: string } | { name: "outbox" };
 
-function readHash(): View {
-  if (typeof window === "undefined") return { name: "run" };
-  const [name, id] = window.location.hash.replace(/^#/, "").split("/");
+const HASH_EVENT = "wp-hashchange";
+function subscribeHash(cb: () => void) {
+  window.addEventListener("hashchange", cb);
+  window.addEventListener(HASH_EVENT, cb);
+  return () => {
+    window.removeEventListener("hashchange", cb);
+    window.removeEventListener(HASH_EVENT, cb);
+  };
+}
+
+function readHash(hash: string): View {
+  const [name, id] = hash.replace(/^#/, "").split("/");
   if ((name === "stop" || name === "deliver" || name === "exception") && id) return { name, stopId: id };
   if (name === "outbox") return { name: "outbox" };
   return { name: "run" };
@@ -48,22 +57,17 @@ function readHash(): View {
 /** DR-01..DR-05 + DG-01: one offline-capable app; views live in the URL hash so no network is needed to move between them. */
 export function DriveApp({ serverPack, userId }: { serverPack: RunPack | null; userId: string }) {
   const d = useDriver(serverPack);
-  const [view, setView] = useState<View>({ name: "run" });
+  const hash = useSyncExternalStore(subscribeHash, () => window.location.hash, () => "");
+  const view = useMemo(() => readHash(hash), [hash]);
   const [tick, setTick] = useState(0);
   useEffect(() => {
-    setView(readHash());
-    const on = () => setView(readHash());
-    window.addEventListener("hashchange", on);
     const t = setInterval(() => setTick((x) => x + 1), 15_000);
-    return () => {
-      window.removeEventListener("hashchange", on);
-      clearInterval(t);
-    };
+    return () => clearInterval(t);
   }, []);
   const go = (v: View) => {
     const h = v.name === "run" ? "" : v.name === "outbox" ? "outbox" : `${v.name}/${v.stopId}`;
     history.pushState(null, "", h ? `#${h}` : window.location.pathname);
-    setView(v);
+    window.dispatchEvent(new Event(HASH_EVENT)); // pushState does not fire hashchange
     window.scrollTo(0, 0);
   };
 

@@ -30,7 +30,9 @@ function Listener({ channels, onChange }: { channels: string[]; onChange: () => 
   const versions = useQuery(api.signals.versions, args);
   const seen = useRef<string | null>(null);
   const cb = useRef(onChange);
-  cb.current = onChange;
+  useEffect(() => {
+    cb.current = onChange;
+  }, [onChange]);
   useEffect(() => {
     if (!versions) return;
     const sig = JSON.stringify(versions);

@@ -29,22 +29,23 @@ const DOT: Record<string, string> = {
 export function NotificationBell({ side = "bottom", channels = [], className }: { side?: "bottom" | "right"; channels?: string[]; className?: string }) {
   const [data, setData] = useState<{ unread: number; items: Item[] } | null>(null);
   const [open, setOpen] = useState(false);
-  const load = useCallback(async () => {
-    try {
-      const r = await fetch("/api/notifications", { cache: "no-store" });
-      if (r.ok) setData(await r.json());
-    } catch {
-      /* offline - keep what we have */
-    }
+  const load = useCallback(() => {
+    fetch("/api/notifications", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d && setData(d))
+      .catch(() => undefined); // offline - keep what we have
   }, []);
   const mark = async (ids?: string[]) => {
     const r = await fetch("/api/notifications", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ids }) }).catch(() => null);
     if (r?.ok) setData(await r.json());
   };
   useEffect(() => {
-    void load();
-    const id = window.setInterval(() => document.visibilityState === "visible" && void load(), 30_000);
-    return () => window.clearInterval(id);
+    const first = window.setTimeout(load, 0);
+    const id = window.setInterval(() => document.visibilityState === "visible" && load(), 30_000);
+    return () => {
+      window.clearTimeout(first);
+      window.clearInterval(id);
+    };
   }, [load]);
 
   const unread = data?.unread ?? 0;
@@ -53,10 +54,10 @@ export function NotificationBell({ side = "bottom", channels = [], className }: 
       open={open}
       onOpenChange={(o) => {
         setOpen(o);
-        if (o) void load();
+        if (o) load();
       }}
     >
-      <SignalListener channels={channels} onChange={() => void load()} />
+      <SignalListener channels={channels} onChange={load} />
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className={cn("relative", className)} aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}>
           <Bell />

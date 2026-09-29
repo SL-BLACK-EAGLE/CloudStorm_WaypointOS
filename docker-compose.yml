@@ -158,6 +158,10 @@ services:
       S3_SECRET_ACCESS_KEY: waypoint-secret
       S3_FORCE_PATH_STYLE: "true"
       CONVEX_URL: http://convex:3210
+      # the demo panel's "Reset demo data" re-seeds from the dataset (mounted read-only, never baked in)
+      SEED_DATA_DIR: /seed-data
+    volumes:
+      - ./seed-data:/seed-data:ro
     depends_on:
       seed:
         condition: service_completed_successfully
