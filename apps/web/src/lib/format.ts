@@ -17,7 +17,7 @@ export const kg = (n: number, digits = 1) =>
   `${n.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits })} kg`;
 export const m3 = (n: number, digits = 2) =>
   `${n.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits })} m³`;
-export const int = (n: number) => n.toLocaleString("en-US");
+export const int = (n: number) => Math.round(n).toLocaleString("en-US");
 
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

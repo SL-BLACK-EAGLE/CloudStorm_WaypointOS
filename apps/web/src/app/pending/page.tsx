@@ -7,6 +7,9 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { AuthShell } from "@/components/wp/auth-shell";
 import { StatusPill } from "@/components/wp/chips";
+import { LiveRefresh } from "@/components/wp/live-refresh";
+import { and, desc, eq } from "@waypoint/db/orm";
+import { db, t } from "@/lib/server/db";
 import { ROLE_LABEL } from "@/lib/roles";
 import { getAppUser } from "@/lib/server/session";
 
@@ -19,9 +22,18 @@ export default async function PendingPage() {
   if (user.status === "active" && user.role) redirect("/app");
   if (!user.requestedRole) redirect("/onboarding");
   const rejected = user.status === "rejected";
+  const [reason] = rejected
+    ? await db()
+        .select({ body: t.notifications.body })
+        .from(t.notifications)
+        .where(and(eq(t.notifications.recipientUserId, user.id), eq(t.notifications.type, "access.rejected")))
+        .orderBy(desc(t.notifications.createdAt))
+        .limit(1)
+    : [];
 
   return (
     <AuthShell>
+      {!rejected && <LiveRefresh seconds={10} />}
       <div className="w-full max-w-md space-y-6">
         <p className="num text-xs tracking-widest text-muted-foreground uppercase">Step 3 of 3 · approval</p>
         <div className="space-y-3">
@@ -31,7 +43,7 @@ export default async function PendingPage() {
           </h1>
           <p className="text-sm text-muted-foreground">
             {rejected
-              ? "A dispatcher declined this request. Contact the Peliyagoda planning office if you think this is a mistake."
+              ? `A dispatcher declined this request${reason ? `: “${reason.body}”` : "."} You can change the request and send it again.`
               : "A dispatcher at the Peliyagoda planning office will check it. This page opens your workspace as soon as they approve."}
           </p>
         </div>
