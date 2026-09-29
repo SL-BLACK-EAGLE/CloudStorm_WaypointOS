@@ -1,0 +1,1371 @@
+{
+"ctx": {
+"date": "2026-01-15",
+"disruption": {
+"N-Coast": 82.2,
+"N-Harbour": 93.1,
+"N-Hills": 99.5,
+"N-Plains": 87.4,
+"S-Lake": 90.3,
+"S-River": 82.6,
+"S-Valley": 89.6
+},
+"festivalRamp": 0.32,
+"monsoon": 0,
+"payday": 0
+},
+"fuelUsed": {
+"SV002": 360.0,
+"SV004": 120.0
+},
+"mode": "LIVE",
+"name": "synth-north-workshop",
+"orders": [
+{
+"daysSinceLastServed": 2,
+"deferredYesterday": 0,
+"kg": 249.0,
+"m3": 1.066,
+"outletId": "SYN001",
+"ref": "SO-SYN001-C",
+"temp": "chilled",
+"units": 61
+},
+{
+"daysSinceLastServed": 3,
+"deferredYesterday": 0,
+"kg": 450.1,
+"m3": 1.731,
+"outletId": "SYN003",
+"ref": "SO-SYN003-C",
+"temp": "chilled",
+"units": 45
+},
+{
+"daysSinceLastServed": 2,
+"deferredYesterday": 0,
+"kg": 590.4,
+"m3": 3.169,
+"outletId": "SYN003",
+"ref": "SO-SYN003-A",
+"temp": "ambient",
+"units": 99
+},
+{
+"daysSinceLastServed": 5,
+"deferredYesterday": 0,
+"kg": 939.2,
+"m3": 5.151,
+"outletId": "SYN005",
+"ref": "SO-SYN005-C",
+"temp": "chilled",
+"units": 98
+},
+{
+"daysSinceLastServed": 3,
+"deferredYesterday": 0,
+"kg": 1225.7,
+"m3": 5.866,
+"outletId": "SYN005",
+"ref": "SO-SYN005-A",
+"temp": "ambient",
+"units": 124
+},
+{
+"daysSinceLastServed": 4,
+"deferredYesterday": 0,
+"kg": 958.5,
+"m3": 3.788,
+"outletId": "SYN007",
+"ref": "SO-SYN007-C",
+"temp": "chilled",
+"units": 120
+},
+{
+"daysSinceLastServed": 2,
+"deferredYesterday": 1,
+"kg": 178.4,
+"m3": 0.701,
+"outletId": "SYN007",
+"ref": "SO-SYN007-A",
+"temp": "ambient",
+"units": 24
+},
+{
+"daysSinceLastServed": 1,
+"deferredYesterday": 0,
+"kg": 431.5,
+"m3": 1.809,
+"outletId": "SYN008",
+"ref": "SO-SYN008-C",
+"temp": "chilled",
+"units": 52
+},
+{
+"daysSinceLastServed": 4,
+"deferredYesterday": 0,
+"kg": 678.3,
+"m3": 2.762,
+"outletId": "SYN010",
+"ref": "SO-SYN010-C",
+"temp": "chilled",
+"units": 134
+},
+{
+"daysSinceLastServed": 5,
+"deferredYesterday": 0,
+"kg": 1153.0,
+"m3": 4.573,
+"outletId": "SYN012",
+"ref": "SO-SYN012-C",
+"temp": "chilled",
+"units": 127
+},
+{
+"daysSinceLastServed": 3,
+"deferredYesterday": 0,
+"kg": 880.8,
+"m3": 4.799,
+"outletId": "SYN014",
+"ref": "SO-SYN014-C",
+"temp": "chilled",
+"units": 136
+},
+{
+"daysSinceLastServed": 3,
+"deferredYesterday": 1,
+"kg": 819.6,
+"m3": 4.015,
+"outletId": "SYN014",
+"ref": "SO-SYN014-A",
+"temp": "ambient",
+"units": 129
+},
+{
+"daysSinceLastServed": 1,
+"deferredYesterday": 0,
+"kg": 644.4,
+"m3": 2.831,
+"outletId": "SYN015",
+"ref": "SO-SYN015-C",
+"temp": "chilled",
+"units": 129
+},
+{
+"daysSinceLastServed": 3,
+"deferredYesterday": 0,
+"kg": 186.3,
+"m3": 1.135,
+"outletId": "SYN015",
+"ref": "SO-SYN015-A",
+"temp": "ambient",
+"units": 31
+},
+{
+"daysSinceLastServed": 4,
+"deferredYesterday": 0,
+"kg": 468.5,
+"m3": 2.164,
+"outletId": "SYN017",
+"ref": "SO-SYN017-C",
+"temp": "chilled",
+"units": 48
+},
+{
+"daysSinceLastServed": 2,
+"deferredYesterday": 0,
+"kg": 168.4,
+"m3": 1.001,
+"outletId": "SYN019",
+"ref": "SO-SYN019-C",
+"temp": "chilled",
+"units": 23
+},
+{
+"daysSinceLastServed": 1,
+"deferredYesterday": 1,
+"kg": 1079.3,
+"m3": 5.816,
+"outletId": "SYN019",
+"ref": "SO-SYN019-A",
+"temp": "ambient",
+"units": 122
+},
+{
+"daysSinceLastServed": 3,
+"deferredYesterday": 0,
+"kg": 139.3,
+"m3": 0.62,
+"outletId": "SYN021",
+"ref": "SO-SYN021-C",
+"temp": "chilled",
+"units": 22
+},
+{
+"daysSinceLastServed": 4,
+"deferredYesterday": 0,
+"kg": 694.3,
+"m3": 3.632,
+"outletId": "SYN022",
+"ref": "SO-SYN022-C",
+"temp": "chilled",
+"units": 85
+},
+{
+"daysSinceLastServed": 4,
+"deferredYesterday": 0,
+"kg": 435.2,
+"m3": 1.918,
+"outletId": "SYN022",
+"ref": "SO-SYN022-A",
+"temp": "ambient",
+"units": 106
+},
+{
+"daysSinceLastServed": 5,
+"deferredYesterday": 0,
+"kg": 562.8,
+"m3": 3.041,
+"outletId": "SYN024",
+"ref": "SO-SYN024-C",
+"temp": "chilled",
+"units": 140
+},
+{
+"daysSinceLastServed": 5,
+"deferredYesterday": 0,
+"kg": 615.4,
+"m3": 3.214,
+"outletId": "SYN026",
+"ref": "SO-SYN026-C",
+"temp": "chilled",
+"units": 70
+},
+{
+"daysSinceLastServed": 5,
+"deferredYesterday": 0,
+"kg": 414.7,
+"m3": 2.5,
+"outletId": "SYN026",
+"ref": "SO-SYN026-A",
+"temp": "ambient",
+"units": 65
+},
+{
+"daysSinceLastServed": 2,
+"deferredYesterday": 0,
+"kg": 381.9,
+"m3": 1.643,
+"outletId": "SYN028",
+"ref": "SO-SYN028-A",
+"temp": "ambient",
+"units": 35
+},
+{
+"daysSinceLastServed": 5,
+"deferredYesterday": 0,
+"kg": 435.9,
+"m3": 2.243,
+"outletId": "SYN030",
+"ref": "SO-SYN030-A",
+"temp": "ambient",
+"units": 93
+},
+{
+"daysSinceLastServed": 5,
+"deferredYesterday": 0,
+"kg": 1048.5,
+"m3": 6.091,
+"outletId": "SYN031",
+"ref": "SO-SYN031-A",
+"temp": "ambient",
+"units": 131
+},
+{
+"daysSinceLastServed": 4,
+"deferredYesterday": 0,
+"kg": 42.3,
+"m3": 0.173,
+"outletId": "SYN033",
+"ref": "SO-SYN033-A",
+"temp": "ambient",
+"units": 9
+},
+{
+"daysSinceLastServed": 3,
+"deferredYesterday": 0,
+"kg": 412.3,
+"m3": 1.892,
+"outletId": "SYN035",
+"ref": "SO-SYN035-A",
+"temp": "ambient",
+"units": 48
+},
+{
+"daysSinceLastServed": 1,
+"deferredYesterday": 0,
+"kg": 697.7,
+"m3": 2.704,
+"outletId": "SYN036",
+"ref": "SO-SYN036-A",
+"temp": "ambient",
+"units": 102
+},
+{
+"daysSinceLastServed": 3,
+"deferredYesterday": 0,
+"kg": 1030.0,
+"m3": 4.238,
+"outletId": "SYN038",
+"ref": "SO-SYN038-A",
+"temp": "ambient",
+"units": 127
+},
+{
+"daysSinceLastServed": 4,
+"deferredYesterday": 0,
+"kg": 1257.2,
+"m3": 4.859,
+"outletId": "SYN040",
+"ref": "SO-SYN040-A",
+"temp": "ambient",
+"units": 125
+},
+{
+"daysSinceLastServed": 2,
+"deferredYesterday": 0,
+"kg": 88.6,
+"m3": 0.512,
+"outletId": "SYN042",
+"ref": "SO-SYN042-A",
+"temp": "ambient",
+"units": 15
+}
+],
+"plan": {
+"deferrals": {
+"SO-SYN007-C": {
+"kind": "UNAVOIDABLE",
+"lostTo": null,
+"reason": "NO_REEFER_VAN_AVAILABLE"
+},
+"SO-SYN014-C": {
+"kind": "CAPACITY_FORCED",
+"lostTo": null,
+"reason": "R7_TRIP_LIMIT"
+},
+"SO-SYN017-C": {
+"kind": "UNAVOIDABLE",
+"lostTo": null,
+"reason": "NO_REEFER_VAN_AVAILABLE"
+},
+"SO-SYN021-C": {
+"kind": "CAPACITY_FORCED",
+"lostTo": null,
+"reason": "R7_TRIP_LIMIT"
+},
+"SO-SYN022-C": {
+"kind": "UNAVOIDABLE",
+"lostTo": null,
+"reason": "NO_REEFER_VAN_AVAILABLE"
+},
+"SO-SYN028-A": {
+"kind": "CAPACITY_FORCED",
+"lostTo": null,
+"reason": "R7_TRIP_LIMIT"
+},
+"SO-SYN033-A": {
+"kind": "CAPACITY_FORCED",
+"lostTo": null,
+"reason": "R7_TRIP_LIMIT"
+},
+"SO-SYN035-A": {
+"kind": "CAPACITY_FORCED",
+"lostTo": null,
+"reason": "R7_TRIP_LIMIT"
+},
+"SO-SYN036-A": {
+"kind": "CAPACITY_FORCED",
+"lostTo": null,
+"reason": "R7_TRIP_LIMIT"
+},
+"SO-SYN042-A": {
+"kind": "CAPACITY_FORCED",
+"lostTo": null,
+"reason": "R7_TRIP_LIMIT"
+}
+},
+"mode": "LIVE",
+"timed": [
+{
+"backExpected": 526.373168743822,
+"backPlanned": 465.0,
+"departure": 155,
+"expected": [
+{
+"arrive": 266.7174784694717,
+"close": 450,
+"depart": 163,
+"late": false,
+"leave": 291.1254784694717,
+"outletId": "SYN026",
+"ref": "SO-SYN026-C",
+"risk": false,
+"service": 24.408,
+"slack": 183.2825215305283,
+"start": 266.7174784694717,
+"travel": 103.71747846947169,
+"wait": 0.0
+},
+{
+"arrive": 308.19124016317545,
+"close": 450,
+"depart": 291.1254784694717,
+"late": false,
+"leave": 320.63324016317546,
+"outletId": "SYN019",
+"ref": "SO-SYN019-C",
+"risk": false,
+"service": 12.442,
+"slack": 141.80875983682455,
+"start": 308.19124016317545,
+"travel": 17.065761693703713,
+"wait": 0.0
+},
+{
+"arrive": 338.26432729600805,
+"close": 480,
+"depart": 320.63324016317546,
+"late": false,
+"leave": 367.65632729600804,
+"outletId": "SYN005",
+"ref": "SO-SYN005-C",
+"risk": false,
+"service": 29.392,
+"slack": 141.73567270399195,
+"start": 338.26432729600805,
+"travel": 17.63108713283261,
+"wait": 0.0
+},
+{
+"arrive": 385.2147089148908,
+"close": 540,
+"depart": 367.65632729600804,
+"late": false,
+"leave": 419.7687089148908,
+"outletId": "SYN012",
+"ref": "SO-SYN012-C",
+"risk": false,
+"service": 34.554,
+"slack": 154.78529108510918,
+"start": 385.2147089148908,
+"travel": 17.558381618882784,
+"wait": 0.0
+}
+],
+"litres": 30.187500000000004,
+"number": 1,
+"planned": [
+{
+"arrive": 240.0,
+"close": 450,
+"depart": 155,
+"late": false,
+"leave": 255.0,
+"outletId": "SYN026",
+"ref": "SO-SYN026-C",
+"risk": false,
+"service": 15.0,
+"slack": 210.0,
+"start": 240.0,
+"travel": 85.0,
+"wait": 0.0
+},
+{
+"arrive": 269.0,
+"close": 450,
+"depart": 255.0,
+"late": false,
+"leave": 311.0,
+"outletId": "SYN019",
+"ref": "SO-SYN019-C",
+"risk": false,
+"service": 11.0,
+"slack": 181.0,
+"start": 300,
+"travel": 14.0,
+"wait": 31.0
+},
+{
+"arrive": 325.0,
+"close": 480,
+"depart": 311.0,
+"late": false,
+"leave": 340.0,
+"outletId": "SYN005",
+"ref": "SO-SYN005-C",
+"risk": false,
+"service": 15.0,
+"slack": 155.0,
+"start": 325.0,
+"travel": 14.0,
+"wait": 0.0
+},
+{
+"arrive": 354.0,
+"close": 540,
+"depart": 340.0,
+"late": false,
+"leave": 380.0,
+"outletId": "SYN012",
+"ref": "SO-SYN012-C",
+"risk": false,
+"service": 20.0,
+"slack": 186.0,
+"start": 360,
+"travel": 14.0,
+"wait": 6.0
+}
+],
+"stops": [
+"SO-SYN026-C",
+"SO-SYN019-C",
+"SO-SYN005-C",
+"SO-SYN012-C"
+],
+"tripMinutes": 188,
+"vehicleId": "SV002"
+},
+{
+"backExpected": 593.7468870477909,
+"backPlanned": 559.0,
+"departure": 495.0,
+"expected": [
+{
+"arrive": 533.1794442318165,
+"close": 540,
+"depart": 503.0,
+"late": false,
+"leave": 568.0894442318165,
+"outletId": "SYN015",
+"ref": "SO-SYN015-C",
+"risk": true,
+"service": 34.91,
+"slack": 6.820555768183453,
+"start": 533.1794442318165,
+"travel": 30.179444231816543,
+"wait": 0.0
+}
+],
+"litres": 5.791666666666667,
+"number": 2,
+"planned": [
+{
+"arrive": 517.0,
+"close": 540,
+"depart": 495.0,
+"late": false,
+"leave": 537.0,
+"outletId": "SYN015",
+"ref": "SO-SYN015-C",
+"risk": false,
+"service": 20.0,
+"slack": 23.0,
+"start": 517.0,
+"travel": 22.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN015-C"
+],
+"tripMinutes": 42,
+"vehicleId": "SV002"
+},
+{
+"backExpected": 495.62078712493917,
+"backPlanned": 425.0,
+"departure": 155,
+"expected": [
+{
+"arrive": 266.7174784694717,
+"close": 450,
+"depart": 163,
+"late": false,
+"leave": 290.2354784694717,
+"outletId": "SYN026",
+"ref": "SO-SYN026-A",
+"risk": false,
+"service": 23.518,
+"slack": 183.2825215305283,
+"start": 266.7174784694717,
+"travel": 103.71747846947169,
+"wait": 0.0
+},
+{
+"arrive": 307.3012401631754,
+"close": 450,
+"depart": 290.2354784694717,
+"late": false,
+"leave": 337.36524016317543,
+"outletId": "SYN019",
+"ref": "SO-SYN019-A",
+"risk": false,
+"service": 30.063999999999997,
+"slack": 142.6987598368246,
+"start": 307.3012401631754,
+"travel": 17.065761693703713,
+"wait": 0.0
+},
+{
+"arrive": 354.996327296008,
+"close": 480,
+"depart": 337.36524016317543,
+"late": false,
+"leave": 389.016327296008,
+"outletId": "SYN005",
+"ref": "SO-SYN005-A",
+"risk": false,
+"service": 34.019999999999996,
+"slack": 125.00367270399198,
+"start": 354.996327296008,
+"travel": 17.63108713283261,
+"wait": 0.0
+}
+],
+"litres": 21.292307692307695,
+"number": 1,
+"planned": [
+{
+"arrive": 240.0,
+"close": 450,
+"depart": 155,
+"late": false,
+"leave": 255.0,
+"outletId": "SYN026",
+"ref": "SO-SYN026-A",
+"risk": false,
+"service": 15.0,
+"slack": 210.0,
+"start": 240.0,
+"travel": 85.0,
+"wait": 0.0
+},
+{
+"arrive": 269.0,
+"close": 450,
+"depart": 255.0,
+"late": false,
+"leave": 311.0,
+"outletId": "SYN019",
+"ref": "SO-SYN019-A",
+"risk": false,
+"service": 11.0,
+"slack": 181.0,
+"start": 300,
+"travel": 14.0,
+"wait": 31.0
+},
+{
+"arrive": 325.0,
+"close": 480,
+"depart": 311.0,
+"late": false,
+"leave": 340.0,
+"outletId": "SYN005",
+"ref": "SO-SYN005-A",
+"risk": false,
+"service": 15.0,
+"slack": 155.0,
+"start": 325.0,
+"travel": 14.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN026-A",
+"SO-SYN019-A",
+"SO-SYN005-A"
+],
+"tripMinutes": 154,
+"vehicleId": "SV003"
+},
+{
+"backExpected": 540.2205441486029,
+"backPlanned": 519.0,
+"departure": 455.0,
+"expected": [
+{
+"arrive": 492.5750999167864,
+"close": 540,
+"depart": 463.0,
+"late": false,
+"leave": 510.04109991678644,
+"outletId": "SYN015",
+"ref": "SO-SYN015-A",
+"risk": false,
+"service": 17.466,
+"slack": 47.42490008321357,
+"start": 492.5750999167864,
+"travel": 29.575099916786424,
+"wait": 0.0
+}
+],
+"litres": 4.276923076923077,
+"number": 2,
+"planned": [
+{
+"arrive": 477.0,
+"close": 540,
+"depart": 455.0,
+"late": false,
+"leave": 497.0,
+"outletId": "SYN015",
+"ref": "SO-SYN015-A",
+"risk": false,
+"service": 20.0,
+"slack": 63.0,
+"start": 477.0,
+"travel": 22.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN015-A"
+],
+"tripMinutes": 42,
+"vehicleId": "SV003"
+},
+{
+"backExpected": 1675.4966004660628,
+"backPlanned": 681.0,
+"departure": 552,
+"expected": [
+{
+"arrive": 613.3052000333157,
+"close": 1200,
+"depart": 560,
+"late": false,
+"leave": 1626.9642000333156,
+"outletId": "SYN038",
+"ref": "SO-SYN038-A",
+"risk": false,
+"service": 1013.659,
+"slack": 586.6947999666843,
+"start": 613.3052000333157,
+"travel": 53.30520003331575,
+"wait": 0.0
+}
+],
+"litres": 14.26923076923077,
+"number": 1,
+"planned": [
+{
+"arrive": 600.0,
+"close": 1200,
+"depart": 552,
+"late": false,
+"leave": 633.0,
+"outletId": "SYN038",
+"ref": "SO-SYN038-A",
+"risk": false,
+"service": 33.0,
+"slack": 600.0,
+"start": 600.0,
+"travel": 48.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN038-A"
+],
+"tripMinutes": 81,
+"vehicleId": "SV004"
+},
+{
+"backExpected": 1926.9984924489968,
+"backPlanned": 909.0,
+"departure": 711.0,
+"expected": [
+{
+"arrive": 833.1350176976416,
+"close": 1080,
+"depart": 719.0,
+"late": false,
+"leave": 1820.2840176976415,
+"outletId": "SYN040",
+"ref": "SO-SYN040-A",
+"risk": false,
+"service": 987.149,
+"slack": 246.86498230235838,
+"start": 833.1350176976416,
+"travel": 114.13501769764157,
+"wait": 0.0
+}
+],
+"litres": 24.115384615384617,
+"number": 2,
+"planned": [
+{
+"arrive": 796.0,
+"close": 1080,
+"depart": 711.0,
+"late": false,
+"leave": 824.0,
+"outletId": "SYN040",
+"ref": "SO-SYN040-A",
+"risk": false,
+"service": 28.0,
+"slack": 284.0,
+"start": 796.0,
+"travel": 85.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN040-A"
+],
+"tripMinutes": 113,
+"vehicleId": "SV004"
+},
+{
+"backExpected": 502.2656938004691,
+"backPlanned": 435.0,
+"departure": 180,
+"expected": [
+{
+"arrive": 328.38831407673626,
+"close": 480,
+"depart": 188,
+"late": false,
+"leave": 363.29831407673623,
+"outletId": "SYN014",
+"ref": "SO-SYN014-A",
+"risk": false,
+"service": 34.91,
+"slack": 151.61168592326374,
+"start": 328.38831407673626,
+"travel": 140.38831407673624,
+"wait": 0.0
+}
+],
+"litres": 24.114285714285717,
+"number": 1,
+"planned": [
+{
+"arrive": 300.0,
+"close": 480,
+"depart": 180,
+"late": false,
+"leave": 315.0,
+"outletId": "SYN014",
+"ref": "SO-SYN014-A",
+"risk": false,
+"service": 15.0,
+"slack": 180.0,
+"start": 300.0,
+"travel": 120.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN014-A"
+],
+"tripMinutes": 135,
+"vehicleId": "SV005"
+},
+{
+"backExpected": 705.3807349001307,
+"backPlanned": 584.0,
+"departure": 518,
+"expected": [
+{
+"arrive": 556.1794442318165,
+"close": 1080,
+"depart": 526,
+"late": false,
+"leave": 679.6394442318166,
+"outletId": "SYN031",
+"ref": "SO-SYN031-A",
+"risk": false,
+"service": 123.46,
+"slack": 523.8205557681835,
+"start": 556.1794442318165,
+"travel": 30.179444231816543,
+"wait": 0.0
+}
+],
+"litres": 3.9714285714285715,
+"number": 2,
+"planned": [
+{
+"arrive": 540.0,
+"close": 1080,
+"depart": 518,
+"late": false,
+"leave": 562.0,
+"outletId": "SYN031",
+"ref": "SO-SYN031-A",
+"risk": false,
+"service": 22.0,
+"slack": 540.0,
+"start": 540.0,
+"travel": 22.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN031-A"
+],
+"tripMinutes": 44,
+"vehicleId": "SV005"
+},
+{
+"backExpected": 422.40869632910295,
+"backPlanned": 371.0,
+"departure": 120,
+"expected": [
+{
+"arrive": 268.38831407673626,
+"close": 480,
+"depart": 128,
+"late": false,
+"leave": 281.00831407673627,
+"outletId": "SYN007",
+"ref": "SO-SYN007-A",
+"risk": false,
+"service": 12.620000000000001,
+"slack": 211.61168592326374,
+"start": 268.38831407673626,
+"travel": 140.38831407673624,
+"wait": 0.0
+}
+],
+"litres": 16.880000000000003,
+"number": 1,
+"planned": [
+{
+"arrive": 240.0,
+"close": 480,
+"depart": 120,
+"late": false,
+"leave": 251.0,
+"outletId": "SYN007",
+"ref": "SO-SYN007-A",
+"risk": false,
+"service": 11.0,
+"slack": 240.0,
+"start": 240.0,
+"travel": 120.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN007-A"
+],
+"tripMinutes": 131,
+"vehicleId": "SV007"
+},
+{
+"backExpected": 490.0026827380081,
+"backPlanned": 456.0,
+"departure": 401.0,
+"expected": [
+{
+"arrive": 433.21158282122167,
+"close": 450,
+"depart": 409.0,
+"late": false,
+"leave": 460.4275828212217,
+"outletId": "SYN022",
+"ref": "SO-SYN022-A",
+"risk": true,
+"service": 27.215999999999998,
+"slack": 16.78841717877833,
+"start": 433.21158282122167,
+"travel": 24.211582821221675,
+"wait": 0.0
+}
+],
+"litres": 2.7800000000000002,
+"number": 2,
+"planned": [
+{
+"arrive": 423.0,
+"close": 450,
+"depart": 401.0,
+"late": false,
+"leave": 434.0,
+"outletId": "SYN022",
+"ref": "SO-SYN022-A",
+"risk": false,
+"service": 11.0,
+"slack": 27.0,
+"start": 423.0,
+"travel": 22.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN022-A"
+],
+"tripMinutes": 33,
+"vehicleId": "SV007"
+},
+{
+"backExpected": 342.86015899250486,
+"backPlanned": 333.0,
+"departure": 218,
+"expected": [
+{
+"arrive": 250.48756977566046,
+"close": 480,
+"depart": 226,
+"late": false,
+"leave": 271.69156977566047,
+"outletId": "SYN008",
+"ref": "SO-SYN008-C",
+"risk": false,
+"service": 21.204,
+"slack": 229.51243022433954,
+"start": 250.48756977566046,
+"travel": 24.487569775660468,
+"wait": 0.0
+},
+{
+"arrive": 280.3888479624519,
+"close": 480,
+"depart": 271.69156977566047,
+"late": false,
+"leave": 319.206,
+"outletId": "SYN001",
+"ref": "SO-SYN001-C",
+"risk": false,
+"service": 19.206,
+"slack": 199.6111520375481,
+"start": 300,
+"travel": 8.697278186791443,
+"wait": 19.611152037548095
+}
+],
+"litres": 6.083333333333333,
+"number": 1,
+"planned": [
+{
+"arrive": 240.0,
+"close": 480,
+"depart": 218,
+"late": false,
+"leave": 255.0,
+"outletId": "SYN008",
+"ref": "SO-SYN008-C",
+"risk": false,
+"service": 15.0,
+"slack": 240.0,
+"start": 240.0,
+"travel": 22.0,
+"wait": 0.0
+},
+{
+"arrive": 263.0,
+"close": 480,
+"depart": 255.0,
+"late": false,
+"leave": 311.0,
+"outletId": "SYN001",
+"ref": "SO-SYN001-C",
+"risk": false,
+"service": 11.0,
+"slack": 217.0,
+"start": 300,
+"travel": 8.0,
+"wait": 37.0
+}
+],
+"stops": [
+"SO-SYN008-C",
+"SO-SYN001-C"
+],
+"tripMinutes": 56,
+"vehicleId": "SV008"
+},
+{
+"backExpected": 594.8137910503334,
+"backPlanned": 530.0,
+"departure": 363.0,
+"expected": [
+{
+"arrive": 420.22572043892933,
+"close": 450,
+"depart": 371.0,
+"late": false,
+"leave": 452.4257204389293,
+"outletId": "SYN010",
+"ref": "SO-SYN010-C",
+"risk": false,
+"service": 32.2,
+"slack": 29.77427956107067,
+"start": 420.22572043892933,
+"travel": 49.22572043892934,
+"wait": 0.0
+},
+{
+"arrive": 464.75731707240345,
+"close": 540,
+"depart": 452.4257204389293,
+"late": false,
+"leave": 484.7153170724034,
+"outletId": "SYN003",
+"ref": "SO-SYN003-C",
+"risk": false,
+"service": 19.958,
+"slack": 75.24268292759655,
+"start": 464.75731707240345,
+"travel": 12.331596633474119,
+"wait": 0.0
+},
+{
+"arrive": 497.3412608617017,
+"close": 540,
+"depart": 484.7153170724034,
+"late": false,
+"leave": 534.2092608617018,
+"outletId": "SYN024",
+"ref": "SO-SYN024-C",
+"risk": false,
+"service": 36.868,
+"slack": 42.6587391382983,
+"start": 497.3412608617017,
+"travel": 12.62594378929825,
+"wait": 0.0
+}
+],
+"litres": 14.600000000000001,
+"number": 2,
+"planned": [
+{
+"arrive": 411.0,
+"close": 450,
+"depart": 363.0,
+"late": false,
+"leave": 422.0,
+"outletId": "SYN010",
+"ref": "SO-SYN010-C",
+"risk": false,
+"service": 11.0,
+"slack": 39.0,
+"start": 411.0,
+"travel": 48.0,
+"wait": 0.0
+},
+{
+"arrive": 432.0,
+"close": 540,
+"depart": 422.0,
+"late": false,
+"leave": 452.0,
+"outletId": "SYN003",
+"ref": "SO-SYN003-C",
+"risk": false,
+"service": 20.0,
+"slack": 108.0,
+"start": 432.0,
+"travel": 10.0,
+"wait": 0.0
+},
+{
+"arrive": 462.0,
+"close": 540,
+"depart": 452.0,
+"late": false,
+"leave": 482.0,
+"outletId": "SYN024",
+"ref": "SO-SYN024-C",
+"risk": false,
+"service": 20.0,
+"slack": 78.0,
+"start": 462.0,
+"travel": 10.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN010-C",
+"SO-SYN003-C",
+"SO-SYN024-C"
+],
+"tripMinutes": 119,
+"vehicleId": "SV008"
+},
+{
+"backExpected": 448.5802467858341,
+"backPlanned": 428.0,
+"departure": 312,
+"expected": [
+{
+"arrive": 369.7845263469048,
+"close": 540,
+"depart": 320,
+"late": false,
+"leave": 399.3545263469048,
+"outletId": "SYN003",
+"ref": "SO-SYN003-A",
+"risk": false,
+"service": 29.57,
+"slack": 170.21547365309522,
+"start": 369.7845263469048,
+"travel": 49.78452634690479,
+"wait": 0.0
+}
+],
+"litres": 14.26923076923077,
+"number": 1,
+"planned": [
+{
+"arrive": 360.0,
+"close": 540,
+"depart": 312,
+"late": false,
+"leave": 380.0,
+"outletId": "SYN003",
+"ref": "SO-SYN003-A",
+"risk": false,
+"service": 20.0,
+"slack": 180.0,
+"start": 360.0,
+"travel": 48.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN003-A"
+],
+"tripMinutes": 68,
+"vehicleId": "SV009"
+},
+{
+"backExpected": 862.5623057135874,
+"backPlanned": 716.0,
+"departure": 458.0,
+"expected": [
+{
+"arrive": 638.0548510865264,
+"close": 960,
+"depart": 466.0,
+"late": false,
+"leave": 715.4028510865263,
+"outletId": "SYN030",
+"ref": "SO-SYN030-A",
+"risk": false,
+"service": 77.348,
+"slack": 321.94514891347364,
+"start": 638.0548510865264,
+"travel": 172.05485108652638,
+"wait": 0.0
+}
+],
+"litres": 32.46153846153846,
+"number": 2,
+"planned": [
+{
+"arrive": 578.0,
+"close": 960,
+"depart": 458.0,
+"late": false,
+"leave": 596.0,
+"outletId": "SYN030",
+"ref": "SO-SYN030-A",
+"risk": false,
+"service": 18.0,
+"slack": 382.0,
+"start": 578.0,
+"travel": 120.0,
+"wait": 0.0
+}
+],
+"stops": [
+"SO-SYN030-A"
+],
+"tripMinutes": 138,
+"vehicleId": "SV009"
+}
+],
+"trips": {
+"SV002": [
+[
+"SO-SYN005-C",
+"SO-SYN012-C",
+"SO-SYN026-C",
+"SO-SYN019-C"
+],
+[
+"SO-SYN015-C"
+]
+],
+"SV003": [
+[
+"SO-SYN019-A",
+"SO-SYN026-A",
+"SO-SYN005-A"
+],
+[
+"SO-SYN015-A"
+]
+],
+"SV004": [
+[
+"SO-SYN038-A"
+],
+[
+"SO-SYN040-A"
+]
+],
+"SV005": [
+[
+"SO-SYN014-A"
+],
+[
+"SO-SYN031-A"
+]
+],
+"SV007": [
+[
+"SO-SYN007-A"
+],
+[
+"SO-SYN022-A"
+]
+],
+"SV008": [
+[
+"SO-SYN024-C",
+"SO-SYN010-C",
+"SO-SYN003-C"
+],
+[
+"SO-SYN001-C",
+"SO-SYN008-C"
+]
+],
+"SV009": [
+[
+"SO-SYN030-A"
+],
+[
+"SO-SYN003-A"
+]
+]
+}
+},
+"status": {
+"SV001": "in_workshop",
+"SV002": "available",
+"SV003": "available",
+"SV004": "available",
+"SV005": "available",
+"SV006": "in_workshop",
+"SV007": "available",
+"SV008": "available",
+"SV009": "available"
+}
+}

@@ -22,6 +22,28 @@ export const RULE_TEXT: Record<string, string> = {
   TRIP2_WINDOW_LATE: "The second trip cannot reach its stops before their windows close",
 };
 
+/**
+ * Rules a dispatcher may knowingly override with a written reason (audited): timing and fuel.
+ * Physical rules - vehicle type (reefer/van/depot), weight, volume, one brand and district per trip,
+ * two trips a day - can never be overridden.
+ */
+export const OVERRIDABLE_CODES: ReadonlySet<string> = new Set(["WINDOW_LATE", "TRIP2_WINDOW_LATE", "R7_FRESH_BUDGET_270", "R7_DAY_BUDGET_480", "FUEL_QUOTA"]);
+
+/** Times an overridden vehicle-day the same way as E13-E19, without rejecting late stops. */
+export function timeUnchecked(R: Reference, trips: Order[][], ctx: DayContext): Array<[Order[], number]> {
+  const ordering = tripOrderings(trips.map((t) => sequence(t)))[0]!;
+  const out: Array<[Order[], number]> = [];
+  let ready: number | null = null;
+  for (const stops of ordering) {
+    const earliest = EARLIEST_DEPARTURE[first(stops).outlet.brand];
+    const t0 = departureTime(R, stops, ready === null ? earliest : Math.max(earliest, ready), ctx);
+    const { back } = schedule(R, stops, t0, ctx, PLANNED, true);
+    out.push([stops, t0]);
+    ready = back + RELOAD_MIN;
+  }
+  return out;
+}
+
 /** E13: Fresh trips before Style/Tech trips; two trips in the same window are tried both ways. */
 function tripOrderings(seqs: Order[][]): Order[][][] {
   const fresh = seqs.filter((s) => first(s).outlet.brand === "Fresh");

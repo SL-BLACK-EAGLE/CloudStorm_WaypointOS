@@ -30,6 +30,10 @@ export async function autoPlanAction(form: FormData): Promise<ActionResult> {
   refresh();
   return {
     ok: true,
-    message: `Planned ${metrics.served} of ${metrics.orders} orders on ${metrics.trips} trips in ${metrics.runtimeMs} ms · ${metrics.deferred} deferred`,
+    message: `Planned ${metrics.served} of ${metrics.orders} orders on ${metrics.trips} trips in ${metrics.runtimeMs} ms · ${metrics.deferred} deferred${
+      metrics.optimizer.moves.length
+        ? ` · optimizer: ${metrics.optimizer.served - metrics.optimizer.baseServed >= 0 ? "+" : ""}${metrics.optimizer.served - metrics.optimizer.baseServed} orders, ${metrics.optimizer.trips - metrics.optimizer.baseTrips} trips`
+        : ""
+    }`,
   };
 }

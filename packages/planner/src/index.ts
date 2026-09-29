@@ -13,8 +13,9 @@ export { window, tripMinutes, tripMinutesOf, litres, bucketOf } from "./formulas
 export { intake, isOperating, nextOperatingDay, previousOperatingDay, type IntakeResult } from "./intake";
 export { checkVehicle, eligibleVehicles, unavoidableReason, weight, orderClass, type StatusMap } from "./eligibility";
 export { PLANNED, EXPECTED, emptyContext, contextForDate, sequence, legMinutes, serviceMinutes, schedule, departureTime } from "./schedule";
-export { MODE_2B, MODE_LIVE, RULE_TEXT, checkVehicleDay } from "./vehicle-day";
+export { MODE_2B, MODE_LIVE, OVERRIDABLE_CODES, RULE_TEXT, checkVehicleDay, timeUnchecked } from "./vehicle-day";
 export { buildTrips, type Trips } from "./build";
 export { repairAndClassify } from "./repair";
 export { planDay, timePlan, servedMap, loadList, dockSignoff, carryOver, type DockDecision } from "./plan";
 export { rescheduleRemaining, notDeparted, longStopAlarmTime, projectPosition, syncEvent, type SyncOutcome } from "./live";
+export { optimizePlan, type OptimizeMove, type OptimizeStats } from "./optimize";

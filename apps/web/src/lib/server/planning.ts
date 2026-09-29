@@ -6,6 +6,7 @@ import {
   contextForDate,
   makeOrder,
   nextOperatingDay,
+  optimizePlan,
   planDay,
   timePlan,
   weight,
@@ -169,9 +170,24 @@ export function planMetrics(input: PlanningInput, plan: Pick<Plan, "timed" | "de
 export async function runAutoPlan(opts: { depot: DepotId; runDate: string; userId: string; mode?: Mode }) {
   const t0 = performance.now();
   const input = await loadPlanningInput(opts.depot, opts.runDate);
-  const plan = planDay(input.R, input.orders, input.status, input.ctx, opts.mode ?? "LIVE", input.fuelUsed);
+  const mode = opts.mode ?? "LIVE";
+  // flowchart algorithm (identical to the Python oracle), then the improvement pass
+  const baseline = planDay(input.R, input.orders, input.status, input.ctx, mode, input.fuelUsed);
+  const { plan, stats } = optimizePlan(input.R, input.orders, input.status, input.ctx, mode, input.fuelUsed, baseline);
   const ms = Math.round(performance.now() - t0);
-  const metrics = { ...planMetrics(input, plan), runtimeMs: ms };
+  const metrics = {
+    ...planMetrics(input, plan),
+    runtimeMs: ms,
+    optimizer: {
+      baseServed: stats.baseServed,
+      served: stats.served,
+      baseTrips: stats.baseTrips,
+      trips: stats.trips,
+      baseLitres: Math.round(stats.baseLitres * 10) / 10,
+      litres: Math.round(stats.litres * 10) / 10,
+      moves: stats.moves.map((m) => ({ kind: m.kind, detail: m.detail })),
+    },
+  };
 
   const planId = await db().transaction(async (tx) => {
     const [last] = await tx

@@ -1,0 +1,3123 @@
+{
+"allowance": [
+{
+"brand": "Fresh",
+"dock": "rear_dock",
+"minutes": 11
+},
+{
+"brand": "Fresh",
+"dock": "street",
+"minutes": 15
+},
+{
+"brand": "Fresh",
+"dock": "mall_bay",
+"minutes": 20
+},
+{
+"brand": "Style",
+"dock": "rear_dock",
+"minutes": 18
+},
+{
+"brand": "Style",
+"dock": "street",
+"minutes": 22
+},
+{
+"brand": "Style",
+"dock": "mall_bay",
+"minutes": 27
+},
+{
+"brand": "Tech",
+"dock": "rear_dock",
+"minutes": 24
+},
+{
+"brand": "Tech",
+"dock": "street",
+"minutes": 28
+},
+{
+"brand": "Tech",
+"dock": "mall_bay",
+"minutes": 33
+}
+],
+"calendar": [
+{
+"date": "2026-01-01",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 1,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-02",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 1,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-03",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 1,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-04",
+"festivalRamp": 0.0,
+"isOperating": 0,
+"isPayday": 0,
+"isoWeek": 1,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-05",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 2,
+"isoYear": 2026,
+"monsoon": 1
+},
+{
+"date": "2026-01-06",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 2,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-07",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 2,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-08",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 2,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-09",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 2,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-10",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 2,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-11",
+"festivalRamp": 0.0,
+"isOperating": 0,
+"isPayday": 0,
+"isoWeek": 2,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-12",
+"festivalRamp": 0.08,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 3,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-13",
+"festivalRamp": 0.16,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 3,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-14",
+"festivalRamp": 0.24,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 3,
+"isoYear": 2026,
+"monsoon": 1
+},
+{
+"date": "2026-01-15",
+"festivalRamp": 0.32,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 3,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-16",
+"festivalRamp": 0.4,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 3,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-17",
+"festivalRamp": 0.48,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 3,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-18",
+"festivalRamp": 0.56,
+"isOperating": 0,
+"isPayday": 0,
+"isoWeek": 3,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-19",
+"festivalRamp": 0.64,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 4,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-20",
+"festivalRamp": 0.72,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 4,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-21",
+"festivalRamp": 0.8,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 4,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-22",
+"festivalRamp": 0.72,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 4,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-23",
+"festivalRamp": 0.64,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 4,
+"isoYear": 2026,
+"monsoon": 1
+},
+{
+"date": "2026-01-24",
+"festivalRamp": 0.56,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 4,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-25",
+"festivalRamp": 0.48,
+"isOperating": 0,
+"isPayday": 1,
+"isoWeek": 4,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-26",
+"festivalRamp": 0.4,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 5,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-27",
+"festivalRamp": 0.32,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 5,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-28",
+"festivalRamp": 0.24,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 5,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-29",
+"festivalRamp": 0.16,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 5,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-30",
+"festivalRamp": 0.08,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 5,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-01-31",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 5,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-01",
+"festivalRamp": 0.0,
+"isOperating": 0,
+"isPayday": 0,
+"isoWeek": 5,
+"isoYear": 2026,
+"monsoon": 1
+},
+{
+"date": "2026-02-02",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 6,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-03",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 6,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-04",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 6,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-05",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 6,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-06",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 6,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-07",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 6,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-08",
+"festivalRamp": 0.0,
+"isOperating": 0,
+"isPayday": 0,
+"isoWeek": 6,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-09",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 7,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-10",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 7,
+"isoYear": 2026,
+"monsoon": 1
+},
+{
+"date": "2026-02-11",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 7,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-12",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 7,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-13",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 7,
+"isoYear": 2026,
+"monsoon": 0
+},
+{
+"date": "2026-02-14",
+"festivalRamp": 0.0,
+"isOperating": 1,
+"isPayday": 0,
+"isoWeek": 7,
+"isoYear": 2026,
+"monsoon": 0
+}
+],
+"districts": [
+{
+"depot": "North",
+"depotKm": 13.9,
+"freeFlowKmh": 35.0,
+"interStopKm": 8.7,
+"interStopMin": 8,
+"name": "N-Harbour",
+"outboundMin": 22
+},
+{
+"depot": "North",
+"depotKm": 37.1,
+"freeFlowKmh": 50.0,
+"interStopKm": 6.7,
+"interStopMin": 10,
+"name": "N-Hills",
+"outboundMin": 48
+},
+{
+"depot": "North",
+"depotKm": 62.7,
+"freeFlowKmh": 40.0,
+"interStopKm": 6.5,
+"interStopMin": 14,
+"name": "N-Coast",
+"outboundMin": 85
+},
+{
+"depot": "North",
+"depotKm": 84.4,
+"freeFlowKmh": 35.0,
+"interStopKm": 3.7,
+"interStopMin": 8,
+"name": "N-Plains",
+"outboundMin": 120
+},
+{
+"depot": "South",
+"depotKm": 16.6,
+"freeFlowKmh": 50.0,
+"interStopKm": 8.3,
+"interStopMin": 14,
+"name": "S-River",
+"outboundMin": 30
+},
+{
+"depot": "South",
+"depotKm": 42.2,
+"freeFlowKmh": 45.0,
+"interStopKm": 4.5,
+"interStopMin": 12,
+"name": "S-Valley",
+"outboundMin": 70
+},
+{
+"depot": "South",
+"depotKm": 84.0,
+"freeFlowKmh": 35.0,
+"interStopKm": 6.1,
+"interStopMin": 14,
+"name": "S-Lake",
+"outboundMin": 105
+}
+],
+"outlets": [
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "North",
+"district": "N-Harbour",
+"dock": "rear_dock",
+"id": "SYN001",
+"open": 300,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "South",
+"district": "S-River",
+"dock": "street",
+"id": "SYN002",
+"open": 180,
+"parking": "van_only"
+},
+{
+"brand": "Fresh",
+"close": 540,
+"depot": "North",
+"district": "N-Hills",
+"dock": "mall_bay",
+"id": "SYN003",
+"open": 360,
+"parking": "mall_dock"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "South",
+"district": "S-Valley",
+"dock": "rear_dock",
+"id": "SYN004",
+"open": 240,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "North",
+"district": "N-Coast",
+"dock": "street",
+"id": "SYN005",
+"open": 180,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 540,
+"depot": "South",
+"district": "S-Lake",
+"dock": "mall_bay",
+"id": "SYN006",
+"open": 360,
+"parking": "mall_dock"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "North",
+"district": "N-Plains",
+"dock": "rear_dock",
+"id": "SYN007",
+"open": 180,
+"parking": "van_only"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "North",
+"district": "N-Harbour",
+"dock": "street",
+"id": "SYN008",
+"open": 240,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 540,
+"depot": "South",
+"district": "S-River",
+"dock": "mall_bay",
+"id": "SYN009",
+"open": 360,
+"parking": "mall_dock"
+},
+{
+"brand": "Fresh",
+"close": 450,
+"depot": "North",
+"district": "N-Hills",
+"dock": "rear_dock",
+"id": "SYN010",
+"open": 240,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "South",
+"district": "S-Valley",
+"dock": "street",
+"id": "SYN011",
+"open": 240,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 540,
+"depot": "North",
+"district": "N-Coast",
+"dock": "mall_bay",
+"id": "SYN012",
+"open": 360,
+"parking": "mall_dock"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "South",
+"district": "S-Lake",
+"dock": "rear_dock",
+"id": "SYN013",
+"open": 180,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "North",
+"district": "N-Plains",
+"dock": "street",
+"id": "SYN014",
+"open": 300,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 540,
+"depot": "North",
+"district": "N-Harbour",
+"dock": "mall_bay",
+"id": "SYN015",
+"open": 360,
+"parking": "mall_dock"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "South",
+"district": "S-River",
+"dock": "rear_dock",
+"id": "SYN016",
+"open": 240,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "North",
+"district": "N-Hills",
+"dock": "street",
+"id": "SYN017",
+"open": 240,
+"parking": "van_only"
+},
+{
+"brand": "Fresh",
+"close": 540,
+"depot": "South",
+"district": "S-Valley",
+"dock": "mall_bay",
+"id": "SYN018",
+"open": 360,
+"parking": "mall_dock"
+},
+{
+"brand": "Fresh",
+"close": 450,
+"depot": "North",
+"district": "N-Coast",
+"dock": "rear_dock",
+"id": "SYN019",
+"open": 300,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 450,
+"depot": "South",
+"district": "S-Lake",
+"dock": "street",
+"id": "SYN020",
+"open": 300,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 540,
+"depot": "North",
+"district": "N-Plains",
+"dock": "mall_bay",
+"id": "SYN021",
+"open": 360,
+"parking": "mall_dock"
+},
+{
+"brand": "Fresh",
+"close": 450,
+"depot": "North",
+"district": "N-Harbour",
+"dock": "rear_dock",
+"id": "SYN022",
+"open": 180,
+"parking": "van_only"
+},
+{
+"brand": "Fresh",
+"close": 450,
+"depot": "South",
+"district": "S-River",
+"dock": "street",
+"id": "SYN023",
+"open": 300,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 540,
+"depot": "North",
+"district": "N-Hills",
+"dock": "mall_bay",
+"id": "SYN024",
+"open": 360,
+"parking": "mall_dock"
+},
+{
+"brand": "Fresh",
+"close": 480,
+"depot": "South",
+"district": "S-Valley",
+"dock": "rear_dock",
+"id": "SYN025",
+"open": 300,
+"parking": "normal"
+},
+{
+"brand": "Fresh",
+"close": 450,
+"depot": "North",
+"district": "N-Coast",
+"dock": "street",
+"id": "SYN026",
+"open": 240,
+"parking": "normal"
+},
+{
+"brand": "Style",
+"close": 1020,
+"depot": "South",
+"district": "S-Valley",
+"dock": "rear_dock",
+"id": "SYN027",
+"open": 540,
+"parking": "normal"
+},
+{
+"brand": "Style",
+"close": 960,
+"depot": "North",
+"district": "N-Coast",
+"dock": "street",
+"id": "SYN028",
+"open": 540,
+"parking": "van_only"
+},
+{
+"brand": "Style",
+"close": 1200,
+"depot": "South",
+"district": "S-Lake",
+"dock": "mall_bay",
+"id": "SYN029",
+"open": 600,
+"parking": "mall_dock"
+},
+{
+"brand": "Style",
+"close": 960,
+"depot": "North",
+"district": "N-Plains",
+"dock": "rear_dock",
+"id": "SYN030",
+"open": 540,
+"parking": "normal"
+},
+{
+"brand": "Style",
+"close": 1080,
+"depot": "North",
+"district": "N-Harbour",
+"dock": "street",
+"id": "SYN031",
+"open": 540,
+"parking": "normal"
+},
+{
+"brand": "Style",
+"close": 1200,
+"depot": "South",
+"district": "S-River",
+"dock": "mall_bay",
+"id": "SYN032",
+"open": 600,
+"parking": "mall_dock"
+},
+{
+"brand": "Style",
+"close": 1080,
+"depot": "North",
+"district": "N-Hills",
+"dock": "rear_dock",
+"id": "SYN033",
+"open": 540,
+"parking": "van_only"
+},
+{
+"brand": "Style",
+"close": 1020,
+"depot": "South",
+"district": "S-Valley",
+"dock": "street",
+"id": "SYN034",
+"open": 540,
+"parking": "normal"
+},
+{
+"brand": "Style",
+"close": 1200,
+"depot": "North",
+"district": "N-Coast",
+"dock": "mall_bay",
+"id": "SYN035",
+"open": 600,
+"parking": "mall_dock"
+},
+{
+"brand": "Tech",
+"close": 1080,
+"depot": "North",
+"district": "N-Harbour",
+"dock": "rear_dock",
+"id": "SYN036",
+"open": 540,
+"parking": "normal"
+},
+{
+"brand": "Tech",
+"close": 1020,
+"depot": "South",
+"district": "S-River",
+"dock": "street",
+"id": "SYN037",
+"open": 540,
+"parking": "van_only"
+},
+{
+"brand": "Tech",
+"close": 1200,
+"depot": "North",
+"district": "N-Hills",
+"dock": "mall_bay",
+"id": "SYN038",
+"open": 600,
+"parking": "mall_dock"
+},
+{
+"brand": "Tech",
+"close": 1080,
+"depot": "South",
+"district": "S-Valley",
+"dock": "rear_dock",
+"id": "SYN039",
+"open": 540,
+"parking": "normal"
+},
+{
+"brand": "Tech",
+"close": 1080,
+"depot": "North",
+"district": "N-Coast",
+"dock": "street",
+"id": "SYN040",
+"open": 540,
+"parking": "normal"
+},
+{
+"brand": "Tech",
+"close": 1200,
+"depot": "South",
+"district": "S-Lake",
+"dock": "mall_bay",
+"id": "SYN041",
+"open": 600,
+"parking": "mall_dock"
+},
+{
+"brand": "Tech",
+"close": 1020,
+"depot": "North",
+"district": "N-Plains",
+"dock": "rear_dock",
+"id": "SYN042",
+"open": 540,
+"parking": "van_only"
+}
+],
+"speed": [
+{
+"district": "N-Harbour",
+"hour": 0,
+"index": 97.8,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 0,
+"index": 89.3,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 1,
+"index": 98.8,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 1,
+"index": 88.8,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 2,
+"index": 98.0,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 2,
+"index": 90.1,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 3,
+"index": 96.5,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 3,
+"index": 90.3,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 4,
+"index": 98.8,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 4,
+"index": 90.9,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 5,
+"index": 99.9,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 5,
+"index": 89.4,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 6,
+"index": 97.6,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 6,
+"index": 90.2,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 7,
+"index": 79.9,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 7,
+"index": 72.0,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 8,
+"index": 78.3,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 8,
+"index": 73.0,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 9,
+"index": 92.1,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 9,
+"index": 84.0,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 10,
+"index": 90.7,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 10,
+"index": 82.8,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 11,
+"index": 91.8,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 11,
+"index": 82.4,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 12,
+"index": 90.7,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 12,
+"index": 84.7,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 13,
+"index": 90.3,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 13,
+"index": 85.6,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 14,
+"index": 91.2,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 14,
+"index": 82.9,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 15,
+"index": 91.9,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 15,
+"index": 84.2,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 16,
+"index": 90.1,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 16,
+"index": 82.1,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 17,
+"index": 78.6,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 17,
+"index": 72.1,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 18,
+"index": 81.7,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 18,
+"index": 72.9,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 19,
+"index": 98.0,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 19,
+"index": 91.6,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 20,
+"index": 97.0,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 20,
+"index": 90.4,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 21,
+"index": 98.2,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 21,
+"index": 91.9,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 22,
+"index": 100.0,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 22,
+"index": 89.7,
+"monsoon": 1
+},
+{
+"district": "N-Harbour",
+"hour": 23,
+"index": 96.3,
+"monsoon": 0
+},
+{
+"district": "N-Harbour",
+"hour": 23,
+"index": 91.7,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 0,
+"index": 96.8,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 0,
+"index": 91.0,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 1,
+"index": 97.5,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 1,
+"index": 89.0,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 2,
+"index": 96.2,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 2,
+"index": 89.3,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 3,
+"index": 97.5,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 3,
+"index": 91.4,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 4,
+"index": 98.7,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 4,
+"index": 89.7,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 5,
+"index": 96.9,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 5,
+"index": 88.2,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 6,
+"index": 98.0,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 6,
+"index": 89.1,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 7,
+"index": 81.5,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 7,
+"index": 73.1,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 8,
+"index": 79.6,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 8,
+"index": 70.2,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 9,
+"index": 90.5,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 9,
+"index": 84.0,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 10,
+"index": 93.7,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 10,
+"index": 83.3,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 11,
+"index": 90.3,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 11,
+"index": 82.9,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 12,
+"index": 90.3,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 12,
+"index": 84.8,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 13,
+"index": 92.4,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 13,
+"index": 82.8,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 14,
+"index": 91.9,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 14,
+"index": 85.2,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 15,
+"index": 93.9,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 15,
+"index": 85.6,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 16,
+"index": 90.4,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 16,
+"index": 85.8,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 17,
+"index": 80.6,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 17,
+"index": 72.6,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 18,
+"index": 78.9,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 18,
+"index": 73.9,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 19,
+"index": 98.0,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 19,
+"index": 90.7,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 20,
+"index": 98.8,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 20,
+"index": 90.7,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 21,
+"index": 99.5,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 21,
+"index": 88.2,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 22,
+"index": 97.7,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 22,
+"index": 88.8,
+"monsoon": 1
+},
+{
+"district": "N-Hills",
+"hour": 23,
+"index": 99.4,
+"monsoon": 0
+},
+{
+"district": "N-Hills",
+"hour": 23,
+"index": 89.9,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 0,
+"index": 98.3,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 0,
+"index": 90.7,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 1,
+"index": 97.6,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 1,
+"index": 89.3,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 2,
+"index": 99.7,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 2,
+"index": 90.4,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 3,
+"index": 99.2,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 3,
+"index": 88.3,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 4,
+"index": 99.8,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 4,
+"index": 89.8,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 5,
+"index": 96.6,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 5,
+"index": 90.2,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 6,
+"index": 97.0,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 6,
+"index": 91.2,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 7,
+"index": 79.2,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 7,
+"index": 70.5,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 8,
+"index": 81.5,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 8,
+"index": 71.9,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 9,
+"index": 90.9,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 9,
+"index": 83.9,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 10,
+"index": 90.2,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 10,
+"index": 85.4,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 11,
+"index": 90.6,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 11,
+"index": 84.4,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 12,
+"index": 92.3,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 12,
+"index": 84.3,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 13,
+"index": 93.7,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 13,
+"index": 84.8,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 14,
+"index": 92.6,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 14,
+"index": 84.9,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 15,
+"index": 92.0,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 15,
+"index": 82.9,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 16,
+"index": 92.3,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 16,
+"index": 84.1,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 17,
+"index": 80.7,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 17,
+"index": 72.1,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 18,
+"index": 81.5,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 18,
+"index": 70.8,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 19,
+"index": 96.8,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 19,
+"index": 88.7,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 20,
+"index": 96.6,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 20,
+"index": 91.1,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 21,
+"index": 96.2,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 21,
+"index": 88.5,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 22,
+"index": 97.4,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 22,
+"index": 90.4,
+"monsoon": 1
+},
+{
+"district": "N-Coast",
+"hour": 23,
+"index": 96.9,
+"monsoon": 0
+},
+{
+"district": "N-Coast",
+"hour": 23,
+"index": 88.6,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 0,
+"index": 97.3,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 0,
+"index": 88.2,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 1,
+"index": 98.6,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 1,
+"index": 91.4,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 2,
+"index": 97.8,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 2,
+"index": 89.7,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 3,
+"index": 97.8,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 3,
+"index": 91.6,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 4,
+"index": 97.1,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 4,
+"index": 89.8,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 5,
+"index": 97.7,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 5,
+"index": 91.1,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 6,
+"index": 98.8,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 6,
+"index": 90.9,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 7,
+"index": 79.8,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 7,
+"index": 73.6,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 8,
+"index": 80.9,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 8,
+"index": 70.2,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 9,
+"index": 93.3,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 9,
+"index": 83.3,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 10,
+"index": 91.0,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 10,
+"index": 83.1,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 11,
+"index": 93.3,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 11,
+"index": 83.5,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 12,
+"index": 92.0,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 12,
+"index": 84.9,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 13,
+"index": 90.7,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 13,
+"index": 84.8,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 14,
+"index": 92.7,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 14,
+"index": 85.0,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 15,
+"index": 93.7,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 15,
+"index": 84.4,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 16,
+"index": 90.4,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 16,
+"index": 82.9,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 17,
+"index": 80.3,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 17,
+"index": 73.9,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 18,
+"index": 81.6,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 18,
+"index": 73.9,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 19,
+"index": 99.5,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 19,
+"index": 89.3,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 20,
+"index": 97.7,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 20,
+"index": 88.3,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 21,
+"index": 98.6,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 21,
+"index": 88.9,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 22,
+"index": 97.6,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 22,
+"index": 89.4,
+"monsoon": 1
+},
+{
+"district": "N-Plains",
+"hour": 23,
+"index": 97.5,
+"monsoon": 0
+},
+{
+"district": "N-Plains",
+"hour": 23,
+"index": 88.3,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 0,
+"index": 98.7,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 0,
+"index": 91.1,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 1,
+"index": 98.1,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 1,
+"index": 88.1,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 2,
+"index": 96.5,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 2,
+"index": 89.3,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 3,
+"index": 96.6,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 3,
+"index": 89.3,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 4,
+"index": 96.3,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 4,
+"index": 90.4,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 5,
+"index": 96.2,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 5,
+"index": 90.6,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 6,
+"index": 97.1,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 6,
+"index": 90.3,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 7,
+"index": 81.9,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 7,
+"index": 71.2,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 8,
+"index": 80.8,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 8,
+"index": 70.2,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 9,
+"index": 90.8,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 9,
+"index": 85.5,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 10,
+"index": 90.9,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 10,
+"index": 84.7,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 11,
+"index": 90.4,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 11,
+"index": 83.8,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 12,
+"index": 92.6,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 12,
+"index": 83.8,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 13,
+"index": 91.1,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 13,
+"index": 85.5,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 14,
+"index": 91.5,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 14,
+"index": 85.5,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 15,
+"index": 93.5,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 15,
+"index": 84.6,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 16,
+"index": 91.4,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 16,
+"index": 83.4,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 17,
+"index": 81.9,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 17,
+"index": 71.7,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 18,
+"index": 80.6,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 18,
+"index": 72.5,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 19,
+"index": 99.0,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 19,
+"index": 90.3,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 20,
+"index": 99.1,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 20,
+"index": 91.5,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 21,
+"index": 97.8,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 21,
+"index": 89.4,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 22,
+"index": 96.3,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 22,
+"index": 89.3,
+"monsoon": 1
+},
+{
+"district": "S-River",
+"hour": 23,
+"index": 98.4,
+"monsoon": 0
+},
+{
+"district": "S-River",
+"hour": 23,
+"index": 91.0,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 0,
+"index": 99.4,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 0,
+"index": 91.9,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 1,
+"index": 98.9,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 1,
+"index": 90.1,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 2,
+"index": 98.9,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 2,
+"index": 90.7,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 3,
+"index": 96.2,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 3,
+"index": 89.6,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 4,
+"index": 96.6,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 4,
+"index": 89.8,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 5,
+"index": 97.4,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 5,
+"index": 88.2,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 6,
+"index": 97.9,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 6,
+"index": 90.9,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 7,
+"index": 79.5,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 7,
+"index": 71.0,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 8,
+"index": 80.7,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 8,
+"index": 71.4,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 9,
+"index": 94.0,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 9,
+"index": 82.1,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 10,
+"index": 92.1,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 10,
+"index": 82.1,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 11,
+"index": 91.3,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 11,
+"index": 82.6,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 12,
+"index": 90.3,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 12,
+"index": 82.4,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 13,
+"index": 92.4,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 13,
+"index": 82.1,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 14,
+"index": 90.2,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 14,
+"index": 85.1,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 15,
+"index": 90.7,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 15,
+"index": 84.6,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 16,
+"index": 93.2,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 16,
+"index": 84.6,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 17,
+"index": 79.5,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 17,
+"index": 71.8,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 18,
+"index": 80.1,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 18,
+"index": 70.8,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 19,
+"index": 97.7,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 19,
+"index": 91.2,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 20,
+"index": 97.5,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 20,
+"index": 91.4,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 21,
+"index": 96.4,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 21,
+"index": 88.2,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 22,
+"index": 96.7,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 22,
+"index": 88.7,
+"monsoon": 1
+},
+{
+"district": "S-Valley",
+"hour": 23,
+"index": 97.2,
+"monsoon": 0
+},
+{
+"district": "S-Valley",
+"hour": 23,
+"index": 88.8,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 0,
+"index": 97.4,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 0,
+"index": 91.7,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 1,
+"index": 98.5,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 1,
+"index": 89.1,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 2,
+"index": 99.4,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 2,
+"index": 89.0,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 3,
+"index": 96.0,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 3,
+"index": 91.9,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 4,
+"index": 99.1,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 4,
+"index": 88.6,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 5,
+"index": 97.7,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 5,
+"index": 89.7,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 6,
+"index": 96.2,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 6,
+"index": 90.5,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 7,
+"index": 78.1,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 7,
+"index": 71.9,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 8,
+"index": 79.4,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 8,
+"index": 73.4,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 9,
+"index": 92.0,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 9,
+"index": 85.7,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 10,
+"index": 91.1,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 10,
+"index": 84.7,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 11,
+"index": 93.0,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 11,
+"index": 85.8,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 12,
+"index": 91.6,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 12,
+"index": 82.9,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 13,
+"index": 93.4,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 13,
+"index": 84.8,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 14,
+"index": 91.8,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 14,
+"index": 84.6,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 15,
+"index": 90.1,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 15,
+"index": 85.2,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 16,
+"index": 91.0,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 16,
+"index": 86.0,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 17,
+"index": 79.6,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 17,
+"index": 72.1,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 18,
+"index": 80.3,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 18,
+"index": 70.8,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 19,
+"index": 96.4,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 19,
+"index": 88.1,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 20,
+"index": 96.0,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 20,
+"index": 91.3,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 21,
+"index": 97.9,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 21,
+"index": 91.3,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 22,
+"index": 97.8,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 22,
+"index": 91.3,
+"monsoon": 1
+},
+{
+"district": "S-Lake",
+"hour": 23,
+"index": 96.5,
+"monsoon": 0
+},
+{
+"district": "S-Lake",
+"hour": 23,
+"index": 89.9,
+"monsoon": 1
+}
+],
+"vehicles": [
+{
+"capKg": 3800.0,
+"capM3": 20.0,
+"depot": "North",
+"id": "SV001",
+"kmPerL": 6.0,
+"temp": "reefer",
+"type": "truck",
+"weeklyQuotaL": 420.0
+},
+{
+"capKg": 5200.0,
+"capM3": 26.0,
+"depot": "North",
+"id": "SV002",
+"kmPerL": 4.8,
+"temp": "reefer",
+"type": "truck",
+"weeklyQuotaL": 480.0
+},
+{
+"capKg": 4200.0,
+"capM3": 24.0,
+"depot": "North",
+"id": "SV003",
+"kmPerL": 6.5,
+"temp": "ambient",
+"type": "truck",
+"weeklyQuotaL": 460.0
+},
+{
+"capKg": 6200.0,
+"capM3": 32.0,
+"depot": "North",
+"id": "SV004",
+"kmPerL": 5.2,
+"temp": "ambient",
+"type": "truck",
+"weeklyQuotaL": 520.0
+},
+{
+"capKg": 3600.0,
+"capM3": 19.0,
+"depot": "North",
+"id": "SV005",
+"kmPerL": 7.0,
+"temp": "ambient",
+"type": "truck",
+"weeklyQuotaL": 400.0
+},
+{
+"capKg": 1400.0,
+"capM3": 8.5,
+"depot": "North",
+"id": "SV006",
+"kmPerL": 9.5,
+"temp": "reefer",
+"type": "van",
+"weeklyQuotaL": 300.0
+},
+{
+"capKg": 1300.0,
+"capM3": 9.0,
+"depot": "North",
+"id": "SV007",
+"kmPerL": 10.0,
+"temp": "ambient",
+"type": "van",
+"weeklyQuotaL": 280.0
+},
+{
+"capKg": 3800.0,
+"capM3": 20.0,
+"depot": "North",
+"id": "SV008",
+"kmPerL": 6.0,
+"temp": "reefer",
+"type": "truck",
+"weeklyQuotaL": 420.0
+},
+{
+"capKg": 6200.0,
+"capM3": 32.0,
+"depot": "North",
+"id": "SV009",
+"kmPerL": 5.2,
+"temp": "ambient",
+"type": "truck",
+"weeklyQuotaL": 520.0
+},
+{
+"capKg": 3800.0,
+"capM3": 20.0,
+"depot": "South",
+"id": "SV010",
+"kmPerL": 6.0,
+"temp": "reefer",
+"type": "truck",
+"weeklyQuotaL": 420.0
+},
+{
+"capKg": 5200.0,
+"capM3": 26.0,
+"depot": "South",
+"id": "SV011",
+"kmPerL": 4.8,
+"temp": "reefer",
+"type": "truck",
+"weeklyQuotaL": 480.0
+},
+{
+"capKg": 4200.0,
+"capM3": 24.0,
+"depot": "South",
+"id": "SV012",
+"kmPerL": 6.5,
+"temp": "ambient",
+"type": "truck",
+"weeklyQuotaL": 460.0
+},
+{
+"capKg": 6200.0,
+"capM3": 32.0,
+"depot": "South",
+"id": "SV013",
+"kmPerL": 5.2,
+"temp": "ambient",
+"type": "truck",
+"weeklyQuotaL": 520.0
+},
+{
+"capKg": 3600.0,
+"capM3": 19.0,
+"depot": "South",
+"id": "SV014",
+"kmPerL": 7.0,
+"temp": "ambient",
+"type": "truck",
+"weeklyQuotaL": 400.0
+},
+{
+"capKg": 1400.0,
+"capM3": 8.5,
+"depot": "South",
+"id": "SV015",
+"kmPerL": 9.5,
+"temp": "reefer",
+"type": "van",
+"weeklyQuotaL": 300.0
+},
+{
+"capKg": 1300.0,
+"capM3": 9.0,
+"depot": "South",
+"id": "SV016",
+"kmPerL": 10.0,
+"temp": "ambient",
+"type": "van",
+"weeklyQuotaL": 280.0
+}
+]
+}

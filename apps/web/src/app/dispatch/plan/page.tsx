@@ -10,6 +10,7 @@ import { DispatchHeader } from "../_components/header";
 import { autoPlanAction } from "../actions";
 import { currentDepot } from "../depot";
 import { PlanningBoard } from "./board";
+import { OptimizerNote } from "./optimizer-note";
 
 export const metadata: Metadata = { title: "D-03 Planning board" };
 
@@ -55,6 +56,7 @@ export default async function PlanningBoardPage() {
         }
         depot={depot}
       />
+      <OptimizerNote metrics={plan.metrics} />
       <PlanningBoard data={data} rerun={<ActionButton key="rerun" action={autoPlanAction} fields={{ depot }} size="desk" variant="secondary" confirm={plan.status === "published" ? "Re-planning creates a new draft. The published plan stays live until you publish again. Continue?" : undefined}>Re-run auto-plan</ActionButton>} />
     </>
   );

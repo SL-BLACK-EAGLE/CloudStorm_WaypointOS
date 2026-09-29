@@ -5,7 +5,7 @@ import { first, litres, tripMinutesOf } from "./formulas";
 import { cmpStr, type Reference } from "./reference";
 import { EXPECTED, PLANNED, schedule } from "./schedule";
 import { repairAndClassify } from "./repair";
-import { MODE_LIVE, checkVehicleDay } from "./vehicle-day";
+import { MODE_LIVE, OVERRIDABLE_CODES, checkVehicleDay, timeUnchecked } from "./vehicle-day";
 import type { DayContext, Mode, Order, Plan, TimedTrip } from "./types";
 
 /** M3-M15: eligibility -> weight -> trip construction -> repair -> timed plan ready to publish. */
@@ -43,12 +43,16 @@ export function timePlan(
   ctx: DayContext,
   mode: Mode,
   fuelUsed: Record<string, number> = {},
+  /** vehicles whose timing/fuel rule the dispatcher overrode with a reason */
+  overridden: ReadonlySet<string> = new Set(),
 ): TimedTrip[] {
   const out: TimedTrip[] = [];
   for (const [v, ts] of [...trips].sort((a, b) => cmpStr(a[0], b[0]))) {
     const chk = checkVehicleDay(R, v, ts, ctx, mode, fuelUsed[v] ?? 0);
-    if (!chk.ok || !chk.timed) throw new Error(`vehicle ${v} fails ${chk.code} at publish time`);
-    chk.timed.forEach(([stops, t0], k) => {
+    let timed = chk.timed;
+    if (!chk.ok && mode === MODE_LIVE && overridden.has(v) && OVERRIDABLE_CODES.has(chk.code ?? "")) timed = timeUnchecked(R, ts, ctx);
+    else if (!chk.ok || !timed) throw new Error(`vehicle ${v} fails ${chk.code} at publish time`);
+    timed!.forEach(([stops, t0], k) => {
       const tt: TimedTrip = {
         vehicleId: v,
         number: k + 1,
