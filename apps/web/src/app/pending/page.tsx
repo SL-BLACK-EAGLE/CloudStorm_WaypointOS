@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { AuthShell } from "@/components/wp/auth-shell";
 import { StatusPill } from "@/components/wp/chips";
-import { LiveRefresh } from "@/components/wp/live-refresh";
+import { RealtimeRefresh } from "@/components/wp/realtime";
 import { and, desc, eq } from "@waypoint/db/orm";
 import { db, t } from "@/lib/server/db";
 import { ROLE_LABEL } from "@/lib/roles";
@@ -33,7 +33,7 @@ export default async function PendingPage() {
 
   return (
     <AuthShell>
-      {!rejected && <LiveRefresh seconds={10} />}
+      {!rejected && <RealtimeRefresh channels={[`user:${user.id}`]} fallbackSeconds={10} />}
       <div className="w-full max-w-md space-y-6">
         <p className="num text-xs tracking-widest text-muted-foreground uppercase">Step 3 of 3 · approval</p>
         <div className="space-y-3">

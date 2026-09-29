@@ -1,5 +1,6 @@
 import { Lock, LockOpen, Snowflake } from "lucide-react";
 import type { Metadata } from "next";
+import { RealtimeRefresh } from "@/components/wp/realtime";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/wp/chips";
@@ -56,6 +57,7 @@ export default async function OrderQueuePage() {
 
   return (
     <>
+      <RealtimeRefresh channels={["orders"]} fallbackSeconds={60} />
       <DispatchHeader title="Order queue" context={`${depot} · run for ${dayLabel(planning, true)}`} depot={depot} />
       <div className="grid xl:grid-cols-[minmax(0,1fr)_340px]">
         <main className="min-w-0 space-y-4 p-6">

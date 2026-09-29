@@ -30,6 +30,7 @@ import type { OutboxRow } from "@/lib/offline/db";
 import type { PackStop, PackTrip, RunPack } from "@/lib/offline/types";
 import { useDriver } from "@/lib/offline/use-driver";
 import { cn } from "@/lib/utils";
+import { SignalListener } from "@/components/wp/realtime";
 import { SignaturePad, type SignatureHandle } from "./signature-pad";
 import { ackDriverNoticeAction, canDeliverAction } from "./actions";
 
@@ -44,7 +45,7 @@ function readHash(): View {
 }
 
 /** DR-01..DR-05 + DG-01: one offline-capable app; views live in the URL hash so no network is needed to move between them. */
-export function DriveApp({ serverPack }: { serverPack: RunPack | null }) {
+export function DriveApp({ serverPack, userId }: { serverPack: RunPack | null; userId: string }) {
   const d = useDriver(serverPack);
   const [view, setView] = useState<View>({ name: "run" });
   const [tick, setTick] = useState(0);
@@ -80,6 +81,8 @@ export function DriveApp({ serverPack }: { serverPack: RunPack | null }) {
 
   return (
     <div className="mx-auto min-h-dvh max-w-md pb-6">
+      {/* dispatcher decisions and stop changes arrive by push while online; offline the phone keeps working from its pack */}
+      <SignalListener channels={[`user:${userId}`, ...pack.trips.map((x) => `trip:${x.tripId}`)]} onChange={() => void d.refresh()} />
       <TopBar pack={pack} online={d.online} queued={d.queued} onOutbox={() => go({ name: "outbox" })} />
       {view.name === "run" && <Notices notices={pack.notices ?? []} online={d.online} />}
       {changed.length > 0 && view.name === "run" && <PlanChanged stops={changed} online={d.online} waiting={waiting} />}

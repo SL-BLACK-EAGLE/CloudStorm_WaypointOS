@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { SignalListener } from "./realtime";
 
 interface Item {
   id: string;
@@ -25,7 +26,7 @@ const DOT: Record<string, string> = {
 };
 
 /** Notification centre: unread count, the latest 30, click-through, mark all read. Polls every 30 s. */
-export function NotificationBell({ side = "bottom", className }: { side?: "bottom" | "right"; className?: string }) {
+export function NotificationBell({ side = "bottom", channels = [], className }: { side?: "bottom" | "right"; channels?: string[]; className?: string }) {
   const [data, setData] = useState<{ unread: number; items: Item[] } | null>(null);
   const [open, setOpen] = useState(false);
   const load = useCallback(async () => {
@@ -55,6 +56,7 @@ export function NotificationBell({ side = "bottom", className }: { side?: "botto
         if (o) void load();
       }}
     >
+      <SignalListener channels={channels} onChange={() => void load()} />
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className={cn("relative", className)} aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}>
           <Bell />

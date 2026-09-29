@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/wp/action-button";
 import { StatusPill, TempTag, type StatusKind } from "@/components/wp/chips";
-import { LiveRefresh } from "@/components/wp/live-refresh";
+import { RealtimeRefresh } from "@/components/wp/realtime";
 import { Kpi, Panel, PanelHeader } from "@/components/wp/panel";
 import { PromptAction } from "@/components/wp/prompt-action";
 import { colombo, dayLabel, hhmm } from "@/lib/format";
@@ -67,7 +67,7 @@ export default async function LivePage() {
 
   return (
     <>
-      <LiveRefresh />
+      <RealtimeRefresh channels={["ops"]} />
       <DispatchHeader
         title="Live operations"
         context={

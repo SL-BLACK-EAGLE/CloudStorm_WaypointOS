@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/wp/action-button";
 import { StatusPill } from "@/components/wp/chips";
-import { LiveRefresh } from "@/components/wp/live-refresh";
+import { RealtimeRefresh } from "@/components/wp/realtime";
 import { Panel, PanelHeader } from "@/components/wp/panel";
 import { colombo, dayLabel, hhmm } from "@/lib/format";
 import { reconciliation, type ConflictCard } from "@/lib/server/live";
@@ -30,7 +30,7 @@ export default async function ReconciliationPage() {
 
   return (
     <>
-      <LiveRefresh seconds={20} />
+      <RealtimeRefresh channels={["ops"]} fallbackSeconds={20} />
       <DispatchHeader
         title="Reconciliation"
         context={`${depot} · ${open.length} open conflict${open.length === 1 ? "" : "s"}`}

@@ -56,7 +56,7 @@ export function DispatchRail() {
       <div className="my-2 h-px w-10 bg-border" />
       {ADMIN.map(item)}
       <div className="mt-auto flex flex-col items-center gap-2 pb-1">
-        <NotificationBell side="right" />
+        <NotificationBell side="right" channels={["role:dispatcher"]} />
         <UserButton />
       </div>
     </nav>

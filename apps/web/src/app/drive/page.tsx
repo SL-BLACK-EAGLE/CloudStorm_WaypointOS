@@ -12,5 +12,5 @@ export const metadata: Metadata = { title: "Today's run" };
 export default async function DrivePage() {
   const user = await requireUser(["driver"]);
   const pack = await buildPack(user);
-  return <DriveApp serverPack={pack} />;
+  return <DriveApp serverPack={pack} userId={user.id} />;
 }

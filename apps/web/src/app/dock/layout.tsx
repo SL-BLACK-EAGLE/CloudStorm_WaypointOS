@@ -1,5 +1,6 @@
 import { UserButton } from "@clerk/nextjs";
 import { NotificationBell } from "@/components/wp/notification-bell";
+import { RealtimeRefresh } from "@/components/wp/realtime";
 import Link from "next/link";
 import { WMark } from "@/components/wp/chips";
 import { dayLabel, hhmm } from "@/lib/format";
@@ -23,7 +24,8 @@ export default async function DockLayout({ children }: LayoutProps<"/dock">) {
         <p className="num text-3xl font-bold tracking-tight" aria-label="Business time">
           {hhmm(clock.minute)}
         </p>
-        <NotificationBell />
+        <NotificationBell channels={["role:loader", `user:${user.id}`]} />
+        <RealtimeRefresh channels={["role:loader", `depot:${user.depotId ?? "Peliyagoda"}`]} fallbackSeconds={30} />
         <UserButton />
       </header>
       <div className="flex-1">{children}</div>

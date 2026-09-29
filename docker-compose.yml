@@ -58,6 +58,38 @@ services:
       redis:
         condition: service_healthy
 
+  # Convex (realtime) - the open-source backend, same functions as Convex Cloud
+  convex:
+    image: ghcr.io/get-convex/convex-backend:latest
+    stop_grace_period: 10s
+    stop_signal: SIGINT
+    ports:
+      - "3210:3210" # client API / websocket
+      - "3211:3211" # HTTP actions
+    environment:
+      INSTANCE_NAME: waypoint
+      CONVEX_CLOUD_ORIGIN: http://127.0.0.1:3210
+      CONVEX_SITE_ORIGIN: http://127.0.0.1:3211
+      DISABLE_BEACON: "true"
+    volumes:
+      - convexdata:/convex/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3210/version || exit 1"]
+      interval: 5s
+      start_period: 10s
+      retries: 20
+
+  convex-dashboard:
+    image: ghcr.io/get-convex/convex-dashboard:latest
+    ports:
+      - "6791:6791"
+    environment:
+      NEXT_PUBLIC_DEPLOYMENT_URL: http://127.0.0.1:3210
+    depends_on:
+      convex:
+        condition: service_healthy
+
 volumes:
   pgdata:
   s3data:
+  convexdata:
