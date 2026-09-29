@@ -10,7 +10,7 @@ type PlanRow = typeof t.plans.$inferSelect;
 /** Everything the planner needs to re-check a stored plan (browser board, D-04 previews, D-05 checks). */
 export async function boardData(plan: PlanRow): Promise<{ data: BoardData; view: PlanView }> {
   const depot = plan.depotId as DepotId;
-  const [input, view, refInput] = await Promise.all([loadPlanningInput(depot, plan.runDate), planView(plan.id), loadReference(db())]);
+  const [input, view, refInput] = await Promise.all([loadPlanningInput(depot, plan.runDate, db(), { planId: plan.id }), planView(plan.id), loadReference(db())]);
   const outletsHere = new Set(input.orders.map((o) => o.outletId));
   const data: BoardData = {
     planId: plan.id,

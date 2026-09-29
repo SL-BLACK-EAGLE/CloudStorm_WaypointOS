@@ -37,14 +37,15 @@ export default async function DeferralReviewPage() {
   const board = new Board(data);
   const stopByOrder = new Map(view.trips.flatMap((tr) => tr.stops.map((s) => [s.orderId, { trip: tr, stop: s }] as const)));
 
-  const rows: ReviewRow[] = view.deferrals.map((d) => {
+  // a deferral whose order cannot be loaded is left out rather than failing the whole review
+  const rows: ReviewRow[] = view.deferrals.filter((d) => board.orders.has(d.orderId)).map((d) => {
     const o = board.orders.get(d.orderId)!;
     const slots = board.legalSlots(d.orderId, 3).map((s) => {
       const day = board.propose(d.orderId, s);
       return { ...s, preview: board.preview(d.orderId, s.vehicleId, day) };
     });
     let swap: ReviewRow["swap"] = null;
-    if (d.lostToOrderId && stopByOrder.has(d.lostToOrderId)) {
+    if (d.lostToOrderId && stopByOrder.has(d.lostToOrderId) && board.orders.has(d.lostToOrderId)) {
       const verdict = board.checkSwap(d.orderId, d.lostToOrderId);
       const p = board.proposeSwap(d.orderId, d.lostToOrderId);
       const lost = board.orders.get(d.lostToOrderId)!;
@@ -75,7 +76,7 @@ export default async function DeferralReviewPage() {
       explanation: d.explanation,
       decided: !!d.decidedAt,
       newRunDate: d.newRunDate,
-      deferredYesterday: o.deferredYesterday,
+      deferredYesterday: (d.fairness as { deferredYesterday?: number } | null)?.deferredYesterday ?? o.deferredYesterday,
       daysSinceLastServed: o.daysSinceLastServed,
       slots,
       swap,

@@ -141,7 +141,7 @@ export async function moveOrder(opts: { planId: string; orderId: string; to: Mov
   const [plan] = await db().select().from(t.plans).where(eq(t.plans.id, opts.planId));
   if (!plan || plan.status === "superseded") return { ok: false, error: "This plan version is no longer current. Reload the board." };
   const depot = plan.depotId as DepotId;
-  const input = await loadPlanningInput(depot, plan.runDate);
+  const input = await loadPlanningInput(depot, plan.runDate, db(), { planId: plan.id });
   const order = input.orders.find((o) => o.ref === opts.orderId);
   if (!order) return { ok: false, error: `${opts.orderId} is not in this run's queue.` };
 

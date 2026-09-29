@@ -27,6 +27,19 @@ export type DepotId = "Peliyagoda" | "Kandy";
 const OPEN_STATUSES = ["confirmed", "planned", "deferred"] as const;
 
 // ─────────────────────────────────────────────────────────────── inputs
+/** Every order a plan refers to (its stops and its deferrals), whatever their current status or run date. */
+async function ordersOfPlan(x: Executor, planId: string) {
+  const [stopIds, deferredIds] = await Promise.all([
+    x
+      .select({ id: t.tripStops.orderId })
+      .from(t.tripStops)
+      .innerJoin(t.trips, eq(t.trips.id, t.tripStops.tripId))
+      .where(eq(t.trips.planId, planId)),
+    x.select({ id: t.deferrals.orderId }).from(t.deferrals).where(eq(t.deferrals.planId, planId)),
+  ]);
+  const ids = [...new Set([...stopIds, ...deferredIds].map((r) => r.id))];
+  return ids.length ? x.select().from(t.orders).where(inArray(t.orders.id, ids)) : [];
+}
 export interface PlanningInput {
   R: Reference;
   orders: Order[];
@@ -36,11 +49,17 @@ export interface PlanningInput {
   week: { isoYear: number; isoWeek: number };
 }
 
-export async function loadPlanningInput(depot: DepotId, runDate: string, x: Executor = db()): Promise<PlanningInput> {
+/**
+ * Inputs for one depot and run. Auto-plan uses the run's open orders only. Screens that look at a
+ * stored plan pass its id: its stops and deferrals keep referring to orders whose status or run date
+ * has since moved on (a published deferral goes to the next run, a delivered stop is no longer open),
+ * and those orders must still be there to draw, check and edit the plan.
+ */
+export async function loadPlanningInput(depot: DepotId, runDate: string, x: Executor = db(), opts: { planId?: string } = {}): Promise<PlanningInput> {
   const R = await reference();
   const cal = R.calendar.get(runDate);
   if (!cal) throw new Error(`No calendar row for ${runDate}`);
-  const [orderRows, dayRows, roadRows, fuelRows] = await Promise.all([
+  const [openRows, dayRows, roadRows, fuelRows, planRows] = await Promise.all([
     x
       .select()
       .from(t.orders)
@@ -52,7 +71,10 @@ export async function loadPlanningInput(depot: DepotId, runDate: string, x: Exec
       .select()
       .from(t.fuelLedger)
       .where(and(eq(t.fuelLedger.isoYear, cal.isoYear), eq(t.fuelLedger.isoWeek, cal.isoWeek))),
+    opts.planId ? ordersOfPlan(x, opts.planId) : Promise.resolve([]),
   ]);
+  const seen = new Set(openRows.map((o) => o.id));
+  const orderRows = [...openRows, ...planRows.filter((o) => !seen.has(o.id))].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   const byDay = new Map(dayRows.map((d) => [d.vehicleId, d.status]));
   const status: Record<string, string> = {};
   for (const v of R.vehicles.values()) if (v.depot === depot) status[v.id] = byDay.get(v.id) ?? "available";

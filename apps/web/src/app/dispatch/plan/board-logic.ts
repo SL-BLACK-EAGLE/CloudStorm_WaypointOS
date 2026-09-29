@@ -101,7 +101,8 @@ export class Board {
 
   /** Legal slots for an order, best first: an existing trip to the same brand + district, then a new trip, least capable vehicle first. */
   legalSlots(orderId: string, limit = 5): Array<Target & { label: string }> {
-    const order = this.orders.get(orderId)!;
+    const order = this.orders.get(orderId);
+    if (!order) return [];
     const out: Array<Target & { label: string; rank: number }> = [];
     for (const v of this.vehicles) {
       if (this.input.status[v.id] !== "available" || v.depot !== order.outlet.depot) continue;

@@ -35,7 +35,7 @@ export async function keepDeferred(opts: { planId: string; orderId: string; reas
 export async function swapDeferral(opts: { planId: string; orderId: string; outOrderId: string; userId: string; reason: string }): Promise<MoveResult> {
   const [plan] = await db().select().from(t.plans).where(eq(t.plans.id, opts.planId));
   if (!plan || plan.status === "superseded") return { ok: false, error: "This plan version is no longer current." };
-  const input = await loadPlanningInput(plan.depotId as DepotId, plan.runDate);
+  const input = await loadPlanningInput(plan.depotId as DepotId, plan.runDate, db(), { planId: plan.id });
   const inO = input.orders.find((o) => o.ref === opts.orderId);
   const outO = input.orders.find((o) => o.ref === opts.outOrderId);
   if (!inO || !outO) return { ok: false, error: "Order not found in this run." };
@@ -77,7 +77,7 @@ export async function swapDeferral(opts: { planId: string; orderId: string; outO
 export async function prePublishChecks(planId: string) {
   const [plan] = await db().select().from(t.plans).where(eq(t.plans.id, planId));
   if (!plan) throw new Error("plan not found");
-  const input = await loadPlanningInput(plan.depotId as DepotId, plan.runDate);
+  const input = await loadPlanningInput(plan.depotId as DepotId, plan.runDate, db(), { planId: plan.id });
   const trips = await tripsOf(plan.id, input);
   const violations: string[] = [];
   const overrides = overridesOf(plan.metrics);
@@ -92,7 +92,8 @@ export async function prePublishChecks(planId: string) {
   }
   const defs = await db().select().from(t.deferrals).where(eq(t.deferrals.planId, plan.id));
   // an outlet skipped on the previous run and deferred again is flagged red: the dispatcher must record why
-  const skippedBefore = new Set(input.orders.filter((o) => o.deferredYesterday).map((o) => o.ref));
+  // fairness snapshot at planning time (publishing later marks every deferred order as skipped)
+  const skippedBefore = new Set(defs.filter((d) => (d.fairness as { deferredYesterday?: number } | null)?.deferredYesterday).map((d) => d.orderId));
   const repeat = defs.filter((d) => skippedBefore.has(d.orderId));
   const undecided = defs.filter((d) => !d.decidedAt && (d.kind === "CHOSEN" || skippedBefore.has(d.orderId)));
   return { plan, input, trips, violations, accepted, deferrals: defs, undecided, repeat };

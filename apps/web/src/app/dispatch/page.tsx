@@ -78,7 +78,8 @@ export default async function ControlTowerPage() {
   const chosen = deferrals.filter((d) => d.kind === "CHOSEN");
   const unavoidable = deferrals.filter((d) => d.kind === "UNAVOIDABLE");
   // outlets skipped on the previous run and deferred again are flagged red and need a recorded reason
-  const skippedBefore = new Set(orders.filter((o) => o.deferredYesterday).map((o) => o.id));
+  // the fairness snapshot taken when the plan was made (publishing later marks every deferred order as skipped)
+  const skippedBefore = new Set(deferrals.filter((d) => (d.fairness as { deferredYesterday?: number } | null)?.deferredYesterday).map((d) => d.orderId));
   const repeat = deferrals.filter((d) => skippedBefore.has(d.orderId));
   const undecidedChosen = deferrals.filter((d) => !d.decidedAt && (d.kind === "CHOSEN" || skippedBefore.has(d.orderId)));
 
