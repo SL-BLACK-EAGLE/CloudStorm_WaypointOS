@@ -76,8 +76,11 @@ export default async function ControlTowerPage() {
   const firstDep = Math.min(...trips.map((tr) => tr.departureMin ?? Infinity));
   const firstVehicles = trips.filter((tr) => tr.departureMin === firstDep).map((tr) => tr.vehicleId);
   const chosen = deferrals.filter((d) => d.kind === "CHOSEN");
-  const undecidedChosen = chosen.filter((d) => !d.decidedAt);
   const unavoidable = deferrals.filter((d) => d.kind === "UNAVOIDABLE");
+  // outlets skipped on the previous run and deferred again are flagged red and need a recorded reason
+  const skippedBefore = new Set(orders.filter((o) => o.deferredYesterday).map((o) => o.id));
+  const repeat = deferrals.filter((d) => skippedBefore.has(d.orderId));
+  const undecidedChosen = deferrals.filter((d) => !d.decidedAt && (d.kind === "CHOSEN" || skippedBefore.has(d.orderId)));
 
   // which resource binds hardest: count deferrals attributable to each
   const load = {
@@ -111,7 +114,7 @@ export default async function ControlTowerPage() {
   const checklist = [
     { done: cutoffPassed, title: "Orders closed at 16:00", sub: cutoffPassed ? `${orders.length} confirmed · later orders go to the next run` : "Orders still open - the queue can still grow", href: "/dispatch/orders" },
     { done: !!plan, title: "Draft plan passes rules 1–7", sub: plan ? `${trips.length} trips · 0 violations (checked by the planner)` : "Run auto-plan to build it", href: "/dispatch/plan" },
-    { done: !!plan && undecidedChosen.length === 0, title: `Decide ${undecidedChosen.length || chosen.length} chosen deferral${chosen.length === 1 ? "" : "s"}`, sub: `${unavoidable.length} unavoidable already have reasons`, href: "/dispatch/deferrals" },
+    { done: !!plan && undecidedChosen.length === 0, title: `Decide ${undecidedChosen.length} deferral${undecidedChosen.length === 1 ? "" : "s"}`, sub: repeat.length ? `${repeat.length} outlet(s) skipped twice in a row need a reason` : `${unavoidable.length} unavoidable already have reasons`, href: "/dispatch/deferrals" },
     { done: published, title: "Publish to loaders, drivers, stores", sub: firstDep < Infinity ? `Before the ${hhmm(firstDep)} departures` : "After the plan is ready", href: "/dispatch/publish" },
   ];
 
@@ -138,10 +141,11 @@ export default async function ControlTowerPage() {
           <Kpi
             label={published ? "Deferred in published plan" : "Deferred in draft"}
             value={plan ? deferrals.length : "—"}
-            tone={deferrals.length ? "deferred" : undefined}
+            tone={repeat.length ? "violation" : deferrals.length ? "deferred" : undefined}
             sub={
               plan ? (
                 <Link href="/dispatch/deferrals" className="text-deferred underline-offset-4 hover:underline">
+                  {repeat.length > 0 && <span className="font-semibold text-violation">{repeat.length} skipped twice in a row · </span>}
                   {chosen.length} chosen · {unavoidable.length} unavoidable · review
                 </Link>
               ) : (

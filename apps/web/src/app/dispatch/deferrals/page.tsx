@@ -86,8 +86,11 @@ export default async function DeferralReviewPage() {
   });
 
   const unavoidable = rows.filter((r) => r.kind === "UNAVOIDABLE");
+  rows.sort((a, b) => b.deferredYesterday - a.deferredYesterday);
   const chosen = rows.filter((r) => r.kind === "CHOSEN");
-  const decided = chosen.filter((r) => r.decided);
+  const repeats = rows.filter((r) => r.deferredYesterday > 0);
+  const needs = rows.filter((r) => r.kind === "CHOSEN" || r.deferredYesterday > 0);
+  const decided = needs.filter((r) => r.decided);
   const totalKg = rows.reduce((s, r) => s + r.kg, 0);
 
   return (
@@ -98,15 +101,21 @@ export default async function DeferralReviewPage() {
         depot={depot}
       />
       <main className="space-y-5 p-6">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <Kpi
+            label="Skipped twice in a row"
+            value={repeats.length}
+            tone={repeats.length ? "violation" : undefined}
+            sub={repeats.length ? "Top priority and still no slot · record why" : "No outlet misses a second run"}
+          />
           <Kpi label="Deferred" value={rows.length} tone={rows.length ? "deferred" : undefined} sub={`${rows.filter((r) => r.temp === "chilled").length} chilled · ${kg(totalKg)}`} />
           <Kpi label="Unavoidable" value={unavoidable.length} sub="No legal slot · reason filled in" />
           <Kpi label="Chosen" value={chosen.length} sub="Lost to a higher-priority order · you decide" />
           <Kpi
             label="Decided"
-            value={`${decided.length} / ${chosen.length}`}
-            tone={decided.length < chosen.length ? "late-risk" : undefined}
-            sub={decided.length < chosen.length ? `Publishing is blocked until ${chosen.length} of ${chosen.length}` : "Ready to publish"}
+            value={`${decided.length} / ${needs.length}`}
+            tone={decided.length < needs.length ? "late-risk" : undefined}
+            sub={decided.length < needs.length ? `Publishing is blocked until ${needs.length} of ${needs.length}` : "Ready to publish"}
           />
         </div>
         <DeferralReview planId={plan.id} rows={rows} />
@@ -115,9 +124,9 @@ export default async function DeferralReviewPage() {
             Checked against rules 1–7, delivery windows and fuel at planned times. Capacity deferrals had no legal slot on any vehicle; unavoidable ones had no
             eligible vehicle at all.
           </p>
-          <Button asChild size="desk" variant={decided.length < chosen.length ? "outline" : "default"}>
+          <Button asChild size="desk" variant={decided.length < needs.length ? "outline" : "default"}>
             <Link href="/dispatch/publish">
-              Continue to publish{decided.length < chosen.length ? ` · ${chosen.length - decided.length} undecided` : ""}
+              Continue to publish{decided.length < needs.length ? ` · ${needs.length - decided.length} undecided` : ""}
             </Link>
           </Button>
         </div>

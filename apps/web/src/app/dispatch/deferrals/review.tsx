@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { BrandMark, StatusPill, TempTag } from "@/components/wp/chips";
+import { BrandMark, StatusPill, TempTag, ViolationChip } from "@/components/wp/chips";
 import { Meter } from "@/components/wp/meter";
 import { Panel } from "@/components/wp/panel";
 import { dayLabel, hhmm, kg as fmtKg } from "@/lib/format";
@@ -56,9 +56,10 @@ const CLASS: Record<string, { label: string; cls: string }> = {
 };
 
 export function DeferralReview({ planId, rows }: { planId: string; rows: ReviewRow[] }) {
-  const [tab, setTab] = useState<"all" | "UNAVOIDABLE" | "CAPACITY_FORCED" | "CHOSEN">("all");
-  const [selected, setSelected] = useState<string | null>(rows.find((r) => r.kind === "CHOSEN" && !r.decided)?.orderId ?? rows[0]?.orderId ?? null);
-  const shown = rows.filter((r) => tab === "all" || r.kind === tab || (tab === "CHOSEN" && r.kind === "MANUAL"));
+  const [tab, setTab] = useState<"all" | "REPEAT" | "UNAVOIDABLE" | "CAPACITY_FORCED" | "CHOSEN">("all");
+  const [selected, setSelected] = useState<string | null>(rows.find((r) => needsDecision(r) && !r.decided)?.orderId ?? rows[0]?.orderId ?? null);
+  const shown = rows.filter((r) => tab === "all" || (tab === "REPEAT" ? r.deferredYesterday > 0 : r.kind === tab || (tab === "CHOSEN" && r.kind === "MANUAL")));
+  const repeats = rows.filter((r) => r.deferredYesterday > 0).length;
   const row = rows.find((r) => r.orderId === selected) ?? null;
   const count = (k: string) => rows.filter((r) => r.kind === k).length;
 
@@ -69,6 +70,7 @@ export function DeferralReview({ planId, rows }: { planId: string; rows: ReviewR
           {(
             [
               ["all", `All ${rows.length}`],
+              ...(repeats ? ([["REPEAT", `Skipped twice ${repeats}`]] as const) : []),
               ["UNAVOIDABLE", `Unavoidable ${count("UNAVOIDABLE")}`],
               ["CAPACITY_FORCED", `Capacity ${count("CAPACITY_FORCED")}`],
               ["CHOSEN", `Chosen ${count("CHOSEN") + count("MANUAL")}`],
@@ -113,6 +115,7 @@ export function DeferralReview({ planId, rows }: { planId: string; rows: ReviewR
                         <span className="num font-semibold">{r.outletId}</span>
                         <span className="text-muted-foreground">{r.district}</span>
                       </div>
+                      {r.deferredYesterday > 0 && <ViolationChip className="mt-1 h-6 text-[12px]">Skipped twice in a row</ViolationChip>}
                       <span className="num text-[12px] text-muted-foreground">{r.orderId}</span>
                     </td>
                     <td className="num px-3 py-2.5 whitespace-nowrap">
@@ -127,7 +130,7 @@ export function DeferralReview({ planId, rows }: { planId: string; rows: ReviewR
                       <span className={cn("font-semibold", c.cls)}>{c.label}</span>
                       <br />
                       <span className="text-[12px] text-muted-foreground">
-                        {r.kind === "CHOSEN" ? (r.decided ? "Decided" : "Needs decision") : r.kind === "MANUAL" ? "Decided" : "Reason filled in"}
+                        {needsDecision(r) ? (r.decided ? "Decided" : r.deferredYesterday ? "Needs a reason · 2nd run" : "Needs decision") : r.kind === "MANUAL" ? "Decided" : "Reason filled in"}
                       </span>
                     </td>
                     <td className="max-w-[380px] px-3 py-2.5 text-[13px]">
@@ -172,6 +175,11 @@ export function DeferralReview({ planId, rows }: { planId: string; rows: ReviewR
       {row ? <DecisionPanel key={row.orderId} planId={planId} row={row} /> : <Panel className="p-4 text-sm text-muted-foreground">Select a deferral.</Panel>}
     </div>
   );
+}
+
+/** Chosen deferrals and outlets skipped two runs in a row need a recorded decision before publishing. */
+function needsDecision(r: ReviewRow) {
+  return r.kind === "CHOSEN" || r.deferredYesterday > 0;
 }
 
 function DecisionPanel({ planId, row }: { planId: string; row: ReviewRow }) {
@@ -269,9 +277,15 @@ function DecisionPanel({ planId, row }: { planId: string; row: ReviewRow }) {
         </dl>
       </section>
 
-      {(row.kind === "CHOSEN" || row.kind === "CAPACITY_FORCED" || row.kind === "MANUAL") && !(row.kind !== "CHOSEN" && !option) && (
+      {row.deferredYesterday > 0 && (
+        <p className="rounded-md border border-violation/60 p-2.5 text-[13px]">
+          <strong className="text-violation">Skipped on the previous run too.</strong> The planner gave this order top priority and it still did not fit.
+          Serve it if an option exists; otherwise record why, and it goes first on the next run.
+        </p>
+      )}
+      {((needsDecision(row) && !row.decided) || option) && (
         <div className="space-y-2">
-          {row.kind === "CHOSEN" && !row.decided && (
+          {needsDecision(row) && !row.decided && (
             <>
               <label htmlFor="reason" className="text-sm font-medium">
                 Reason (required to keep deferred)
@@ -280,7 +294,7 @@ function DecisionPanel({ planId, row }: { planId: string; row: ReviewRow }) {
             </>
           )}
           <div className="flex gap-2">
-            {row.kind === "CHOSEN" && !row.decided && (
+            {needsDecision(row) && !row.decided && (
               <Button size="desk" variant="outline" className="flex-1" disabled={pending || reason.trim().length < 5} onClick={() => decide({ decision: "keep", reason })}>
                 {pending ? <Loader2 className="animate-spin" /> : <Check />} Keep deferred
               </Button>

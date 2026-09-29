@@ -1,5 +1,6 @@
 import { Ban, Check, Package, Printer, Send, Smartphone, Store, TriangleAlert } from "lucide-react";
 import type { Metadata } from "next";
+import { RULE_TEXT } from "@waypoint/planner";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/wp/action-button";
@@ -53,10 +54,26 @@ export default async function PublishPage({ searchParams }: PageProps<"/dispatch
   const preview = trips.find((tr) => tr.id === sp.trip) ?? trips.find((tr) => tr.stops.length > 3) ?? trips[0];
 
   const checklist = [
-    { ok: checks.violations.length === 0, t: "Feasibility rules 1–7", d: checks.violations.length ? `Breaks: ${checks.violations.join(", ")}` : `${trips.length} trips · 0 violations (re-checked now by the planner)` },
+    {
+      ok: checks.violations.length === 0,
+      t: "Feasibility rules 1–7",
+      d: checks.violations.length
+        ? `Breaks: ${checks.violations.join(", ")}`
+        : `${trips.length} trips · 0 violations (re-checked now by the planner)${
+            checks.accepted.length
+              ? ` · ${checks.accepted.length} override(s) accepted: ${checks.accepted.map((a) => `${a.vehicleId} ${(RULE_TEXT[a.code] ?? a.code).toLowerCase()} - "${a.justification}"`).join("; ")}`
+              : ""
+          }`,
+    },
     { ok: onTime === stops.length, t: "Delivery windows", d: `${onTime} of ${stops.length} planned arrivals before window close` },
     { ok: true, t: "Fresh budget (270 min)", d: topFresh.length ? `Highest ${topFresh.map(([v, m]) => `${v} ${m}`).join(" · ")}` : "No Fresh trips" },
-    { ok: undecided === 0, t: "Deferrals recorded", d: undecided ? `${undecided} chosen deferral(s) still need a decision` : `${deferred.length} deferred, each with a reason` },
+    {
+      ok: undecided === 0,
+      t: "Deferrals recorded",
+      d: undecided
+        ? `${undecided} deferral(s) still need a decision${checks.repeat.length ? ` · ${checks.repeat.length} outlet(s) would miss a second run in a row` : ""}`
+        : `${deferred.length} deferred, each with a reason${checks.repeat.length ? ` · ${checks.repeat.length} repeat deferral(s) justified` : ""}`,
+    },
   ];
 
   return (

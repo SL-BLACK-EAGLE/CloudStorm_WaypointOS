@@ -1,14 +1,33 @@
 import "server-only";
 import { and, eq, inArray } from "@waypoint/db/orm";
 import type { Executor } from "@waypoint/db";
-import { nextOperatingDay, RULE_TEXT, timePlan, weight, type Order, type Trips } from "@waypoint/planner";
+import { nextOperatingDay, OVERRIDABLE_CODES, RULE_TEXT, timePlan, weight, type Order, type Trips } from "@waypoint/planner";
+import { businessDate, now } from "./clock";
 import { explainDeferral } from "@/lib/explain";
 import { db, t } from "./db";
 import { audit, emit, notify } from "./events";
 import { loadPlanningInput, tripsOf, validateDay, type DepotId, type PlanningInput } from "./planning";
 
 export type MoveTarget = { kind: "trip"; vehicleId: string; tripNo: number | "new" } | { kind: "defer"; justification: string };
-export type MoveResult = { ok: true; message: string } | { ok: false; error: string; code?: string };
+export type MoveResult = { ok: true; message: string } | { ok: false; error: string; code?: string; overridable?: boolean };
+
+/** A timing or fuel rule the dispatcher overrode for one vehicle of a plan, with the reason (kept in plans.metrics). */
+export interface PlanOverride {
+  vehicleId: string;
+  code: string;
+  orderId: string;
+  justification: string;
+  by: string;
+  at: string;
+}
+
+export function overridesOf(metrics: unknown): PlanOverride[] {
+  const o = (metrics as { overrides?: PlanOverride[] } | null)?.overrides;
+  return Array.isArray(o) ? o : [];
+}
+
+/** Vehicles whose day carries an accepted override (their day is timed even though a timing/fuel rule fails). */
+export const overriddenVehicles = (metrics: unknown) => new Set(overridesOf(metrics).map((o) => o.vehicleId));
 
 const LOCKED_TRIP = ["en_route", "completed"] as const;
 
@@ -22,9 +41,17 @@ function tripCode(runDate: string, vehicleId: string, n: number) {
  * trip or position changed gets a new version - which is how an offline driver's device
  * later detects that the plan moved under it (flowchart F9 Q4-Q6).
  */
-export async function rewriteInPlace(tx: Executor, planId: string, runDate: string, input: PlanningInput, trips: Trips, vehicleIds: string[]) {
+export async function rewriteInPlace(
+  tx: Executor,
+  planId: string,
+  runDate: string,
+  input: PlanningInput,
+  trips: Trips,
+  vehicleIds: string[],
+  overridden: ReadonlySet<string> = new Set(),
+) {
   const affected: Trips = new Map([...trips].filter(([v, ts]) => vehicleIds.includes(v) && ts.length > 0));
-  const timed = timePlan(input.R, affected, input.ctx, "LIVE", input.fuelUsed);
+  const timed = timePlan(input.R, affected, input.ctx, "LIVE", input.fuelUsed, overridden);
 
   const oldTrips = await tx.select().from(t.trips).where(and(eq(t.trips.planId, planId), inArray(t.trips.vehicleId, vehicleIds)));
   const oldStops = oldTrips.length
@@ -110,7 +137,7 @@ async function refreshMetrics(tx: Executor, planId: string) {
 }
 
 /** Moves one order between trips, onto a new trip, off the deferral list, or into it (manual deferral). */
-export async function moveOrder(opts: { planId: string; orderId: string; to: MoveTarget; userId: string }): Promise<MoveResult> {
+export async function moveOrder(opts: { planId: string; orderId: string; to: MoveTarget; userId: string; override?: string }): Promise<MoveResult> {
   const [plan] = await db().select().from(t.plans).where(eq(t.plans.id, opts.planId));
   if (!plan || plan.status === "superseded") return { ok: false, error: "This plan version is no longer current. Reload the board." };
   const depot = plan.depotId as DepotId;
@@ -134,6 +161,8 @@ export async function moveOrder(opts: { planId: string; orderId: string; to: Mov
 
   const next: Trips = new Map([...trips].map(([v, ts]) => [v, ts.map((tr) => tr.filter((o) => o !== order)).filter((tr) => tr.length > 0)]));
   const touched = new Set<string>(fromVehicle ? [fromVehicle] : []);
+  const overridden = new Set(overriddenVehicles(plan.metrics));
+  let newOverride: PlanOverride | null = null;
 
   if (opts.to.kind === "trip") {
     const { vehicleId, tripNo } = opts.to;
@@ -151,20 +180,47 @@ export async function moveOrder(opts: { planId: string; orderId: string; to: Mov
     }
     const chk = validateDay(input, vehicleId, proposed);
     if (!chk.ok) {
-      return { ok: false, code: chk.code ?? undefined, error: chk.code === "IN_WORKSHOP" ? `${vehicleId} is in the workshop.` : (RULE_TEXT[chk.code ?? ""] ?? `Breaks rule ${chk.code}`) };
+      const overridable = OVERRIDABLE_CODES.has(chk.code ?? "");
+      const why = opts.override?.trim() ?? "";
+      if (!overridable || why.length < 10) {
+        return {
+          ok: false,
+          code: chk.code ?? undefined,
+          overridable,
+          error: chk.code === "IN_WORKSHOP" ? `${vehicleId} is in the workshop.` : (RULE_TEXT[chk.code ?? ""] ?? `Breaks rule ${chk.code}`),
+        };
+      }
+      // the dispatcher accepts a timing/fuel overrun knowingly, with a reason
+      newOverride = { vehicleId, code: chk.code!, orderId: order.ref, justification: why, by: opts.userId, at: businessDate(await now()).toISOString() };
+      overridden.add(vehicleId);
     }
     next.set(vehicleId, proposed);
     touched.add(vehicleId);
   }
   if (fromVehicle && (next.get(fromVehicle)?.length ?? 0) > 0) {
     const chk = validateDay(input, fromVehicle, next.get(fromVehicle)!);
-    if (!chk.ok) return { ok: false, error: `Removing it would leave ${fromVehicle} invalid (${chk.code}).` };
+    if (!chk.ok && !(overridden.has(fromVehicle) && OVERRIDABLE_CODES.has(chk.code ?? ""))) {
+      return { ok: false, error: `Removing it would leave ${fromVehicle} invalid (${chk.code}).` };
+    }
   }
 
   const published = plan.status === "published";
   const newRun = nextOperatingDay(input.R, plan.runDate);
   await db().transaction(async (tx) => {
-    await rewriteInPlace(tx, plan.id, plan.runDate, input, next, [...touched]);
+    await rewriteInPlace(tx, plan.id, plan.runDate, input, next, [...touched], overridden);
+    if (newOverride) {
+      const [p] = await tx.select({ metrics: t.plans.metrics }).from(t.plans).where(eq(t.plans.id, plan.id));
+      const metrics = { ...((p?.metrics as Record<string, unknown>) ?? {}), overrides: [...overridesOf(p?.metrics), newOverride] };
+      await tx.update(t.plans).set({ metrics }).where(eq(t.plans.id, plan.id));
+      await audit(tx, {
+        actorId: opts.userId,
+        action: "plan.override",
+        entity: "vehicle",
+        entityId: newOverride.vehicleId,
+        after: { planId: plan.id, code: newOverride.code, orderId: order.ref },
+        justification: newOverride.justification,
+      });
+    }
     const [existingDeferral] = await tx.select().from(t.deferrals).where(and(eq(t.deferrals.planId, plan.id), eq(t.deferrals.orderId, order.ref)));
     if (opts.to.kind === "trip" && existingDeferral) {
       await tx.delete(t.deferrals).where(eq(t.deferrals.id, existingDeferral.id));
@@ -211,5 +267,10 @@ export async function moveOrder(opts: { planId: string; orderId: string; to: Mov
   });
 
   const where = opts.to.kind === "trip" ? `${opts.to.vehicleId}${opts.to.tripNo === "new" ? " (new trip)" : ` trip ${opts.to.tripNo}`}` : "the deferral list";
-  return { ok: true, message: `${order.ref} (${order.outletId}) moved to ${where}. Every rule still passes.` };
+  return {
+    ok: true,
+    message: newOverride
+      ? `${order.ref} (${order.outletId}) moved to ${where}. Override recorded: ${RULE_TEXT[newOverride.code] ?? newOverride.code}.`
+      : `${order.ref} (${order.outletId}) moved to ${where}. Every rule still passes.`,
+  };
 }

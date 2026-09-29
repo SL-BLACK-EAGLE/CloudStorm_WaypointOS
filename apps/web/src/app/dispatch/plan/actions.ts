@@ -13,6 +13,7 @@ const Move = z.discriminatedUnion("kind", [
     orderId: z.string().min(3).max(20),
     vehicleId: z.string().regex(/^VEH\d{3}$/),
     tripNo: z.union([z.coerce.number().int().min(1).max(2), z.literal("new")]),
+    override: z.string().trim().max(300).optional(),
   }),
   z.object({
     kind: z.literal("defer"),
@@ -33,6 +34,7 @@ export async function moveOrderAction(form: FormData): Promise<MoveResult> {
     orderId: m.orderId,
     userId: user.id,
     to: m.kind === "trip" ? { kind: "trip", vehicleId: m.vehicleId, tripNo: m.tripNo } : { kind: "defer", justification: m.justification },
+    override: m.kind === "trip" ? m.override : undefined,
   });
   if (result.ok) {
     kickRelay();

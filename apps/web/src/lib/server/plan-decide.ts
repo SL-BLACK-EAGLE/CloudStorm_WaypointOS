@@ -6,7 +6,7 @@ import { dayLabel, hhmm } from "@/lib/format";
 import { businessDate, now } from "./clock";
 import { db, t } from "./db";
 import { audit, emit, notify } from "./events";
-import { rewriteInPlace, type MoveResult } from "./plan-edit";
+import { overriddenVehicles, overridesOf, rewriteInPlace, type MoveResult } from "./plan-edit";
 import { loadPlanningInput, tripsOf, type DepotId } from "./planning";
 
 /** D-04 "Keep deferred": the dispatcher confirms a chosen deferral with a reason. */
@@ -19,7 +19,7 @@ export async function keepDeferred(opts: { planId: string; orderId: string; reas
   await db().transaction(async (tx) => {
     await tx
       .update(t.deferrals)
-      .set({ decidedBy: opts.userId, decidedAt: new Date(), explanation: `${d.explanation} Dispatcher: ${opts.reason}` })
+      .set({ decidedBy: opts.userId, decidedAt: businessDate(await now()), explanation: `${d.explanation} Dispatcher: ${opts.reason}` })
       .where(eq(t.deferrals.id, d.id));
     await audit(tx, { actorId: opts.userId, action: "deferral.keep", entity: "order", entityId: opts.orderId, justification: opts.reason });
     await emit(tx, "plan.edited", { planId: opts.planId, orderId: opts.orderId });
@@ -53,7 +53,7 @@ export async function swapDeferral(opts: { planId: string; orderId: string; outO
   if (!chk.ok) return { ok: false, error: `The swap breaks ${chk.code} on ${vehicle}.` };
 
   await db().transaction(async (tx) => {
-    await rewriteInPlace(tx, plan.id, plan.runDate, input, trips, [vehicle!]);
+    await rewriteInPlace(tx, plan.id, plan.runDate, input, trips, [vehicle!], overriddenVehicles(plan.metrics));
     await tx.delete(t.deferrals).where(and(eq(t.deferrals.planId, plan.id), eq(t.deferrals.orderId, inO.ref)));
     await tx.insert(t.deferrals).values({
       planId: plan.id,
@@ -80,20 +80,29 @@ export async function prePublishChecks(planId: string) {
   const input = await loadPlanningInput(plan.depotId as DepotId, plan.runDate);
   const trips = await tripsOf(plan.id, input);
   const violations: string[] = [];
+  const overrides = overridesOf(plan.metrics);
+  const accepted: Array<{ vehicleId: string; code: string; justification: string; orderId: string }> = [];
   for (const [v, ts] of trips) {
     const chk = checkVehicleDay(input.R, v, ts, input.ctx, "LIVE", input.fuelUsed[v] ?? 0);
-    if (!chk.ok) violations.push(`${v}: ${chk.code}`);
+    if (chk.ok) continue;
+    // a timing/fuel overrun the dispatcher accepted with a reason is a warning, not a blocker
+    const o = [...overrides].reverse().find((x) => x.vehicleId === v && x.code === chk.code);
+    if (o) accepted.push({ vehicleId: v, code: chk.code!, justification: o.justification, orderId: o.orderId });
+    else violations.push(`${v}: ${chk.code}`);
   }
   const defs = await db().select().from(t.deferrals).where(eq(t.deferrals.planId, plan.id));
-  const undecided = defs.filter((d) => d.kind === "CHOSEN" && !d.decidedAt);
-  return { plan, input, trips, violations, deferrals: defs, undecided };
+  // an outlet skipped on the previous run and deferred again is flagged red: the dispatcher must record why
+  const skippedBefore = new Set(input.orders.filter((o) => o.deferredYesterday).map((o) => o.ref));
+  const repeat = defs.filter((d) => skippedBefore.has(d.orderId));
+  const undecided = defs.filter((d) => !d.decidedAt && (d.kind === "CHOSEN" || skippedBefore.has(d.orderId)));
+  return { plan, input, trips, violations, accepted, deferrals: defs, undecided, repeat };
 }
 
 export async function publishPlan(opts: { planId: string; userId: string }): Promise<MoveResult> {
   const { plan, input, violations, undecided, deferrals } = await prePublishChecks(opts.planId);
   if (plan.status !== "draft") return { ok: false, error: "Only a draft can be published." };
   if (violations.length) return { ok: false, error: `Plan breaks the rules on ${violations.join(", ")}.` };
-  if (undecided.length) return { ok: false, error: `${undecided.length} chosen deferral(s) still need a decision in D-04.` };
+  if (undecided.length) return { ok: false, error: `${undecided.length} deferral(s) still need a decision in D-04 (chosen, or an outlet skipped two runs in a row).` };
 
   const byRef = new Map(input.orders.map((o) => [o.ref, o]));
   const stops = await db()

@@ -14,6 +14,7 @@ import { hhmm, kg as fmtKg } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { tripMinutes } from "@waypoint/planner";
 import { moveOrderAction } from "./actions";
+import { OVERRIDABLE_CODES } from "@waypoint/planner";
 import { Board, type BoardInput, type BoardTrip, type Target, type Verdict } from "./board-logic";
 
 export interface BoardData extends BoardInput {
@@ -341,6 +342,11 @@ export function PlanningBoard({ data, rerun }: { data: BoardData; rerun: React.R
             setBlocked(null);
             send({ kind: "trip", orderId: blocked.orderId, vehicleId: t.vehicleId, tripNo: String(t.tripNo) });
           }}
+          onOverride={(why) => {
+            const b = blocked;
+            setBlocked(null);
+            send({ kind: "trip", orderId: b.orderId, vehicleId: b.target.vehicleId, tripNo: String(b.target.tripNo), override: why });
+          }}
         />
       )}
       <DeferDialog
@@ -354,6 +360,7 @@ export function PlanningBoard({ data, rerun }: { data: BoardData; rerun: React.R
         }}
       />
       <MoveDialog
+        key={moveFor ?? "closed"}
         orderId={moveFor}
         board={board}
         verdictFor={verdictFor}
@@ -362,6 +369,11 @@ export function PlanningBoard({ data, rerun }: { data: BoardData; rerun: React.R
           const id = moveFor!;
           setMoveFor(null);
           send({ kind: "trip", orderId: id, vehicleId: t.vehicleId, tripNo: String(t.tripNo) });
+        }}
+        onOverride={(t, why) => {
+          const id = moveFor!;
+          setMoveFor(null);
+          send({ kind: "trip", orderId: id, vehicleId: t.vehicleId, tripNo: String(t.tripNo), override: why });
         }}
       />
     </div>
@@ -583,9 +595,24 @@ function OrderPanel({
   );
 }
 
-function BlockedPopover({ blocked, board, onCancel, onDrop }: { blocked: Blocked; board: Board; onCancel: () => void; onDrop: (t: Target) => void }) {
+function BlockedPopover({
+  blocked,
+  board,
+  onCancel,
+  onDrop,
+  onOverride,
+}: {
+  blocked: Blocked;
+  board: Board;
+  onCancel: () => void;
+  onDrop: (t: Target) => void;
+  onOverride: (why: string) => void;
+}) {
   const o = board.orders.get(blocked.orderId)!;
   const best = blocked.legal[0];
+  const overridable = OVERRIDABLE_CODES.has(blocked.verdict.code ?? "");
+  const [why, setWhy] = useState("");
+  const [overriding, setOverriding] = useState(false);
   return (
     <div
       role="alertdialog"
@@ -615,6 +642,26 @@ function BlockedPopover({ blocked, board, onCancel, onDrop }: { blocked: Blocked
           <X /> Cancel (Esc)
         </Button>
       </div>
+      {overridable && (
+        <div className="mt-3 border-t pt-3">
+          {overriding ? (
+            <div className="space-y-2">
+              <p className="text-[13px] text-muted-foreground">
+                Timing and fuel rules can be overridden when you know something the plan does not (the store agreed to a late delivery, fuel was topped
+                up). Your reason is recorded and shown at publish. Vehicle type, weight and one brand per trip can never be overridden.
+              </p>
+              <Textarea rows={2} value={why} onChange={(e) => setWhy(e.target.value)} placeholder="e.g. OUT041 agreed by phone to receive until 08:30" autoFocus />
+              <Button size="desk" variant="destructive" disabled={why.trim().length < 10} onClick={() => onOverride(why.trim())}>
+                Override and move to {blocked.target.vehicleId}
+              </Button>
+            </div>
+          ) : (
+            <button className="text-[13px] underline underline-offset-4" onClick={() => setOverriding(true)}>
+              Override this rule with a reason…
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -658,14 +705,18 @@ function MoveDialog({
   verdictFor,
   onClose,
   onPick,
+  onOverride,
 }: {
   orderId: string | null;
   board: Board;
   verdictFor: (o: string, t: Target) => Verdict;
   onClose: () => void;
   onPick: (t: Target) => void;
+  onOverride: (t: Target, why: string) => void;
 }) {
   const o = orderId ? board.orders.get(orderId) : null;
+  const [pick, setPick] = useState<(Target & { label: string; v: Verdict }) | null>(null);
+  const [why, setWhy] = useState("");
   const options: Array<Target & { label: string; v: Verdict }> = [];
   if (orderId && o) {
     for (const v of board.vehicles) {
@@ -682,7 +733,7 @@ function MoveDialog({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Move {o?.outletId} ({o?.ref})</DialogTitle>
-          <DialogDescription>Every option is checked against rules 1–7, delivery windows and fuel. Only legal ones can be chosen.</DialogDescription>
+          <DialogDescription>Every option is checked against rules 1–7, delivery windows and fuel. Timing and fuel overruns can be overridden with a reason; vehicle type, weight and one brand per trip never can.</DialogDescription>
         </DialogHeader>
         <div className="max-h-[50vh] space-y-1 overflow-y-auto">
           {ok.map((x) => (
@@ -695,13 +746,38 @@ function MoveDialog({
               <span className="text-[12px] font-semibold text-delivered">Fits</span>
             </button>
           ))}
-          {no.slice(0, 12).map((x) => (
-            <div key={`${x.vehicleId}${x.tripNo}`} className="flex items-center justify-between rounded-md px-3 py-1.5 text-sm text-muted-foreground">
-              <span className="num">{x.label}</span>
-              <span className="text-[12px] text-violation">{x.v.title}</span>
-            </div>
-          ))}
+          {no.slice(0, 12).map((x) =>
+            OVERRIDABLE_CODES.has(x.v.code ?? "") ? (
+              <button
+                key={`${x.vehicleId}${x.tripNo}`}
+                onClick={() => setPick(x)}
+                className={cn(
+                  "flex w-full items-center justify-between rounded-md px-3 py-1.5 text-left text-sm text-muted-foreground hover:bg-muted",
+                  pick?.vehicleId === x.vehicleId && pick.tripNo === x.tripNo && "bg-muted",
+                )}
+              >
+                <span className="num">{x.label}</span>
+                <span className="text-[12px] text-violation">{x.v.title} · override…</span>
+              </button>
+            ) : (
+              <div key={`${x.vehicleId}${x.tripNo}`} className="flex items-center justify-between rounded-md px-3 py-1.5 text-sm text-muted-foreground">
+                <span className="num">{x.label}</span>
+                <span className="text-[12px] text-violation">{x.v.title}</span>
+              </div>
+            ),
+          )}
         </div>
+        {pick && (
+          <div className="space-y-2 border-t pt-3">
+            <p className="text-sm">
+              Override <strong>{pick.v.title.toLowerCase()}</strong> on {pick.label}? Your reason is recorded and shown at publish.
+            </p>
+            <Textarea rows={2} value={why} onChange={(e) => setWhy(e.target.value)} placeholder="e.g. the store agreed by phone to receive until 08:30" autoFocus />
+            <Button size="desk" variant="destructive" disabled={why.trim().length < 10} onClick={() => onOverride(pick, why.trim())}>
+              Override and move
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
