@@ -1,4 +1,5 @@
 import { UserButton } from "@clerk/nextjs";
+import { NotificationBell } from "@/components/wp/notification-bell";
 import { notFound } from "next/navigation";
 import { BrandMark, WMark } from "@/components/wp/chips";
 import { DOCK_LABEL, hhmm } from "@/lib/format";
@@ -28,6 +29,7 @@ export default async function StoreLayout({ children }: LayoutProps<"/store">) {
             </p>
           </div>
           <StoreNav variant="top" />
+          <NotificationBell />
           <UserButton />
         </div>
       </header>

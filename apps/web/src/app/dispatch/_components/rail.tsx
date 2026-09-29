@@ -1,6 +1,7 @@
 "use client";
 
 import { UserButton } from "@clerk/nextjs";
+import { NotificationBell } from "@/components/wp/notification-bell";
 import { Activity, ChartLine, Inbox, LayoutGrid, Send, SkipForward, SquareKanban, Truck, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -55,6 +56,7 @@ export function DispatchRail() {
       <div className="my-2 h-px w-10 bg-border" />
       {ADMIN.map(item)}
       <div className="mt-auto flex flex-col items-center gap-2 pb-1">
+        <NotificationBell side="right" />
         <UserButton />
       </div>
     </nav>
