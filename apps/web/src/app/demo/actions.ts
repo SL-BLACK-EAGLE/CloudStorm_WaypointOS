@@ -7,6 +7,7 @@ import { writeClock } from "@/lib/server/clock";
 import { db, t } from "@/lib/server/db";
 import { audit } from "@/lib/server/events";
 import { requireUser, syncClerkMetadata } from "@/lib/server/session";
+import { simulateFleet } from "@/lib/server/simulate";
 
 type Result = { ok: true; message: string } | { ok: false; error: string };
 
@@ -24,8 +25,29 @@ export async function setClockAction(form: FormData): Promise<Result> {
   const at = p.data.at ? (p.data.at.length === 16 ? `${p.data.at}:00` : p.data.at) : undefined;
   const c = await writeClock({ at, running: p.data.running ? p.data.running === "1" : undefined, speed: p.data.speed });
   await db().transaction((tx) => audit(tx, { actorId: user.id, action: "demo.clock", entity: "clock", entityId: "clock", after: c }));
+  const sim = await simulateOthers();
   refresh();
-  return { ok: true, message: `Business clock: ${c.iso.replace("T", " ").slice(0, 16)}${c.running ? ` · running ×${c.speed}` : " · paused"}` };
+  return {
+    ok: true,
+    message: `Business clock: ${c.iso.replace("T", " ").slice(0, 16)}${c.running ? ` · running ×${c.speed}` : " · paused"}${sim.trips ? ` · other drivers: ${sim.departed} trucks left, ${sim.delivered} stops delivered` : ""}`,
+  };
+}
+
+/** Every truck except those driven by a driver account follows its plan up to the business clock. */
+async function simulateOthers() {
+  const drivers = await db().select({ vehicleId: t.users.vehicleId }).from(t.users).where(eq(t.users.role, "driver"));
+  return simulateFleet({ skipVehicleIds: drivers.map((d) => d.vehicleId).filter((v): v is string => !!v) });
+}
+
+/** Judge panel: advance the other trucks to the current business time without moving the clock. */
+export async function simulateAction(): Promise<Result> {
+  await requireUser();
+  const sim = await simulateOthers();
+  refresh();
+  return {
+    ok: true,
+    message: sim.trips ? `Other drivers: ${sim.departed} trucks left, ${sim.delivered} stops delivered.` : "Nothing to move - no published plan is running at this time.",
+  };
 }
 
 /** Judge panel: let the demo driver take over any vehicle that has trips in the published plan. */

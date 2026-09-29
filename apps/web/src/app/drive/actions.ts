@@ -1,8 +1,9 @@
 "use server";
 
-import { eq } from "@waypoint/db/orm";
+import { and, eq } from "@waypoint/db/orm";
 import { z } from "zod";
 import { db, t } from "@/lib/server/db";
+import { businessDate, now } from "@/lib/server/clock";
 import { emit, notify } from "@/lib/server/events";
 import { kickRelay } from "@/lib/server/relay";
 import { requireUser } from "@/lib/server/session";
@@ -24,6 +25,7 @@ export async function canDeliverAction(form: FormData): Promise<{ ok: true; mess
       stopId: s.id,
       kind: "DRIVER_CAN_DELIVER",
       detail: { outletId: s.outletId, orderId: s.orderId, vehicleId: s.vehicleId, driver: user.name },
+      createdAt: businessDate(await now()),
     });
     await notify(tx, {
       type: "sync.conflict",
@@ -37,4 +39,16 @@ export async function canDeliverAction(form: FormData): Promise<{ ok: true; mess
   });
   kickRelay();
   return { ok: true, message: "Sent. Stay parked - the dispatcher's answer appears here." };
+}
+
+/** The driver read a dispatcher notice (message or decision). */
+export async function ackDriverNoticeAction(form: FormData): Promise<{ ok: true; message: string } | { ok: false; error: string }> {
+  const user = await requireUser(["driver"]);
+  const id = z.uuid().safeParse(form.get("id"));
+  if (!id.success) return { ok: false, error: "Unknown notice" };
+  await db()
+    .update(t.notifications)
+    .set({ readAt: new Date() })
+    .where(and(eq(t.notifications.id, id.data), eq(t.notifications.recipientUserId, user.id)));
+  return { ok: true, message: "OK" };
 }

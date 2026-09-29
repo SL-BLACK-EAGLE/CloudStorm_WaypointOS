@@ -31,7 +31,7 @@ import type { PackStop, PackTrip, RunPack } from "@/lib/offline/types";
 import { useDriver } from "@/lib/offline/use-driver";
 import { cn } from "@/lib/utils";
 import { SignaturePad, type SignatureHandle } from "./signature-pad";
-import { canDeliverAction } from "./actions";
+import { ackDriverNoticeAction, canDeliverAction } from "./actions";
 
 type View = { name: "run" } | { name: "stop"; stopId: string } | { name: "deliver"; stopId: string } | { name: "exception"; stopId: string } | { name: "outbox" };
 
@@ -73,11 +73,16 @@ export function DriveApp({ serverPack }: { serverPack: RunPack | null }) {
 
   const allStops = pack.trips.flatMap((t) => t.stops.map((s) => ({ ...s, trip: t })));
   const findStop = (id: string) => allStops.find((s) => s.stopId === id);
+  // moved stops stay on screen until the dispatcher has settled them (DG-02), not only right after the change arrives
+  const settled = new Set(pack.conflicts.filter((c) => c.status === "resolved").map((c) => c.stopId));
+  const waiting = pack.conflicts.filter((c) => c.status === "open" && c.kind === "DRIVER_CAN_DELIVER").map((c) => c.stopId!);
+  const changed = [...new Map([...d.changes.filter((s) => !settled.has(s.stopId)), ...allStops.filter((s) => s.status === "skipped" && !settled.has(s.stopId))].map((s) => [s.stopId, s])).values()];
 
   return (
     <div className="mx-auto min-h-dvh max-w-md pb-6">
       <TopBar pack={pack} online={d.online} queued={d.queued} onOutbox={() => go({ name: "outbox" })} />
-      {d.changes.length > 0 && view.name === "run" && <PlanChanged stops={d.changes} online={d.online} />}
+      {view.name === "run" && <Notices notices={pack.notices ?? []} online={d.online} />}
+      {changed.length > 0 && view.name === "run" && <PlanChanged stops={changed} online={d.online} waiting={waiting} />}
       {view.name === "run" && <RunView pack={pack} now={now!.minute} online={d.online} onOpen={(s) => go({ name: "stop", stopId: s })} record={d.record} />}
       {view.name === "stop" && findStop(view.stopId) && (
         <NextStopView stop={findStop(view.stopId)!} trip={findStop(view.stopId)!.trip} now={now!.minute} onBack={() => go({ name: "run" })} onArrive={() => go({ name: "deliver", stopId: view.stopId })} onProblem={() => go({ name: "exception", stopId: view.stopId })} record={d.record} />
@@ -158,8 +163,46 @@ function TopBar({ pack, online, queued, onOutbox }: { pack: RunPack; online: boo
   );
 }
 
-function PlanChanged({ stops, online }: { stops: PackStop[]; online: boolean }) {
-  const [sent, setSent] = useState<string | null>(null);
+/** Dispatcher messages and decisions (DG-02 answers) - big, plain, one tap to clear. */
+function Notices({ notices, online }: { notices: NonNullable<RunPack["notices"]>; online: boolean }) {
+  const [hidden, setHidden] = useState<string[]>([]);
+  const shown = notices.filter((n) => !hidden.includes(n.id));
+  if (!shown.length) return null;
+  return (
+    <section className="m-4 space-y-3" aria-label="From the dispatcher">
+      {shown.map((n) => (
+        <div
+          key={n.id}
+          className={cn(
+            "space-y-2 rounded-lg border-2 p-4",
+            n.severity === "conflict" ? "border-conflict-border bg-conflict-bg text-conflict" : "border-foreground bg-background text-foreground",
+          )}
+        >
+          <p className="text-lg font-bold">{n.title}</p>
+          <p className="text-base">{n.body}</p>
+          <Button
+            size="field"
+            variant="outline"
+            className="border-2 border-foreground bg-background text-foreground"
+            onClick={() => {
+              setHidden((h) => [...h, n.id]);
+              if (online) {
+                const f = new FormData();
+                f.set("id", n.id);
+                void ackDriverNoticeAction(f).catch(() => undefined);
+              }
+            }}
+          >
+            <Check /> OK
+          </Button>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function PlanChanged({ stops, online, waiting }: { stops: PackStop[]; online: boolean; waiting: string[] }) {
+  const [sentNow, setSent] = useState<string | null>(null);
   return (
     <section className="m-4 space-y-3 rounded-lg border-2 border-conflict-border bg-conflict-bg p-4 text-conflict">
       <p className="flex items-center gap-2 text-lg font-bold">
@@ -178,7 +221,7 @@ function PlanChanged({ stops, online }: { stops: PackStop[]; online: boolean }) 
                 size="field"
                 variant="outline"
                 className="border-2 border-foreground bg-background text-foreground"
-                disabled={!online || sent === s.stopId}
+                disabled={!online || (sentNow === s.stopId || waiting.includes(s.stopId))}
                 onClick={async () => {
                   const f = new FormData();
                   f.set("stopId", s.stopId);
@@ -189,7 +232,7 @@ function PlanChanged({ stops, online }: { stops: PackStop[]; online: boolean }) 
                   } else toast.error(r.error);
                 }}
               >
-                {sent === s.stopId ? "Sent - waiting for the dispatcher" : "Tell dispatcher: I can deliver now"}
+                {(sentNow === s.stopId || waiting.includes(s.stopId)) ? "Sent - waiting for the dispatcher" : "Tell dispatcher: I can deliver now"}
               </Button>
               <p className="text-sm">Follow the change: keep the goods on board{s.temp === "chilled" ? " with the reefer running" : ""}.</p>
             </div>

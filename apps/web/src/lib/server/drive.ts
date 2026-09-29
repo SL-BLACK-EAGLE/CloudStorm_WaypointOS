@@ -1,9 +1,9 @@
 import "server-only";
-import { and, asc, eq, inArray } from "@waypoint/db/orm";
+import { and, asc, desc, eq, inArray, isNull } from "@waypoint/db/orm";
 import { makeOrder, rescheduleRemaining } from "@waypoint/planner";
 import type { DriverEvent, RunPack, SyncOutcome } from "@/lib/offline/types";
 import { hhmm } from "@/lib/format";
-import { readClockSetting } from "./clock";
+import { businessDate, now, readClockSetting } from "./clock";
 import { db, t } from "./db";
 import { audit, emit, notify } from "./events";
 import { loadPlanningInput, publishedPlan, type DepotId } from "./planning";
@@ -33,7 +33,15 @@ export async function buildPack(user: AppUser): Promise<RunPack> {
     clock,
     trips: [],
     conflicts: [],
+    notices: [],
   };
+  const notes = await db()
+    .select()
+    .from(t.notifications)
+    .where(and(eq(t.notifications.recipientUserId, user.id), isNull(t.notifications.readAt)))
+    .orderBy(desc(t.notifications.createdAt))
+    .limit(10);
+  base.notices = notes.map((n) => ({ id: n.id, title: n.title, body: n.body, severity: n.severity, at: n.createdAt.toISOString() }));
   if (!vehicle) return base;
   const runDate = await driverRunDate(vehicle.depotId as DepotId);
   const plan = await publishedPlan(vehicle.depotId as DepotId, runDate);
@@ -163,8 +171,8 @@ async function stopForDriver(stopId: string, vehicleId: string): Promise<StopRow
   return s && s.vehicleId === vehicleId ? s : null;
 }
 
-/** Recomputes EXPECTED ETAs for a trip's remaining stops from the last actual time (flowchart K6). */
-async function refreshEtas(tripId: string) {
+/** Recomputes EXPECTED ETAs for a trip's remaining stops from the last actual time (flowchart K6); skipped stops drop out. */
+export async function refreshEtas(tripId: string) {
   const [trip] = await db().select().from(t.trips).where(eq(t.trips.id, tripId));
   if (!trip) return;
   const [plan] = await db().select().from(t.plans).where(eq(t.plans.id, trip.planId));
@@ -173,7 +181,8 @@ async function refreshEtas(tripId: string) {
     .select({ id: t.tripStops.id, orderId: t.tripStops.orderId, status: t.tripStops.status, arrivedMin: t.tripStops.arrivedMin, leftMin: t.tripStops.leftMin, seq: t.tripStops.seq })
     .from(t.tripStops)
     .where(eq(t.tripStops.tripId, tripId))
-    .orderBy(asc(t.tripStops.seq));
+    .orderBy(asc(t.tripStops.seq))
+    .then((rows) => rows.filter((r) => r.status !== "skipped"));
   const input = await loadPlanningInput(plan.depotId as DepotId, plan.runDate);
   const R = await reference();
   const orderRows = await db().select().from(t.orders).where(inArray(t.orders.id, stops.map((s) => s.orderId)));
@@ -310,7 +319,7 @@ export async function applyEvents(user: AppUser, deviceIdIn: string, events: Dri
           outcome: conflict ? "APPLIED_WITH_CONFLICT" : "APPLIED",
         });
         if (conflict && stop) {
-          await tx.insert(t.conflicts).values({ eventId: ev.eventId, stopId: stop.id, kind: conflict.kind, detail: conflict.detail });
+          await tx.insert(t.conflicts).values({ eventId: ev.eventId, stopId: stop.id, kind: conflict.kind, detail: conflict.detail, createdAt: businessDate(await now()) });
           await notify(tx, {
             type: "sync.conflict",
             title: `Conflict after reconnect · ${stop.outletId}`,

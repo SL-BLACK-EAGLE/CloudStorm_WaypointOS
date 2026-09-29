@@ -310,6 +310,7 @@ export async function messageDispatcher(opts: { orderId: string; outletId: strin
       threadId: opts.orderId,
       authorId: opts.userId,
       body: opts.body,
+      createdAt: businessDate(await now()),
     });
     await notify(tx, {
       type: "message",

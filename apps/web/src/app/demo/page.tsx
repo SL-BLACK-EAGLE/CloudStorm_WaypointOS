@@ -12,7 +12,7 @@ import { now } from "@/lib/server/clock";
 import { db, t } from "@/lib/server/db";
 import { requireUser } from "@/lib/server/session";
 import { cn } from "@/lib/utils";
-import { driveVehicleAction, resetDemoAction, setClockAction, storeOutletAction } from "./actions";
+import { driveVehicleAction, resetDemoAction, setClockAction, simulateAction, storeOutletAction } from "./actions";
 import { ClockForm } from "./clock-form";
 
 export const metadata: Metadata = { title: "Judge demo panel" };
@@ -97,6 +97,15 @@ export default async function DemoPage() {
             })}
           </ul>
           <ClockForm current={clock.iso.slice(0, 16)} running={clock.running} speed={clock.speed} />
+          <div className="flex flex-wrap items-center gap-3 border-t pt-4">
+            <p className="flex-1 text-sm text-muted-foreground">
+              Only the demo driver&apos;s phone records real events. Every other truck follows its plan up to the clock (with road drift, one long stop, and
+              trucks with an undecided shortfall stay at the dock), so live operations and store tracking have a fleet to show. Runs each time the clock moves.
+            </p>
+            <ActionButton action={simulateAction} variant="outline" size="desk">
+              <Truck /> Move the other trucks to now
+            </ActionButton>
+          </div>
         </div>
       </Panel>
 

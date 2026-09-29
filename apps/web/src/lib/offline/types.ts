@@ -62,6 +62,8 @@ export interface RunPack {
   trips: PackTrip[];
   /** open conflicts the dispatcher has not resolved yet */
   conflicts: Array<{ id: string; stopId: string | null; kind: string; detail: Record<string, unknown>; status: string; resolution: string | null }>;
+  /** dispatcher messages and decisions for this driver, not yet acknowledged (older packs may lack it) */
+  notices?: Array<{ id: string; title: string; body: string; severity: string; at: string }>;
 }
 
 export type DriverEventType = "trip.depart" | "stop.arrive" | "stop.deliver" | "stop.exception";
