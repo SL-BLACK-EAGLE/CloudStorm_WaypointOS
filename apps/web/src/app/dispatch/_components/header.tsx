@@ -1,4 +1,5 @@
 import { dayLabel, hhmm } from "@/lib/format";
+import { NotificationBell } from "@/components/wp/notification-bell";
 import { now } from "@/lib/server/clock";
 import { cn } from "@/lib/utils";
 import { setDepot } from "../actions";
@@ -45,6 +46,7 @@ export async function DispatchHeader({
       <p className="num text-sm text-muted-foreground" title="Business clock (Asia/Colombo)">
         {dayLabel(clock.date)} · {hhmm(clock.minute)}
       </p>
+      <NotificationBell channels={["role:dispatcher"]} />
     </header>
   );
 }

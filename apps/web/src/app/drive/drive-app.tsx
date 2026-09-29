@@ -30,6 +30,7 @@ import type { OutboxRow } from "@/lib/offline/db";
 import type { PackStop, PackTrip, RunPack } from "@/lib/offline/types";
 import { useDriver } from "@/lib/offline/use-driver";
 import { cn } from "@/lib/utils";
+import { NotificationBell } from "@/components/wp/notification-bell";
 import { SignalListener } from "@/components/wp/realtime";
 import { SignaturePad, type SignatureHandle } from "./signature-pad";
 import { ackDriverNoticeAction, canDeliverAction } from "./actions";
@@ -69,8 +70,8 @@ export function DriveApp({ serverPack, userId }: { serverPack: RunPack | null; u
   const pack = d.pack;
   const now = useMemo(() => (pack ? clockNow(pack.clock) : null), [pack, tick]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!pack) return <EmptyState text="Opening your run…" />;
-  if (!pack.vehicle) return <EmptyState text="No vehicle is assigned to you yet. Ask the dispatcher to assign one." />;
-  if (!pack.trips.length) return <EmptyState text={`No trips for ${pack.vehicle.id} on ${dayLabel(pack.runDate)} yet. The run appears here as soon as the dispatcher publishes the plan.`} onRefresh={d.refresh} />;
+  if (!pack.vehicle) return <EmptyState text="No vehicle is assigned to you yet. Ask the dispatcher to assign one." userId={userId} />;
+  if (!pack.trips.length) return <EmptyState text={`No trips for ${pack.vehicle.id} on ${dayLabel(pack.runDate)} yet. The run appears here as soon as the dispatcher publishes the plan.`} onRefresh={d.refresh} userId={userId} />;
 
   const allStops = pack.trips.flatMap((t) => t.stops.map((s) => ({ ...s, trip: t })));
   const findStop = (id: string) => allStops.find((s) => s.stopId === id);
@@ -83,7 +84,7 @@ export function DriveApp({ serverPack, userId }: { serverPack: RunPack | null; u
     <div className="mx-auto min-h-dvh max-w-md pb-6">
       {/* dispatcher decisions and stop changes arrive by push while online; offline the phone keeps working from its pack */}
       <SignalListener channels={[`user:${userId}`, ...pack.trips.map((x) => `trip:${x.tripId}`)]} onChange={() => void d.refresh()} />
-      <TopBar pack={pack} online={d.online} queued={d.queued} onOutbox={() => go({ name: "outbox" })} />
+      <TopBar pack={pack} online={d.online} queued={d.queued} onOutbox={() => go({ name: "outbox" })} userId={userId} />
       {view.name === "run" && <Notices notices={pack.notices ?? []} online={d.online} />}
       {changed.length > 0 && view.name === "run" && <PlanChanged stops={changed} online={d.online} waiting={waiting} />}
       {view.name === "run" && <RunView pack={pack} now={now!.minute} online={d.online} onOpen={(s) => go({ name: "stop", stopId: s })} record={d.record} />}
@@ -129,9 +130,10 @@ function nextStop(pack: RunPack): PackStop | undefined {
   return undefined;
 }
 
-function EmptyState({ text, onRefresh }: { text: string; onRefresh?: () => Promise<boolean> }) {
+function EmptyState({ text, onRefresh, userId }: { text: string; onRefresh?: () => Promise<boolean>; userId?: string }) {
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 p-6 text-center text-lg">
+    <div className="relative mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 p-6 text-center text-lg">
+      {userId && <NotificationBell className="absolute top-3 right-3 size-11" channels={[`user:${userId}`, "role:driver"]} />}
       <p>{text}</p>
       {onRefresh && (
         <Button size="field" variant="outline" className="border-2 border-foreground" onClick={() => void onRefresh()}>
@@ -142,7 +144,7 @@ function EmptyState({ text, onRefresh }: { text: string; onRefresh?: () => Promi
   );
 }
 
-function TopBar({ pack, online, queued, onOutbox }: { pack: RunPack; online: boolean; queued: number; onOutbox: () => void }) {
+function TopBar({ pack, online, queued, onOutbox, userId }: { pack: RunPack; online: boolean; queued: number; onOutbox: () => void; userId: string }) {
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b-2 border-foreground bg-background px-4 py-3">
       <div className="min-w-0">
@@ -151,6 +153,7 @@ function TopBar({ pack, online, queued, onOutbox }: { pack: RunPack; online: boo
           {dayLabel(pack.runDate)} · {pack.vehicle?.depot} depot
         </p>
       </div>
+      <NotificationBell className="ml-auto size-11 shrink-0 rounded-full border-2 border-foreground" channels={[`user:${userId}`, "role:driver"]} />
       <button
         onClick={onOutbox}
         className={cn(
