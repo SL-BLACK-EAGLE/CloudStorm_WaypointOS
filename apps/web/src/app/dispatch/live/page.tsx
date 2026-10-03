@@ -141,8 +141,9 @@ export default async function LivePage() {
               </details>
             )}
             <p className="border-t px-4 py-3 text-[13px] text-muted-foreground">
-              ETA = planned arrival + the drift seen so far on that trip (re-timed from each recorded stop). Late risk = under {LATE_MARGIN} min before the
-              window closes. The Datathon lateness model replaces the drift rule when its forecast is loaded.
+              ETA = the expected schedule: travel scaled by the hour&apos;s traffic and the district&apos;s road disruption, plus a service time fitted on
+              two years of deliveries, re-timed from each recorded stop. The plan itself keeps the booklet timings. Late risk = under {LATE_MARGIN} min
+              before the window closes.
             </p>
           </Panel>
 
@@ -387,7 +388,7 @@ function ExceptionCard({ e, nextLabel }: { e: LiveException; nextLabel: string }
       const worstStop = e.stops.reduce((a, b) => ((a.margin ?? 0) <= (b.margin ?? 0) ? a : b));
       return (
         <>
-          {head("late-risk", `Late risk · ${e.stops.length} stop${e.stops.length === 1 ? "" : "s"}`, `running ${e.trip.drift ?? 0} min behind`)}
+          {head("late-risk", `Late risk · ${e.stops.length} stop${e.stops.length === 1 ? "" : "s"}`, e.trip.drift ? `running ${e.trip.drift} min behind` : "expected with traffic and roads")}
           <p className="num font-medium">
             {e.trip.code} · {e.trip.vehicleId} · {e.trip.district}
           </p>

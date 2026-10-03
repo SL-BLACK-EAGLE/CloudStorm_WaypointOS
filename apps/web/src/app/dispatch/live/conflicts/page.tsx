@@ -121,8 +121,8 @@ export default async function ReconciliationPage() {
                     })}
                   </ol>
                   <p className="border-t px-4 py-3 text-[13px] text-muted-foreground">
-                    Live operations, store tracking and the lateness history show these times as recorded, not the time the phone reconnected. Late
-                    arrivals feed the Datathon lateness model.
+                    Live operations, store tracking and the lateness history show these times as recorded, not the time the phone reconnected, so
+                    lateness is measured against when the truck really arrived.
                   </p>
                 </Panel>
                 <div className="space-y-4">
