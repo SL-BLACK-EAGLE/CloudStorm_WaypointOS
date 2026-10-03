@@ -52,7 +52,7 @@ export default async function DockQueuePage({ searchParams }: PageProps<"/dock">
             key={k}
             href={`/dock?tab=${k}`}
             aria-current={tab === k ? "page" : undefined}
-            className={cn("flex h-14 items-center justify-center text-base font-semibold", tab === k && "bg-foreground text-background")}
+            className={cn("flex h-14 items-center justify-center px-2 text-center text-base leading-tight font-semibold", tab === k && "bg-foreground text-background")}
           >
             {label}
           </Link>
@@ -72,13 +72,14 @@ export default async function DockQueuePage({ searchParams }: PageProps<"/dock">
                   {t.changed && <span className="rounded-md border-2 border-foreground px-2 text-sm font-semibold" title="Stops changed after the first draft">Changed at publish</span>}
                 </span>
                 <span className="num block text-base text-muted-foreground">
-                  {t.code} · {t.district} · {t.stops} stops · {t.units} units
+                  {t.code} · {t.district} · {t.stops} stop{t.stops === 1 ? "" : "s"} · {t.units} units
                 </span>
+                <span className="mt-1.5 block sm:hidden">{STATE[t.state](t)}</span>
               </span>
               <span className="hidden sm:block">
                 <TempTag temp={t.chilled ? "chilled" : "ambient"} size="lg" />
               </span>
-              <span className="shrink-0">{STATE[t.state](t)}</span>
+              <span className="hidden shrink-0 sm:block">{STATE[t.state](t)}</span>
               <ChevronRight className="size-7 shrink-0" aria-hidden />
             </Link>
           </li>

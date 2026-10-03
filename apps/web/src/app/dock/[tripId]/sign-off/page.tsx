@@ -45,14 +45,14 @@ export default async function SignOffPage({ params }: PageProps<"/dock/[tripId]/
         <Link href={`/dock/${tripId}`} className="mt-1 rounded-md border-2 border-foreground p-2" aria-label="Back to load list">
           <ChevronLeft className="size-6" />
         </Link>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold">Dispatch sign-off</h1>
-          <p className="num text-lg">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl font-bold">Sign-off</h1>
+          <p className="num text-base">
             {trip.vehicleId} · {trip.code} · {trip.district}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-muted-foreground">Planned departure</p>
+          <p className="text-sm text-muted-foreground">Departs</p>
           <p className="num text-3xl font-bold">{hhmm(trip.departureMin)}</p>
         </div>
       </div>
