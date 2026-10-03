@@ -11,6 +11,8 @@ One plan, from the 16:00 order cutoff to the signature at the store door, for Wa
 | Driver | Follows the run, records arrival and proof of delivery (signature, photo). Works offline for hours and syncs later | sunlight, phone (PWA) |
 | Store manager | Orders before 16:00, sees the arrival time or why the order moved, confirms what arrived | light, desktop/tablet |
 
+**Live deployment: https://cloudstorm-waypointos.vercel.app** (sign in with the demo accounts below; the demo starts at Mon 22 Dec 14:30 with no plan published - follow the judge walkthrough, or use **Reset demo data** on `/demo` to start again).
+
 ## What's inside
 
 - **Next.js 16.3** (App Router, server actions, Turbopack) · **React 19** · **Tailwind CSS v4** · **shadcn/ui**
@@ -112,9 +114,10 @@ For development, point `DATABASE_URL` in `.env` at either the local Postgres (`l
 
 | Piece | Service | Configuration |
 |---|---|---|
-| App | Vercel | Root `apps/web`; every variable from `.env.example` |
+| App | Vercel | Root `apps/web`; build command `pnpm exec convex deploy --cmd 'pnpm build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL` (deploys the Convex functions and sets their URL); no S3 variables, so files go to Postgres |
 | Database | Neon | `DATABASE_URL` (pooled) and `DATABASE_URL_UNPOOLED`; run `pnpm db:migrate && pnpm db:seed` once (the seed also saves the demo baseline, so **Reset demo data** works without the CSVs) |
 | Realtime | Convex Cloud | `CONVEX_DEPLOY_KEY`, `NEXT_PUBLIC_CONVEX_URL`; `npx convex deploy` from `apps/web`; set `CONVEX_SERVER_SECRET` in the Convex environment |
+| One-shot setup | `scripts/deploy-cloud.mjs` | pushes the cloud keys from `.env` to Vercel (values via stdin, never printed), sets the Convex secret, migrates and seeds Neon; `--schedule <url>` creates the QStash relay schedule |
 | Redis, jobs | Upstash | `UPSTASH_REDIS_REST_*`, `QSTASH_*`; then `APP_URL=https://… pnpm --filter web jobs:schedule` |
 | Files | Postgres (default) or any S3 API | leave `S3_ENDPOINT` empty to store files in Postgres, or set the `S3_*` variables |
 
