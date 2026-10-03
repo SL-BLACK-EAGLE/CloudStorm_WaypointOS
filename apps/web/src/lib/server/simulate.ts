@@ -3,7 +3,7 @@ import type { Executor } from "@waypoint/db";
 import { and, asc, eq, inArray } from "@waypoint/db/orm";
 import { db, t } from "./db";
 import { refreshEtas } from "./drive";
-import { now } from "./clock";
+import { readClockSetting, resolveClock } from "./clock";
 import { publishedPlan, type DepotId } from "./planning";
 import { runs } from "./runs";
 
@@ -16,8 +16,9 @@ import { runs } from "./runs";
  * that began 20-50 minutes ago (the D-06 "long stop" case) whenever the clock lands mid-run.
  */
 export async function simulateFleet(opts: { skipVehicleIds: string[] }) {
-  const clock = await now();
-  const { active, planning } = await runs();
+  // read the clock fresh: the demo panel moves it earlier in the same request, and now() is memoised per request
+  const clock = resolveClock(await readClockSetting());
+  const { active, planning } = await runs(clock);
   const touched = new Set<string>();
   let delivered = 0;
   let departed = 0;

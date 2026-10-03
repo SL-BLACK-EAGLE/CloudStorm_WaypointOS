@@ -18,7 +18,7 @@ One plan, from the 16:00 order cutoff to the signature at the store door, for Wa
 - **Convex**: realtime push. The outbox relays change signals to Convex and screens re-read from Postgres, so business data never leaves Postgres
 - **Clerk**: sign-in and sign-up. New users request a role and a dispatcher approves it
 - **Upstash Redis** (rate limits, idempotency, relay lock) and **QStash** (signed, retried outbox sweep)
-- **Object storage** (S3 API: Neon Object Storage in the cloud, SeaweedFS locally) for signatures and photos
+- **File storage** for signatures and photos: any S3 API (SeaweedFS in docker), or a Postgres table when no S3 endpoint is configured
 - **Planner** (`packages/planner`): a TypeScript port of the team's Python delivery-planning algorithm, checked against it by golden-file parity tests (also in CI, on a synthetic operation). An improvement pass then fits more orders or saves trips, and every change is explained on the board.
 - **Offline driver app**: Serwist service worker, IndexedDB outbox, UUIDv7 idempotent sync, conflict detection by stop version
 - **Docker**: the whole stack, including Convex, starts with one command
@@ -71,7 +71,7 @@ Use a separate browser profile or incognito window for each role so all four can
 The seeded operation is **Tue 23 Dec 2025**, the Christmas peak. The app runs on a business clock that you move from the **demo panel** at `/demo` (any signed-in role can open it). Each step below starts by choosing a clock preset there.
 
 1. **Mon 14:30: the store orders.** Sign in as the **store manager**. SM-01 shows the 16:00 cutoff countdown. Choose **Place Tue's orders**, press **Typical order** on the dry and chilled tabs, review, and submit. You get two confirmed orders; dry and chilled are separate because chilled goods need a reefer.
-2. **Mon 16:05: the dispatcher plans.** Sign in as the **dispatcher**. The **Control tower** (D-01) shows demand against the scarce resources (reefers, vans, Fresh minutes, fuel). Press **Run auto-plan**: about 80 of 88 orders on 20 trips in well under a second.
+2. **Mon 16:05: the dispatcher plans.** Sign in as the **dispatcher**. The **Control tower** (D-01) shows demand against the scarce resources (reefers, vans, Fresh minutes, fuel). Press **Run auto-plan**: 80 of 88 orders on 19 trips in well under a second; the improvement pass saves a trip.
 3. **Try to break a rule.** On the **Plan board** (D-03), drag a chilled order onto an ambient truck. The move is refused with the rule it breaks ("needs reefer, rule 2"). **Move to…** gives a keyboard alternative. A timing or fuel overrun (for example "trip 2 too late") can be overridden with a written reason; physical rules never can. The **Improvement pass** note above the board lists what the optimiser changed after the flowchart algorithm.
 4. **Explain the deferrals.** Open **Deferrals** (D-04). Every order that did not fit shows why (unavoidable, capacity-forced or chosen), with its fairness history. Keep one with a reason, or swap it with another order. An outlet skipped two runs in a row is flagged red, and publishing waits for a recorded reason.
 5. **Publish** (D-05). Pre-publish checks run, then loaders get load lists, drivers get their runs, and stores get an arrival time or a plain-language deferral notice (store: SM-03 tracking / SM-04 notice).
@@ -82,6 +82,7 @@ The seeded operation is **Tue 23 Dec 2025**, the Christmas peak. The app runs on
    - go back online: they sync in order, with the times as recorded
 8. **Tue 06:30: live operations.** The demo panel moves the other trucks along their plans. On **Live** (D-06), trips are ranked by risk: not departed, long stop, late risk. Try **Warn store**, **Send new ETAs**, **Message driver** (it appears on the driver's phone immediately), and **Defer to Wed** on a late stop.
 9. **The dead-zone conflict (DG-01 / DG-02).** Defer one of the demo driver's remaining stops. On the driver's phone, press **Tell dispatcher: I can deliver now**. In **Live → Reconciliation**, the dispatcher sees their own change next to the truck's reality and chooses **Deliver today** or **Keep the next run**. The answer arrives on the driver's phone and at the store.
+   - **Deliver today · ask the store** (DG-03): the store's window may already have closed, so the store decides. Switch the store account to that outlet: it sees **Your order can come today after all** with **Accept today** or **Keep it for Wed**. Accepting cancels the move; the driver gets **Deliver now**, and the dispatcher sees the conflict settled. The store's order page keeps every message, with the replaced deferral notice struck through.
 10. **Tue 09:00: the store confirms receipt.** As the store manager, open **Receive** (SM-05). It shows the driver's record (times, units, signature). Count what arrived; a short count or damage (with a photo) goes to the dispatcher's exception feed, where they can reply.
 11. **Capacity** (D-07). The dispatcher's **Forecast** screen turns weekly demand into reefer trips needed per week against the 108 available. **Load forecast file** accepts the Datathon Task 2A submission CSV.
 12. **Everyone's notifications.** Every role has a bell at the top right. Anything missed while offline or on another screen is there, with unread markers.
@@ -112,10 +113,10 @@ For development, point `DATABASE_URL` in `.env` at either the local Postgres (`l
 | Piece | Service | Configuration |
 |---|---|---|
 | App | Vercel | Root `apps/web`; every variable from `.env.example` |
-| Database | Neon | `DATABASE_URL` (pooled) and `DATABASE_URL_UNPOOLED`; run `pnpm db:migrate && pnpm db:seed` once |
+| Database | Neon | `DATABASE_URL` (pooled) and `DATABASE_URL_UNPOOLED`; run `pnpm db:migrate && pnpm db:seed` once (the seed also saves the demo baseline, so **Reset demo data** works without the CSVs) |
 | Realtime | Convex Cloud | `CONVEX_DEPLOY_KEY`, `NEXT_PUBLIC_CONVEX_URL`; `npx convex deploy` from `apps/web`; set `CONVEX_SERVER_SECRET` in the Convex environment |
 | Redis, jobs | Upstash | `UPSTASH_REDIS_REST_*`, `QSTASH_*`; then `APP_URL=https://… pnpm --filter web jobs:schedule` |
-| Files | Neon Object Storage | the `S3_*` variables |
+| Files | Postgres (default) or any S3 API | leave `S3_ENDPOINT` empty to store files in Postgres, or set the `S3_*` variables |
 
 ## Dataset and privacy
 

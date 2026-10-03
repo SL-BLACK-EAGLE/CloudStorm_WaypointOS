@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/wp/action-button";
 import { TempTag } from "@/components/wp/chips";
-import { hhmm, kg, m3 } from "@/lib/format";
+import { DOCK_LABEL, hhmm, kg, m3 } from "@/lib/format";
 import { loadList } from "@/lib/server/dock";
 import { requireUser } from "@/lib/server/session";
 import { cn } from "@/lib/utils";
@@ -41,7 +41,7 @@ export default async function LoadListPage({ params }: PageProps<"/dock/[tripId]
             {trip.vehicleId} · {trip.code}
           </h1>
           <p className="text-base text-muted-foreground">
-            {trip.vTemp} {trip.vType} · {trip.brand} · {trip.district} · {stops.length} stops
+            {trip.vTemp} {trip.vType} · {trip.brand} · {trip.district} · {stops.length} stop{stops.length === 1 ? "" : "s"}
           </p>
         </div>
         <div className="text-right">
@@ -62,6 +62,19 @@ export default async function LoadListPage({ params }: PageProps<"/dock/[tripId]
           const isLoaded = loaded.has(s.orderId);
           const short = flagged.get(s.orderId);
           const isCurrent = !locked && current?.orderId === s.orderId;
+          const status = short ? (
+            <span className="inline-flex items-center gap-1 font-semibold text-exception">
+              <TriangleAlert className="size-5" /> {short.units} {short.kind === "missing" ? "short" : "damaged"}
+            </span>
+          ) : isLoaded ? (
+            <span className="inline-flex items-center gap-1 text-lg font-semibold">
+              <Check className="size-6" /> Loaded
+            </span>
+          ) : isCurrent ? (
+            <span className="text-base font-semibold">Checking</span>
+          ) : (
+            <span className="text-base text-muted-foreground">To load</span>
+          );
           return (
             <li key={s.id} className={cn("rounded-lg border-2 bg-card", isCurrent ? "border-foreground" : "border-border", isLoaded && "opacity-80")}>
               <div className="flex items-center gap-3 p-3">
@@ -73,10 +86,14 @@ export default async function LoadListPage({ params }: PageProps<"/dock/[tripId]
                 <div className="min-w-0 flex-1">
                   <p className="num text-2xl font-bold">{s.outletId}</p>
                   <p className="num text-sm text-muted-foreground">
-                    {s.dock} · {hhmm(s.open)}–{hhmm(s.close)} {s.version > 1 && <strong className="text-foreground">· changed</strong>}
+                    {DOCK_LABEL[s.dock as keyof typeof DOCK_LABEL] ?? s.dock} · <span className="whitespace-nowrap">{hhmm(s.open)}–{hhmm(s.close)}</span>{" "}
+                    {s.version > 1 && <strong className="text-foreground">· changed</strong>}
                   </p>
+                  <div className="mt-1 sm:hidden">
+                    {status}
+                  </div>
                 </div>
-                <div className="text-right">
+                <div className="shrink-0 text-right">
                   <p className="num text-3xl font-bold">{s.units}</p>
                   <p className="text-xs text-muted-foreground">units</p>
                 </div>
@@ -84,20 +101,8 @@ export default async function LoadListPage({ params }: PageProps<"/dock/[tripId]
                   <p className="num">{kg(s.kg)}</p>
                   <p className="num">{m3(s.m3, 3)}</p>
                 </div>
-                <div className="w-32 shrink-0 text-right">
-                  {short ? (
-                    <span className="inline-flex items-center gap-1 font-semibold text-exception">
-                      <TriangleAlert className="size-5" /> {short.units} {short.kind === "missing" ? "short" : "damaged"}
-                    </span>
-                  ) : isLoaded ? (
-                    <span className="inline-flex items-center gap-1 text-lg font-semibold">
-                      <Check className="size-6" /> Loaded
-                    </span>
-                  ) : isCurrent ? (
-                    <span className="text-base font-semibold">Checking</span>
-                  ) : (
-                    <span className="text-base text-muted-foreground">To load</span>
-                  )}
+                <div className="hidden w-32 shrink-0 text-right sm:block">
+                  {status}
                 </div>
               </div>
               {isCurrent && (

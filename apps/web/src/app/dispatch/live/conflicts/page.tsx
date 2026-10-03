@@ -11,7 +11,7 @@ import { reconciliation, type ConflictCard } from "@/lib/server/live";
 import { cn } from "@/lib/utils";
 import { DispatchHeader } from "../../_components/header";
 import { currentDepot } from "../../depot";
-import { resolveConflictAction } from "../actions";
+import { askStoreAction, resolveConflictAction } from "../actions";
 
 export const metadata: Metadata = { title: "DG-02 Reconciliation" };
 
@@ -121,8 +121,8 @@ export default async function ReconciliationPage() {
                     })}
                   </ol>
                   <p className="border-t px-4 py-3 text-[13px] text-muted-foreground">
-                    Live operations, store tracking and the lateness history show these times as recorded, not the time the phone reconnected. Late
-                    arrivals feed the Datathon lateness model.
+                    Live operations, store tracking and the lateness history show these times as recorded, not the time the phone reconnected, so
+                    lateness is measured against when the truck really arrived.
                   </p>
                 </Panel>
                 <div className="space-y-4">
@@ -153,6 +153,7 @@ export default async function ReconciliationPage() {
 function Conflict({ c }: { c: ConflictCard }) {
   const s = c.stop;
   const moved = s.status === "skipped";
+  const ask = (c.detail as { storeAsk?: { askedMin: number; eta: number } }).storeAsk ?? null;
   const driver = typeof c.detail.driver === "string" ? c.detail.driver : "The driver";
   return (
     <Panel className="border-conflict-border">
@@ -228,14 +229,32 @@ function Conflict({ c }: { c: ConflictCard }) {
                 </p>
               </div>
             </div>
-            <p className="text-[13px] text-muted-foreground">The driver waits parked. The answer goes to the driver and the store.</p>
+            {ask ? (
+              <p className="rounded-md border border-conflict-border bg-conflict-bg p-3 text-[13px] text-conflict">
+                <strong>Waiting for {s.outletId}&apos;s answer</strong> · asked {hhmm(ask.askedMin)}, arrival about {hhmm(ask.eta)}. The store sees
+                &ldquo;Accept today&rdquo; or &ldquo;Keep it for the next run&rdquo;; the driver waits parked and gets the answer.
+              </p>
+            ) : (
+              <p className="text-[13px] text-muted-foreground">The driver waits parked. The answer goes to the driver and the store.</p>
+            )}
             <div className="flex flex-wrap gap-2">
               <ActionButton action={resolveConflictAction} fields={{ conflictId: c.id, resolution: "keep_next_run" }} variant="outline">
                 Keep the next run
               </ActionButton>
-              <ActionButton action={resolveConflictAction} fields={{ conflictId: c.id, resolution: "deliver_today" }}>
-                Deliver today · ask the store
-              </ActionButton>
+              {ask ? (
+                <ActionButton
+                  action={resolveConflictAction}
+                  fields={{ conflictId: c.id, resolution: "deliver_today" }}
+                  variant="outline"
+                  confirm={`Deliver today without ${s.outletId}'s answer? Use this only if the store agreed by phone.`}
+                >
+                  Deliver today without waiting
+                </ActionButton>
+              ) : (
+                <ActionButton action={askStoreAction} fields={{ conflictId: c.id }}>
+                  Deliver today · ask the store
+                </ActionButton>
+              )}
             </div>
           </>
         ) : (

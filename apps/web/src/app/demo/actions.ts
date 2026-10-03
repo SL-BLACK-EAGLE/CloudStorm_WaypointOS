@@ -29,7 +29,7 @@ export async function setClockAction(form: FormData): Promise<Result> {
   refresh();
   return {
     ok: true,
-    message: `Business clock: ${c.iso.replace("T", " ").slice(0, 16)}${c.running ? ` · running ×${c.speed}` : " · paused"}${sim.trips ? ` · other drivers: ${sim.departed} trucks left, ${sim.delivered} stops delivered` : ""}`,
+    message: `Business clock: ${c.iso.replace("T", " ").slice(0, 16)}${c.running ? ` · running ×${c.speed}` : " · paused"}${sim.departed + sim.delivered ? ` · other drivers: ${sim.departed} trucks left, ${sim.delivered} stops delivered` : ""}`,
   };
 }
 
@@ -46,7 +46,7 @@ export async function simulateAction(): Promise<Result> {
   refresh();
   return {
     ok: true,
-    message: sim.trips ? `Other drivers: ${sim.departed} trucks left, ${sim.delivered} stops delivered.` : "Nothing to move - no published plan is running at this time.",
+    message: !sim.trips ? "Nothing to move - no published plan is running at this time." : sim.departed + sim.delivered ? `Other drivers: ${sim.departed} trucks left, ${sim.delivered} stops delivered.` : "The other trucks are already where the plan puts them at this time.",
   };
 }
 
@@ -94,8 +94,14 @@ export async function resetDemoAction(): Promise<Result> {
   const user = await requireUser();
   try {
     const seed = await import("@waypoint/db/seed");
-    seed.dataDir();
-    await seed.seedOperations(db());
+    if (await seed.hasBaseline(db())) {
+      // hosted or local: restore the seeded state kept in the database (no CSVs needed)
+      await seed.restoreBaseline(db());
+    } else {
+      seed.dataDir();
+      await seed.seedOperations(db());
+      await seed.saveBaseline(db());
+    }
     await seed.seedUsers(db());
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message.split("\n")[0]! : "Reset failed" };

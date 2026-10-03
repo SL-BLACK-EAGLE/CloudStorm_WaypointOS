@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 import { dayLabel, hhmm } from "@/lib/format";
 import { decideShortfall } from "@/lib/server/dock";
-import { closeException, deferStop, markHandled, messageDriver, replyStore, resolveConflict, warnStore, warnTripStores } from "@/lib/server/live";
+import { askStore, closeException, deferStop, markHandled, messageDriver, replyStore, resolveConflict, warnStore, warnTripStores } from "@/lib/server/live";
 import { kickRelay } from "@/lib/server/relay";
 import { requireUser } from "@/lib/server/session";
 import type { ActionResult } from "../actions";
@@ -106,5 +106,15 @@ export async function resolveConflictAction(form: FormData) {
   return run(async (userId) => {
     const r = await resolveConflict({ ...p.data, userId });
     return `${r.outletId}: ${r.text}. The driver sees it at the next sync.`;
+  });
+}
+
+/** DG-02 "Deliver today · ask the store": the window has closed, so the store decides (DG-03). */
+export async function askStoreAction(form: FormData) {
+  const id = z.uuid().safeParse(form.get("conflictId"));
+  if (!id.success) return fail(new Error("Unknown conflict"));
+  return run(async (userId) => {
+    const r = await askStore({ conflictId: id.data, userId });
+    return `${r.outletId} asked to accept a delivery about ${hhmm(r.eta)}. The driver waits for the answer.`;
   });
 }

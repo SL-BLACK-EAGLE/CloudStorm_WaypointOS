@@ -8,11 +8,13 @@ import { TempTag } from "@/components/wp/chips";
 import { Panel, PanelHeader } from "@/components/wp/panel";
 import { colombo, dayLabel, hhmm, kg, m3 } from "@/lib/format";
 import { requireUser } from "@/lib/server/session";
+import { orderMessages, pendingStoreAsk } from "@/lib/server/live";
 import { outletInfo, stageOf, storeOrders } from "@/lib/server/store";
 import { cn } from "@/lib/utils";
 import { ackNoticeAction } from "../../actions";
 import { MessageDispatcher } from "../../message-dispatcher";
 import { StagePill } from "../../stage-pill";
+import { OrderMessages, StoreAsk } from "./store-ask";
 
 export const metadata: Metadata = { title: "SM-03 Order tracking" };
 
@@ -26,6 +28,9 @@ export default async function OrderPage({ params }: PageProps<"/store/orders/[id
   const o = all.find((x) => x.id === id);
   if (!o) notFound();
   const stage = stageOf(o);
+  const [ask, messages] = await Promise.all([pendingStoreAsk(o.id), orderMessages(outlet.id, o.id)]);
+  // DG-03: a moved order offered back for today - the store decides
+  if (ask) return <StoreAsk order={{ id: o.id, temp: o.temp, units: o.units, kg: o.weightKg }} ask={ask} messages={messages} />;
   const siblings = all.filter((x) => (x.runDate === o.runDate && x.id !== o.id) || (o.deferral && x.requestedDate === o.requestedDate && x.id !== o.id));
 
   if (stage === "deferred" && o.deferral) {
@@ -201,6 +206,7 @@ export default async function OrderPage({ params }: PageProps<"/store/orders/[id
           </Button>
         )}
         <MessageDispatcher orderId={o.id} />
+        <OrderMessages messages={messages} />
       </aside>
     </main>
   );

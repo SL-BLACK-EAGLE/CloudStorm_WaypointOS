@@ -1,4 +1,4 @@
-import { ArrowRight, SkipForward } from "lucide-react";
+import { ArrowRight, RotateCcw, SkipForward } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { CUTOFF_MIN } from "@/lib/time-rules";
 import { db, t } from "@/lib/server/db";
 import { runs } from "@/lib/server/runs";
 import { requireUser } from "@/lib/server/session";
+import { pendingStoreAsk } from "@/lib/server/live";
 import { orderingRun, outletInfo, stageOf, storeOrders, type StoreOrder } from "@/lib/server/store";
 import { and, eq } from "@waypoint/db/orm";
 import { cn } from "@/lib/utils";
@@ -32,8 +33,12 @@ export default async function StoreHome() {
     .select()
     .from(t.serviceAllowances)
     .where(and(eq(t.serviceAllowances.brand, outlet.brand), eq(t.serviceAllowances.dockType, outlet.dockType)));
-  const next = today.find((o) => o.stop && o.stop.status !== "delivered") ?? today.find((o) => o.stop);
+  // A skipped stop belongs to the run the order was moved off, so it is not this run's delivery.
+  const onRun = (o: StoreOrder) => !!o.stop && o.stop.status !== "skipped";
+  const next = today.find((o) => onRun(o) && o.stop!.status !== "delivered") ?? today.find(onRun);
   const deferredToday = today.filter((o) => stageOf(o) === "deferred");
+  // DG-03: any moved order the dispatcher has offered back for today
+  const asks = (await Promise.all([...activeOrders, ...today].filter((o, i, a) => a.findIndex((x) => x.id === o.id) === i).map(async (o) => ({ o, ask: await pendingStoreAsk(o.id) })))).filter((x) => x.ask);
   const minsToCutoff = clock.date < ordering.requested ? CUTOFF_MIN - clock.minute : 0;
 
   return (
@@ -85,6 +90,19 @@ export default async function StoreHome() {
         </Button>
       </Panel>
 
+      {asks.map(({ o, ask }) => (
+        <Link key={`ask-${o.id}`} href={`/store/orders/${o.id}`} className="flex items-center gap-3 rounded-lg border border-conflict-border bg-conflict-bg p-4 text-conflict lg:col-span-2">
+          <RotateCcw className="size-5 shrink-0" />
+          <span className="flex-1">
+            <strong>Your {o.temp === "chilled" ? "chilled" : "dry"} order can come today after all</strong>
+            <span className="block text-sm">
+              Arrives about {hhmm(ask!.ask.eta)}
+              {ask!.ask.eta > ask!.close ? ", after your window" : ""} · the driver is waiting for your answer
+            </span>
+          </span>
+          <ArrowRight className="size-4" />
+        </Link>
+      ))}
       {deferredToday.map((o) => (
         <Link
           key={o.id}

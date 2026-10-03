@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { userForApi } from "@/lib/server/session";
-import { ALLOWED_TYPES, MAX_BYTES, putObject, storageConfigured } from "@/lib/server/storage";
+import { ALLOWED_TYPES, MAX_BYTES, putObject } from "@/lib/server/storage";
 
 const KINDS = ["pod", "signature", "shortfall", "receipt", "exception"] as const;
 
@@ -12,7 +12,6 @@ const KINDS = ["pod", "signature", "shortfall", "receipt", "exception"] as const
 export async function POST(req: Request) {
   const user = await userForApi();
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
-  if (!storageConfigured()) return Response.json({ error: "Object storage is not configured" }, { status: 503 });
   const form = await req.formData();
   const file = form.get("file");
   const kind = String(form.get("kind") ?? "");

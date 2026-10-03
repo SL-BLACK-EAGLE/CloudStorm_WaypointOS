@@ -37,6 +37,9 @@ import { ackDriverNoticeAction, canDeliverAction } from "./actions";
 
 type View = { name: "run" } | { name: "stop"; stopId: string } | { name: "deliver"; stopId: string } | { name: "exception"; stopId: string } | { name: "outbox" };
 
+/** Stop screens (arrive, proof, problem) open only once the trip has left - recorded on this phone counts, even offline. */
+const hasDeparted = (trip: { status: string; departedMin: number | null }) => trip.status === "en_route" || trip.status === "completed" || trip.departedMin !== null;
+
 const HASH_EVENT = "wp-hashchange";
 function subscribeHash(cb: () => void) {
   window.addEventListener("hashchange", cb);
@@ -92,10 +95,10 @@ export function DriveApp({ serverPack, userId }: { serverPack: RunPack | null; u
       {view.name === "run" && <Notices notices={pack.notices ?? []} online={d.online} />}
       {changed.length > 0 && view.name === "run" && <PlanChanged stops={changed} online={d.online} waiting={waiting} />}
       {view.name === "run" && <RunView pack={pack} now={now!.minute} online={d.online} onOpen={(s) => go({ name: "stop", stopId: s })} record={d.record} />}
-      {view.name === "stop" && findStop(view.stopId) && (
+      {(view.name === "stop" || ((view.name === "deliver" || view.name === "exception") && findStop(view.stopId) && !hasDeparted(findStop(view.stopId)!.trip))) && findStop(view.stopId) && (
         <NextStopView stop={findStop(view.stopId)!} trip={findStop(view.stopId)!.trip} now={now!.minute} onBack={() => go({ name: "run" })} onArrive={() => go({ name: "deliver", stopId: view.stopId })} onProblem={() => go({ name: "exception", stopId: view.stopId })} record={d.record} />
       )}
-      {view.name === "deliver" && findStop(view.stopId) && (
+      {view.name === "deliver" && findStop(view.stopId) && hasDeparted(findStop(view.stopId)!.trip) && (
         <DeliverView
           stop={findStop(view.stopId)!}
           trip={findStop(view.stopId)!.trip}
@@ -110,7 +113,7 @@ export function DriveApp({ serverPack, userId }: { serverPack: RunPack | null; u
           onBack={() => go({ name: "stop", stopId: view.stopId })}
         />
       )}
-      {view.name === "exception" && findStop(view.stopId) && (
+      {view.name === "exception" && findStop(view.stopId) && hasDeparted(findStop(view.stopId)!.trip) && (
         <ExceptionView
           stop={findStop(view.stopId)!}
           trip={findStop(view.stopId)!.trip}
@@ -256,7 +259,7 @@ function PlanChanged({ stops, online, waiting }: { stops: PackStop[]; online: bo
 function RunView({ pack, now, online, onOpen, record }: { pack: RunPack; now: number; online: boolean; onOpen: (stopId: string) => void; record: ReturnType<typeof useDriver>["record"] }) {
   const [pending, setPending] = useState(false);
   const active = pack.trips.find((t) => t.status !== "completed" && t.stops.some((s) => s.status === "planned" || s.status === "arrived")) ?? pack.trips[pack.trips.length - 1]!;
-  const departed = active.status === "en_route" || active.departedMin !== null;
+  const departed = hasDeparted(active);
   const next = active.stops.find((s) => s.status === "planned" || s.status === "arrived");
   const units = active.stops.reduce((n, s) => n + s.units, 0);
   const kg = active.stops.reduce((n, s) => n + s.kg, 0);
@@ -471,13 +474,13 @@ function NextStopView({
         </Button>
         <Button
           size="hero"
-          disabled={stop.status === "delivered" || stop.status === "skipped"}
+          disabled={stop.status === "delivered" || stop.status === "skipped" || (stop.status === "planned" && !hasDeparted(trip))}
           onClick={async () => {
             if (stop.status === "planned") await record({ type: "stop.arrive", tripId: trip.tripId, stopId: stop.stopId, baseVersion: stop.version });
             onArrive();
           }}
         >
-          {stop.status === "delivered" ? "Delivered" : stop.status === "skipped" ? "Moved by the dispatcher" : "I've arrived"}
+          {stop.status === "delivered" ? "Delivered" : stop.status === "skipped" ? "Moved by the dispatcher" : !hasDeparted(trip) ? "Start the trip first" : "I've arrived"}
         </Button>
         <p className="text-center text-sm text-muted-foreground">Business time {hhmm(now)}</p>
       </div>
@@ -581,17 +584,17 @@ function DeliverView({
       <section className="space-y-2">
         <p className="text-lg font-semibold">Units handed over</p>
         <div className="flex items-center gap-3">
-          <Button size="icon-lg" variant="outline" className="size-16 border-2 border-foreground" onClick={() => setUnits((u) => Math.max(0, u - 1))} aria-label="One less">
+          <Button size="icon-lg" variant="outline" className="size-16 shrink-0 border-2 border-foreground" onClick={() => setUnits((u) => Math.max(0, u - 1))} aria-label="One less">
             <Minus className="size-7" />
           </Button>
           <input
             value={units}
             onChange={(e) => setUnits(Math.max(0, Math.min(stop.units, Number(e.target.value) || 0)))}
             inputMode="numeric"
-            className="num h-16 flex-1 rounded-lg border-2 border-foreground bg-card text-center text-4xl font-bold"
+            className="num h-16 w-full min-w-0 flex-1 rounded-lg border-2 border-foreground bg-card text-center text-4xl font-bold"
             aria-label="Units handed over"
           />
-          <Button size="icon-lg" variant="outline" className="size-16 border-2 border-foreground" onClick={() => setUnits((u) => Math.min(stop.units, u + 1))} aria-label="One more">
+          <Button size="icon-lg" variant="outline" className="size-16 shrink-0 border-2 border-foreground" onClick={() => setUnits((u) => Math.min(stop.units, u + 1))} aria-label="One more">
             <Plus className="size-7" />
           </Button>
         </div>

@@ -96,7 +96,7 @@ export default async function DemoPage() {
               );
             })}
           </ul>
-          <ClockForm current={clock.iso.slice(0, 16)} running={clock.running} speed={clock.speed} />
+          <ClockForm key={clock.iso.slice(0, 16)} current={clock.iso.slice(0, 16)} running={clock.running} speed={clock.speed} />
           <div className="flex flex-wrap items-center gap-3 border-t pt-4">
             <p className="flex-1 text-sm text-muted-foreground">
               Only the demo driver&apos;s phone records real events. Every other truck follows its plan up to the clock (with road drift, one long stop, and

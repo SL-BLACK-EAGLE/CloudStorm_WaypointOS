@@ -1,11 +1,14 @@
 import "server-only";
 import { CreateBucketCommand, GetObjectCommand, HeadBucketCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { eq } from "@waypoint/db/orm";
+import { db, t } from "./db";
 
 /**
  * Object storage for proof-of-delivery photos, signatures and shortfall evidence.
- * Neon Object Storage in the cloud and SeaweedFS in docker - both speak the S3 API,
- * so this is the only storage code. Objects are never public: they are served through
- * /api/files, which checks the caller's session first.
+ * Any S3-compatible store (SeaweedFS in docker, Neon Object Storage / S3 in the cloud) when
+ * S3_ENDPOINT is set; otherwise Postgres (the `files` table), so a deployment needs no extra
+ * service. Objects are never public: they are served through /api/files, which checks the
+ * caller's session first.
  */
 let client: S3Client | null = null;
 let bucketReady: Promise<void> | null = null;
@@ -47,12 +50,27 @@ export const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 export const MAX_BYTES = 3 * 1024 * 1024;
 
 export async function putObject(key: string, body: Uint8Array, contentType: string) {
+  if (!storageConfigured()) {
+    const data = Buffer.from(body);
+    await db().insert(t.files).values({ key, contentType, data }).onConflictDoUpdate({ target: t.files.key, set: { contentType, data } });
+    return key;
+  }
   await ensureBucket();
   await s3().send(new PutObjectCommand({ Bucket: bucket(), Key: key, Body: body, ContentType: contentType }));
   return key;
 }
 
-export async function getObject(key: string) {
-  const r = await s3().send(new GetObjectCommand({ Bucket: bucket(), Key: key }));
-  return { body: r.Body, contentType: r.ContentType ?? "application/octet-stream" };
+/** The stored bytes and their type, or null when the key does not exist. */
+export async function getObject(key: string): Promise<{ bytes: Uint8Array; contentType: string } | null> {
+  if (!storageConfigured()) {
+    const [row] = await db().select().from(t.files).where(eq(t.files.key, key));
+    return row ? { bytes: new Uint8Array(row.data), contentType: row.contentType } : null;
+  }
+  try {
+    const r = await s3().send(new GetObjectCommand({ Bucket: bucket(), Key: key }));
+    const body = r.Body as { transformToByteArray: () => Promise<Uint8Array> };
+    return { bytes: await body.transformToByteArray(), contentType: r.ContentType ?? "application/octet-stream" };
+  } catch {
+    return null;
+  }
 }

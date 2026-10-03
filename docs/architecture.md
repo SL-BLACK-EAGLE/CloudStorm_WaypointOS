@@ -12,8 +12,49 @@ Waypoint Delivery OS is one Next.js 16 app serving four roles (dispatcher, loade
 | Auth | Clerk (Core 3) | Clerk development instance | Sign-in/up; role and scope live in Postgres, mirrored to Clerk metadata |
 | Cache, locks, rate limits | Upstash Redis | `redis` + `redis-rest` (SRH) | Rate limits on sync/uploads, idempotency claims, relay lock |
 | Jobs | Upstash QStash | per-request `after()` kick | Signed, retried outbox sweep (`/api/jobs/relay`) |
-| Files | Neon Object Storage (S3 API) | `s3` (SeaweedFS) | Signatures, delivery/damage/shortfall photos |
-| AI | Neon AI Gateway | deterministic fallback | Plain-language deferral explanations (template fallback when no gateway) |
+| Files | Postgres `files` table, or any S3 API when `S3_ENDPOINT` is set | `s3` (SeaweedFS) | Signatures, delivery/damage/shortfall photos |
+| Explanations | - | - | Plain-language deferral reasons from deterministic templates (`apps/web/src/lib/explain.ts`); no LLM is called at runtime |
+
+## System diagram
+
+```mermaid
+flowchart LR
+  subgraph Phones["Phones and desks"]
+    D[Dispatcher<br/>desktop]
+    L[Loader<br/>phone at the dock]
+    DR[Driver<br/>offline PWA]
+    S[Store manager<br/>tablet / desktop]
+  end
+
+  subgraph App["Next.js 16 app (Vercel or docker `web`)"]
+    UI[Server components<br/>+ server actions]
+    API[Route handlers<br/>/api/sync · /api/uploads · /api/files<br/>/api/notifications · /api/jobs/*]
+    PL[packages/planner<br/>flowchart algorithm + improvement pass]
+    RL[Outbox relay]
+  end
+
+  PG[(Postgres / Neon<br/>system of record<br/>+ outbox + files)]
+  RD[(Redis / Upstash<br/>locks · rate limits · idempotency)]
+  QS[QStash<br/>signed outbox sweep]
+  CX[Convex<br/>change signals only]
+  CK[Clerk<br/>sign-in]
+
+  D & L & S --> UI
+  DR -- "events (UUIDv7, seq, version)" --> API
+  DR -. "service worker + IndexedDB<br/>run pack" .-> DR
+  UI --> PL
+  UI & API -- "one transaction:<br/>rows + outbox row" --> PG
+  API --> RD
+  QS -- "every minute" --> RL
+  UI -- "after() kick" --> RL
+  RL -- "Redis lock" --> RD
+  RL -- "read pending" --> PG
+  RL -- "signals.relay" --> CX
+  CX -- websocket --> D & L & DR & S
+  UI & API --> CK
+```
+
+Screens subscribe to Convex channels and re-read Postgres when a signal moves. Without Convex they poll; without Redis or QStash the per-request kick still relays the outbox.
 
 ## The one data-flow rule
 
@@ -74,6 +115,8 @@ The driver app keeps working with no signal:
 ## Business clock
 
 The seeded operation is Tue 23 Dec 2025, so the app runs on a demo clock stored in `app_settings`. The `/demo` panel sets it, and a fleet simulator advances every truck not driven by a signed-in driver along its plan, with road-disruption drift. Every timestamp a user sees comes from this clock (`businessDate()`).
+
+**Demo reset without the dataset.** Seeding from the CSVs also copies every operational table into a `demo_baseline` schema in the same database. "Reset demo data" on `/demo` restores from that copy in one transaction, so a hosted deployment can be reset without shipping the confidential CSVs.
 
 ## Security
 

@@ -4,6 +4,7 @@ import { and, eq, isNull } from "@waypoint/db/orm";
 import { refresh } from "next/cache";
 import { z } from "zod";
 import { db, t } from "@/lib/server/db";
+import { storeAnswer } from "@/lib/server/live";
 import { kickRelay } from "@/lib/server/relay";
 import { rateLimit } from "@/lib/server/redis";
 import { requireUser } from "@/lib/server/session";
@@ -69,4 +70,19 @@ export async function ackNoticeAction(form: FormData): Promise<{ ok: true; messa
     .where(and(eq(t.notifications.outletId, user.outletId!), eq(t.notifications.link, `/store/orders/${orderId}`), isNull(t.notifications.readAt)));
   refresh();
   return { ok: true, message: "Noted." };
+}
+
+/** DG-03: accept the late delivery today, or keep the next-run slot. */
+export async function storeAnswerAction(form: FormData): Promise<{ ok: true; message: string } | { ok: false; error: string }> {
+  const user = await requireUser(["store_manager"]);
+  const p = z.object({ conflictId: z.uuid(), accept: z.enum(["1", "0"]) }).safeParse(Object.fromEntries(form));
+  if (!p.success) return { ok: false, error: "Unknown question" };
+  try {
+    const r = await storeAnswer({ conflictId: p.data.conflictId, outletId: user.outletId!, userId: user.id, accept: p.data.accept === "1" });
+    kickRelay();
+    refresh();
+    return { ok: true, message: r.accept ? "Accepted - the driver is on the way. The later move is cancelled." : "Kept for the next run. The driver brings it back to the depot." };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Could not record your answer" };
+  }
 }
