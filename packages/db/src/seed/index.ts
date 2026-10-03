@@ -14,6 +14,7 @@ import * as s from "../schema";
 import { buildCatalog } from "./catalog";
 import { int, num, orNull, readCsv, type Row } from "./csv";
 import { DEMO_CLOCK_START, DEMO_RUN_DATE, DEPOTS, HISTORY_FROM, WALKTHROUGH_OUTLET, WORKSHOP } from "./scenario";
+import { saveBaseline } from "./baseline";
 import { seedUsers } from "./users";
 
 config({ path: "../../.env" });
@@ -325,6 +326,8 @@ async function main() {
   await seedOperations(db);
   console.log("seeding demo users…");
   await seedUsers(db);
+  console.log("saving the demo baseline (used by Reset demo data)…");
+  await saveBaseline(db);
   console.log(`done in ${((Date.now() - t) / 1000).toFixed(1)} s`);
   await closeDb(db);
 }

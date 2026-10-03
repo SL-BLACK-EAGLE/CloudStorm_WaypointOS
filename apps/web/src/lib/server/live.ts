@@ -654,7 +654,7 @@ export async function resolveConflict(opts: { conflictId: string; resolution: "d
         title: opts.resolution === "deliver_today" ? `Deliver ${s.outletId} now` : opts.resolution === "keep_next_run" ? `Keep ${s.outletId} for the next run` : `Your record for ${s.outletId} stands`,
         body:
           opts.resolution === "deliver_today"
-            ? `The dispatcher cancelled the move. The store has been asked to accept a delivery after its window.${opts.note ? ` ${opts.note}` : ""}`
+            ? `The dispatcher cancelled the move and the store agreed to take it today.${opts.note ? ` ${opts.note}` : ""}`
             : opts.resolution === "keep_next_run"
               ? `Keep ${s.orderId} (${s.units} units) on board and bring it back to the depot.${opts.note ? ` ${opts.note}` : ""}`
               : "The dispatcher reviewed the change and kept what you recorded.",
@@ -666,7 +666,7 @@ export async function resolveConflict(opts: { conflictId: string; resolution: "d
       await notify(tx, {
         type: "order.restored",
         title: "Your delivery is coming today after all",
-        body: `${s.vehicleId} is close and can still deliver ${s.orderId} today, after your ${hhmm(s.close)} close. The move to the next run is withdrawn - tell the dispatcher if you cannot receive it.`,
+        body: `${s.vehicleId} is close and can still deliver ${s.orderId} today${(await now()).minute > s.close ? `, after your ${hhmm(s.close)} close` : `, before your ${hhmm(s.close)} close`}. The move to the next run is withdrawn - tell the dispatcher if you cannot receive it.`,
         link: `/store/orders/${s.orderId}`,
         severity: "late-risk",
         outletId: s.outletId,
@@ -676,4 +676,151 @@ export async function resolveConflict(opts: { conflictId: string; resolution: "d
   });
   if (opts.resolution === "deliver_today") await refreshEtas(s.tripId).catch(() => undefined);
   return { text, outletId: s.outletId };
+}
+
+// ─────────────────────────────────────────────────────────────── DG-02 → DG-03: ask the store
+
+interface StoreAsk {
+  askedAt: string;
+  askedMin: number;
+  eta: number;
+  by: string;
+}
+interface StoreAnswer {
+  accept: boolean;
+  at: string;
+  atMin: number;
+  by: string;
+}
+const askOf = (detail: unknown) => (detail as { storeAsk?: StoreAsk } | null)?.storeAsk ?? null;
+const answerOf = (detail: unknown) => (detail as { storeAnswer?: StoreAnswer } | null)?.storeAnswer ?? null;
+
+/** The earlier "skip this stop" instruction on the driver's phone is superseded by a decision. */
+async function clearSkipNotice(tx: Executor, driverUserId: string | null, outletId: string, at: Date) {
+  if (!driverUserId) return;
+  await tx
+    .update(t.notifications)
+    .set({ readAt: at })
+    .where(and(eq(t.notifications.recipientUserId, driverUserId), eq(t.notifications.type, "stop.skipped"), like(t.notifications.title, `Skip ${outletId} %`), isNull(t.notifications.readAt)));
+  await tx
+    .update(t.notifications)
+    .set({ readAt: at })
+    .where(and(eq(t.notifications.recipientUserId, driverUserId), eq(t.notifications.type, "conflict.waiting"), like(t.notifications.title, `Asking ${outletId} %`), isNull(t.notifications.readAt)));
+}
+
+/**
+ * DG-02 "Deliver today · ask the store". The window has closed, so a late delivery must be the store's
+ * choice, not an assumption: the store gets the decision (DG-03), the driver waits parked.
+ */
+export async function askStore(opts: { conflictId: string; userId: string }) {
+  const [c] = await db().select().from(t.conflicts).where(eq(t.conflicts.id, opts.conflictId));
+  if (!c || !c.stopId) throw new Error("Conflict not found");
+  if (c.status === "resolved") throw new Error("Already decided");
+  if (askOf(c.detail)) throw new Error("The store has already been asked");
+  const s = await stopContext(c.stopId);
+  if (s.status !== "skipped") throw new Error("Only a stop that was moved to the next run can be offered back to the store");
+  const at = await now();
+  const eta = Math.round(at.minute + 5); // the driver is parked a few minutes away and has asked to deliver now
+  const R = await reference();
+  const next = nextOperatingDay(R, s.runDate);
+  const ask: StoreAsk = { askedAt: businessDate(at).toISOString(), askedMin: at.minute, eta, by: opts.userId };
+  await db().transaction(async (tx) => {
+    await tx
+      .update(t.conflicts)
+      .set({ detail: { ...(c.detail ?? {}), storeAsk: ask } })
+      .where(eq(t.conflicts.id, c.id));
+    await notify(tx, {
+      type: "order.ask",
+      title: "Your order can come today after all",
+      body: `We moved ${s.orderId} to ${dayLabel(next)} because we had lost contact with the truck. It still has your ${s.units} units and is about 5 minutes away - arriving about ${hhmm(eta)}, ${eta > s.close ? `after your ${hhmm(s.close)} close` : `before your ${hhmm(s.close)} close`}. Accept today, or keep it for ${dayLabel(next)}.`,
+      link: `/store/orders/${s.orderId}`,
+      severity: "conflict",
+      outletId: s.outletId,
+    });
+    if (s.driverUserId)
+      await notify(tx, {
+        type: "conflict.waiting",
+        title: `Asking ${s.outletId} to accept a late delivery`,
+        body: "Stay parked. The store's answer comes here.",
+        link: "/drive",
+        recipientUserId: s.driverUserId,
+      });
+    await audit(tx, { actorId: opts.userId, action: "conflict.ask_store", entity: "conflict", entityId: c.id, after: { eta } });
+    await emit(tx, "conflict.asked", { conflictId: c.id, stopId: s.id, tripId: s.tripId, outletId: s.outletId });
+  });
+  return { outletId: s.outletId, eta };
+}
+
+/** DG-03: the store accepts the late delivery today, or keeps the next-run slot. The answer settles the conflict. */
+export async function storeAnswer(opts: { conflictId: string; outletId: string; userId: string; accept: boolean }) {
+  const [c] = await db().select().from(t.conflicts).where(eq(t.conflicts.id, opts.conflictId));
+  if (!c || !c.stopId || !askOf(c.detail)) throw new Error("There is no open question for your store");
+  if (c.status === "resolved" || answerOf(c.detail)) throw new Error("This has already been decided");
+  const s = await stopContext(c.stopId);
+  if (s.outletId !== opts.outletId) throw new Error("That order is not for your outlet");
+  const at = await now();
+  const R = await reference();
+  const next = nextOperatingDay(R, s.runDate);
+  const answer: StoreAnswer = { accept: opts.accept, at: businessDate(at).toISOString(), atMin: at.minute, by: opts.userId };
+  const text = opts.accept
+    ? `Deliver today - ${s.outletId} agreed at ${hhmm(at.minute)}; the ${dayLabel(next)} move is cancelled`
+    : `Keep ${dayLabel(next)} - ${s.outletId} chose to wait; the goods return to the depot`;
+  await db().transaction(async (tx) => {
+    if (opts.accept && s.status === "skipped") await restoreStop(tx, s.id);
+    await tx
+      .update(t.conflicts)
+      .set({ status: "resolved", resolution: text, resolvedBy: opts.userId, resolvedAt: businessDate(at), detail: { ...(c.detail ?? {}), storeAnswer: answer } })
+      .where(eq(t.conflicts.id, c.id));
+    await tx
+      .update(t.conflicts)
+      .set({ status: "resolved", resolution: text, resolvedBy: opts.userId, resolvedAt: businessDate(at) })
+      .where(and(eq(t.conflicts.stopId, s.id), eq(t.conflicts.status, "open")));
+    await clearSkipNotice(tx, s.driverUserId, s.outletId, businessDate(at));
+    if (s.driverUserId)
+      await notify(tx, {
+        type: "conflict.resolved",
+        title: opts.accept ? `Deliver ${s.outletId} now` : `Keep ${s.outletId} for ${dayLabel(next)}`,
+        body: opts.accept
+          ? `Store agreed at ${hhmm(at.minute)}. The ${dayLabel(next)} move is cancelled.${askOf(c.detail)!.eta > s.close ? ` The arrival after the ${hhmm(s.close)} window is recorded on the delivery.` : ""}`
+          : `The store chose ${dayLabel(next)}. Keep ${s.orderId} (${s.units} units) on board and bring it back to the depot.`,
+        link: "/drive",
+        severity: opts.accept ? "info" : "conflict",
+        recipientUserId: s.driverUserId,
+      });
+    await notify(tx, {
+      type: "conflict.store_answer",
+      title: opts.accept ? `${s.outletId} accepted the late delivery` : `${s.outletId} chose to wait for ${dayLabel(next)}`,
+      body: opts.accept ? `${s.vehicleId} delivers ${s.orderId} today, about ${hhmm(askOf(c.detail)!.eta)}.` : `${s.orderId} stays on ${dayLabel(next)}'s run with priority.`,
+      link: "/dispatch/live/conflicts",
+      severity: "info",
+      recipientRole: "dispatcher",
+    });
+    await audit(tx, { actorId: opts.userId, action: "conflict.store_answer", entity: "conflict", entityId: c.id, after: { accept: opts.accept } });
+    await emit(tx, "conflict.resolved", { conflictId: c.id, stopId: s.id, tripId: s.tripId, outletId: s.outletId, resolution: opts.accept ? "deliver_today" : "keep_next_run" });
+  });
+  if (opts.accept) await refreshEtas(s.tripId).catch(() => undefined);
+  return { text, accept: opts.accept, next };
+}
+
+/** DG-03 data for one order: the open question to the store, if any. */
+export async function pendingStoreAsk(orderId: string) {
+  const rows = await db()
+    .select({ c: t.conflicts, stopId: t.tripStops.id })
+    .from(t.conflicts)
+    .innerJoin(t.tripStops, eq(t.tripStops.id, t.conflicts.stopId))
+    .where(and(eq(t.tripStops.orderId, orderId), eq(t.conflicts.status, "open")));
+  const row = rows.find((r) => askOf(r.c.detail) && !answerOf(r.c.detail));
+  if (!row) return null;
+  const s = await stopContext(row.stopId);
+  const R = await reference();
+  return { conflictId: row.c.id, ask: askOf(row.c.detail)!, close: s.close, vehicleId: s.vehicleId, units: s.units, next: nextOperatingDay(R, s.runDate) };
+}
+
+/** Every notice the store received about one order, oldest first (DG-03 history). */
+export async function orderMessages(outletId: string, orderId: string) {
+  return db()
+    .select({ id: t.notifications.id, type: t.notifications.type, title: t.notifications.title, body: t.notifications.body, at: t.notifications.createdAt })
+    .from(t.notifications)
+    .where(and(eq(t.notifications.outletId, outletId), eq(t.notifications.link, `/store/orders/${orderId}`)))
+    .orderBy(asc(t.notifications.createdAt));
 }

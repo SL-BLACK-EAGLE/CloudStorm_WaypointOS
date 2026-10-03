@@ -126,7 +126,7 @@ export default async function LivePage() {
               <span />
             </div>
             {shown.map((tr) => (
-              <TripRow key={tr.id} trip={tr} />
+              <TripRow key={tr.id} trip={tr} nextLabel={nextLabel} />
             ))}
             {quiet.length > 0 && (
               <details className="group border-t">
@@ -136,7 +136,7 @@ export default async function LivePage() {
                   {quiet.filter((x) => x.label === "Complete").length} complete
                 </summary>
                 {quiet.map((tr) => (
-                  <TripRow key={tr.id} trip={tr} />
+                  <TripRow key={tr.id} trip={tr} nextLabel={nextLabel} />
                 ))}
               </details>
             )}
@@ -163,7 +163,7 @@ export default async function LivePage() {
   );
 }
 
-function TripRow({ trip: tr }: { trip: LiveTrip }) {
+function TripRow({ trip: tr, nextLabel }: { trip: LiveTrip; nextLabel: string }) {
   const risk = tr.riskStops.filter((s) => s.id !== tr.next?.id);
   return (
     <details className="group border-b last:border-0">
@@ -220,7 +220,7 @@ function TripRow({ trip: tr }: { trip: LiveTrip }) {
       <div className="bg-muted/30 px-4 py-3">
         <ol className="grid gap-1.5 text-sm">
           {tr.stops.map((s) => (
-            <StopLine key={s.id} s={s} />
+            <StopLine key={s.id} s={s} code={tr.code} nextLabel={nextLabel} />
           ))}
         </ol>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -246,7 +246,7 @@ function TripRow({ trip: tr }: { trip: LiveTrip }) {
   );
 }
 
-function StopLine({ s }: { s: LiveStop }) {
+function StopLine({ s, code, nextLabel }: { s: LiveStop; code: string; nextLabel: string }) {
   const state =
     s.status === "delivered"
       ? `delivered ${hhmm(s.arrivedMin)}–${hhmm(s.leftMin)}${s.arrivedMin !== null && s.arrivedMin > s.close ? " · late" : ""}`
@@ -258,13 +258,32 @@ function StopLine({ s }: { s: LiveStop }) {
             ? `not delivered · ${hhmm(s.leftMin)}`
             : `ETA ${hhmm(s.eta)} · ${s.margin !== null ? (s.margin >= 0 ? `${s.margin} min to spare` : `${-s.margin} min after close`) : ""}`;
   return (
-    <li className={cn("grid grid-cols-[2rem_5.5rem_5rem_1fr] items-center gap-2", s.status === "skipped" && "opacity-60")}>
+    <li className={cn("grid grid-cols-[2rem_5.5rem_5rem_1fr_auto] items-center gap-2", s.status === "skipped" && "opacity-60")}>
       <span className="num text-muted-foreground">{s.seq}</span>
       <span className="num font-medium">{s.outletId}</span>
       <TempTag temp={s.temp} />
       <span className={cn("num text-[13px]", s.risk && "text-late-risk")}>
         {state} <span className="text-muted-foreground">· window closes {hhmm(s.close)} · planned {hhmm(s.plannedArrive)}</span>
       </span>
+      {s.status === "planned" ? (
+        <PromptAction
+          action={deferStopAction}
+          fields={{ stopId: s.id }}
+          name="reason"
+          required={false}
+          title={`Move ${s.outletId} to ${nextLabel}?`}
+          description={`The stop comes off ${code}; the goods ride back and go first on ${nextLabel}'s run. The store and the driver are told now; an offline phone gets the change when it reconnects.`}
+          placeholder="Reason for the store (optional)"
+          submitLabel={`Defer to ${nextLabel}`}
+          size="sm"
+          variant="ghost"
+          className="h-7 px-2 text-xs"
+        >
+          <SkipForward /> {nextLabel}
+        </PromptAction>
+      ) : (
+        <span />
+      )}
     </li>
   );
 }

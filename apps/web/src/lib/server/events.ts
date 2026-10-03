@@ -26,9 +26,11 @@ export interface NotifyInput {
 
 /** Writes a notification row and its realtime event in the caller's transaction. */
 export async function notify(tx: Executor, n: NotifyInput) {
+  const { businessDate, now } = await import("./clock");
   const [row] = await tx
     .insert(t.notifications)
     .values({
+      createdAt: businessDate(await now()),
       type: n.type,
       title: n.title,
       body: n.body,

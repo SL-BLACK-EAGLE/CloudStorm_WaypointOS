@@ -8,13 +8,9 @@ export async function GET(_req: Request, ctx: RouteContext<"/api/files/[...key]"
   const { key } = await ctx.params;
   const path = key.join("/");
   if (!/^(pod|signature|shortfall|receipt|exception)\/[\w./-]+$/.test(path)) return new Response("Not found", { status: 404 });
-  try {
-    const obj = await getObject(path);
-    const body = obj.body as { transformToByteArray: () => Promise<Uint8Array> };
-    return new Response(Buffer.from(await body.transformToByteArray()), {
-      headers: { "Content-Type": obj.contentType, "Cache-Control": "private, max-age=86400, immutable" },
-    });
-  } catch {
-    return new Response("Not found", { status: 404 });
-  }
+  const obj = await getObject(path);
+  if (!obj) return new Response("Not found", { status: 404 });
+  return new Response(Buffer.from(obj.bytes), {
+    headers: { "Content-Type": obj.contentType, "Cache-Control": "private, max-age=86400, immutable" },
+  });
 }
