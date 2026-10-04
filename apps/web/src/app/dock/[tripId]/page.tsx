@@ -66,7 +66,7 @@ export default async function LoadListPage({ params }: PageProps<"/dock/[tripId]
           const short = flagged.get(s.orderId);
           const isCurrent = !locked && current?.orderId === s.orderId;
           const status = short ? (
-            <span className="inline-flex items-center gap-1 font-semibold text-exception">
+            <span className="inline-flex items-center gap-1 font-semibold text-exception sunlight:text-exception-bg">
               <TriangleAlert className="size-5" /> {short.units} {short.kind === "missing" ? "short" : "damaged"}
             </span>
           ) : isLoaded ? (

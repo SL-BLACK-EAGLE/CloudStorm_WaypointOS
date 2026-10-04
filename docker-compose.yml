@@ -103,14 +103,15 @@ services:
       convex:
         condition: service_healthy
 
-  # one-shot: push the Convex functions (convex/) and the relay secret to the local backend
+  # one-shot: push the Convex functions (convex/, incl. the departure cron) and its env (relay secret, app URL) to the local backend
   convex-push:
     build: { context: ., target: tools }
     working_dir: /repo/apps/web
     command: >
       sh -c 'export CONVEX_SELF_HOSTED_ADMIN_KEY="$$(cat /keys/admin_key)" &&
       npx convex deploy -y &&
-      npx convex env set CONVEX_SERVER_SECRET "$$CONVEX_SERVER_SECRET"'
+      npx convex env set CONVEX_SERVER_SECRET "$$CONVEX_SERVER_SECRET" &&
+      npx convex env set APP_URL http://web:3000'
     environment:
       CONVEX_SELF_HOSTED_URL: http://convex:3210
       CONVEX_SERVER_SECRET: ${CONVEX_SERVER_SECRET}
