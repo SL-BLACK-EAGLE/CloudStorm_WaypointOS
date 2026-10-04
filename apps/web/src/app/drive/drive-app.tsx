@@ -443,7 +443,7 @@ function NextStopView({
         <div className="grid grid-cols-2 gap-3 border-t-2 pt-3">
           <div>
             <p className="text-sm">Arrive about</p>
-            <p className={cn("num text-3xl font-bold", late && "text-exception")}>{hhmm(eta)}</p>
+            <p className={cn("num text-3xl font-bold", late && "text-exception sunlight:text-exception-bg")}>{hhmm(eta)}</p>
             <p className="num text-sm text-muted-foreground">planned {hhmm(stop.plannedArrive)}</p>
           </div>
           <div>

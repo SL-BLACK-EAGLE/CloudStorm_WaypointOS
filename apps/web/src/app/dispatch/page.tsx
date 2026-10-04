@@ -2,7 +2,6 @@ import { PageTour } from "@/components/wp/tour";
 import { TOWER_TOUR } from "@/lib/tours/dispatcher";
 import { Check, Circle, CircleDashed, Fuel, Play, Snowflake, Timer, Truck } from "lucide-react";
 import type { Metadata } from "next";
-import { RealtimeRefresh } from "@/components/wp/realtime";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/wp/action-button";
@@ -123,7 +122,6 @@ export default async function ControlTowerPage() {
 
   return (
     <>
-      <RealtimeRefresh channels={["orders"]} fallbackSeconds={60} />
       <PageTour id="d01" steps={TOWER_TOUR} />
       <DispatchHeader
         title="Control tower"

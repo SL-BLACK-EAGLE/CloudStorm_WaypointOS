@@ -1,14 +1,21 @@
 import { Receiver } from "@upstash/qstash";
 import { NextResponse } from "next/server";
+import { runDepartureAlerts } from "@/lib/server/departures";
 import { triggerRelay } from "@/lib/server/relay-runner";
 
 /**
  * Background jobs, called by Upstash QStash (retried, signed). The signature is checked against
  * the current and next signing keys, so key rotation never drops a call.
- *   relay - sweep the transactional outbox into Convex (backs up the per-request kick)
+ *   relay      - sweep the transactional outbox into Convex (backs up the per-request kick)
+ *   departures - departure alerts (normally run by the Convex cron; a backup path)
  */
 const JOBS: Record<string, () => Promise<unknown>> = {
   relay: () => triggerRelay(),
+  departures: async () => {
+    const r = await runDepartureAlerts();
+    await triggerRelay();
+    return r;
+  },
 };
 
 export async function POST(req: Request, ctx: RouteContext<"/api/jobs/[job]">) {

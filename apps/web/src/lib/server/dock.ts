@@ -3,6 +3,7 @@ import { and, asc, eq, inArray } from "@waypoint/db/orm";
 import { dockSignoff } from "@waypoint/planner";
 import { businessDate, now } from "./clock";
 import { db, t } from "./db";
+import { settleDepartureNotices } from "./departures";
 import { audit, emit, notify } from "./events";
 import { publishedPlan, type DepotId } from "./planning";
 
@@ -295,8 +296,9 @@ export async function signOff(opts: { tripId: string; userId: string; depotId: s
   const state = dockSignoff(undecided.length, undecided.length ? null : decision);
   if (state === "LOCKED") throw new Error(`Sign-off blocked · ${undecided.length} shortfall unresolved`);
   if (open.some((s) => s.decision === "HOLD")) throw new Error("The dispatcher chose to hold: mark the units found first");
+  const signedAt = businessDate(await now());
   await db().transaction(async (tx) => {
-    await tx.insert(t.dockSignoffs).values({ tripId: opts.tripId, state, signedBy: opts.userId, signedAt: businessDate(await now()) });
+    await tx.insert(t.dockSignoffs).values({ tripId: opts.tripId, state, signedBy: opts.userId, signedAt });
     await tx.update(t.trips).set({ status: "ready" }).where(eq(t.trips.id, opts.tripId));
     await notify(tx, {
       type: "dock.signed_off",
@@ -306,7 +308,8 @@ export async function signOff(opts: { tripId: string; userId: string; depotId: s
       recipientRole: "driver",
     });
     await audit(tx, { actorId: opts.userId, action: "dock.signoff", entity: "trip", entityId: opts.tripId, after: { state } });
-    await emit(tx, "dock.signed_off", { tripId: opts.tripId, state });
+    await emit(tx, "dock.signed_off", { tripId: opts.tripId, state, depot: list.trip.depotId });
   });
+  await settleDepartureNotices(opts.tripId, signedAt);
   return state;
 }

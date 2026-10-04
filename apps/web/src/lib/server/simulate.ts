@@ -53,6 +53,15 @@ export async function simulateFleet(opts: { skipVehicleIds: string[] }) {
       const blocked = shorts.some((s) => s.tripId === tr.id && s.decision !== "SEND_AND_WARN") || tr.status === "held";
       const signed = signs.some((s) => s.tripId === tr.id);
       if (blocked) continue; // stays at the dock until the dispatcher decides
+      // a person is loading it: they sign it off, and it only leaves once they have
+      if (!signed && tr.status === "loading") continue;
+      // simulated loaders sign off 15 minutes before departure, so the departure watch flags real delays only
+      if (!signed && tr.status === "planned" && nowMin >= tr.departureMin - 15) {
+        await db().transaction(async (tx) => {
+          await tx.insert(t.dockSignoffs).values({ tripId: tr.id, state: "RELEASED" }).onConflictDoNothing();
+          await tx.update(t.trips).set({ status: "ready" }).where(and(eq(t.trips.id, tr.id), eq(t.trips.status, "planned")));
+        });
+      }
       const d0 = jitter(tr.code, 0, 9);
       const leaveAt = tr.departedMin ?? tr.departureMin + d0;
       if (leaveAt > nowMin) continue;
@@ -132,4 +141,10 @@ function jitter(key: string, lo: number, hi: number) {
   let h = 2166136261;
   for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619);
   return lo + ((h >>> 0) % (hi - lo + 1));
+}
+
+/** Every truck except those driven by a driver account follows its plan up to the business clock. */
+export async function simulateOtherTrucks() {
+  const drivers = await db().select({ vehicleId: t.users.vehicleId }).from(t.users).where(eq(t.users.role, "driver"));
+  return simulateFleet({ skipVehicleIds: drivers.map((d) => d.vehicleId).filter((v): v is string => !!v) });
 }

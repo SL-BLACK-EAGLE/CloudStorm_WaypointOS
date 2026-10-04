@@ -103,7 +103,7 @@ export function ShortfallForm({
             of <span className="num font-bold">{stop.units}</span> on the load list
           </p>
         </div>
-        {short > 0 && <p className="num text-xl font-bold text-exception">{short} short</p>}
+        {short > 0 && <p className="num text-xl font-bold text-exception sunlight:text-exception-bg">{short} short</p>}
       </section>
 
       <section className="space-y-2" data-tour="cause">

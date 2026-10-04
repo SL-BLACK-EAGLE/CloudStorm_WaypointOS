@@ -1,6 +1,7 @@
 import { UserButton } from "@clerk/nextjs";
 import { NotificationBell } from "@/components/wp/notification-bell";
 import { TourButton } from "@/components/wp/tour";
+import { DepartureAlerts } from "@/components/wp/departure-alerts";
 import { RealtimeRefresh } from "@/components/wp/realtime";
 import Link from "next/link";
 import { WMark } from "@/components/wp/chips";
@@ -35,6 +36,7 @@ export default async function DockLayout({ children }: LayoutProps<"/dock">) {
         <UserButton />
       </header>
       <div className="flex-1">{children}</div>
+      <DepartureAlerts role="loader" channels={["role:loader", `depot:${user.depotId ?? "Peliyagoda"}`]} className="top-[80px]" />
     </div>
   );
 }

@@ -4,6 +4,7 @@
  *
  *   node scripts/deploy-cloud.mjs                      # Vercel env + Convex secret + Neon migrate/seed
  *   node scripts/deploy-cloud.mjs --schedule https://cloudstorm-waypointos.vercel.app   # QStash schedule only
+ *   node scripts/deploy-cloud.mjs --convex https://cloudstorm-waypointos.vercel.app     # Convex env only (relay secret + APP_URL for the departure cron)
  *
  * Needs: `vercel link` done at the repo root, the CLIs logged in, seed-data/ present for the seed.
  */
@@ -34,6 +35,31 @@ const isLocal = (v) => /localhost|127\.0\.0\.1|host\.docker\.internal|:5433\b/.t
 const run = (cmd, args, opts = {}) => spawnSync(cmd, args, { cwd: root, stdio: ["pipe", "pipe", "pipe"], encoding: "utf8", shell: process.platform === "win32", ...opts });
 const ok = (msg) => console.log(`  ✓ ${msg}`);
 const warn = (msg) => console.log(`  ! ${msg}`);
+
+/** Convex Cloud environment: the relay secret, and APP_URL so the departure cron can call the app. */
+function convexEnv(appUrl) {
+  const convexBin = join(dirname(createRequire(join(web, "package.json")).resolve("convex/package.json")), "bin/main.js");
+  const childEnv = { ...process.env, CONVEX_DEPLOY_KEY: env.CONVEX_DEPLOY_KEY };
+  delete childEnv.CONVEX_SELF_HOSTED_URL;
+  delete childEnv.CONVEX_SELF_HOSTED_ADMIN_KEY;
+  const set = (name, value) => spawnSync(process.execPath, [convexBin, "env", "set", name, value], { cwd: web, env: childEnv, encoding: "utf8" });
+  let r = set("CONVEX_SERVER_SECRET", env.CONVEX_SERVER_SECRET);
+  r.status === 0 ? ok("CONVEX_SERVER_SECRET set on the deployment") : warn(`convex env set failed: ${(r.stderr || r.stdout).trim().split("\n").pop()}`);
+  if (appUrl) {
+    r = set("APP_URL", appUrl);
+    r.status === 0 ? ok(`APP_URL = ${appUrl} (departure cron target)`) : warn(`convex env set APP_URL failed: ${(r.stderr || r.stdout).trim().split("\n").pop()}`);
+  }
+}
+
+const convexIdx = process.argv.indexOf("--convex");
+if (convexIdx > -1) {
+  const appUrl = process.argv[convexIdx + 1];
+  if (!appUrl?.startsWith("https://")) throw new Error("Pass the deployed https URL after --convex");
+  if (!env.CONVEX_DEPLOY_KEY || !env.CONVEX_SERVER_SECRET) throw new Error("CONVEX_DEPLOY_KEY and CONVEX_SERVER_SECRET must be set in .env");
+  console.log("Convex Cloud");
+  convexEnv(appUrl);
+  process.exit(0);
+}
 
 const scheduleIdx = process.argv.indexOf("--schedule");
 if (scheduleIdx > -1) {
@@ -90,16 +116,9 @@ if (blocked) {
   process.exit(1);
 }
 
-// ── 2. Convex Cloud: the relay mutation checks this shared secret
+// ── 2. Convex Cloud: the relay secret, and APP_URL for the departure cron
 console.log("Convex Cloud");
-{
-  const convexBin = join(dirname(createRequire(join(web, "package.json")).resolve("convex/package.json")), "bin/main.js");
-  const childEnv = { ...process.env, CONVEX_DEPLOY_KEY: env.CONVEX_DEPLOY_KEY };
-  delete childEnv.CONVEX_SELF_HOSTED_URL;
-  delete childEnv.CONVEX_SELF_HOSTED_ADMIN_KEY;
-  const r = spawnSync(process.execPath, [convexBin, "env", "set", "CONVEX_SERVER_SECRET", env.CONVEX_SERVER_SECRET], { cwd: web, env: childEnv, encoding: "utf8" });
-  r.status === 0 ? ok("CONVEX_SERVER_SECRET set on the deployment") : warn(`convex env set failed: ${(r.stderr || r.stdout).trim().split("\n").pop()}`);
-}
+convexEnv(env.APP_URL && !isLocal(env.APP_URL) ? env.APP_URL : null);
 
 // ── 3. Neon: migrate, then seed (writes the demo baseline and the four demo accounts)
 console.log("Neon database");

@@ -7,7 +7,9 @@ import { writeClock } from "@/lib/server/clock";
 import { db, t } from "@/lib/server/db";
 import { audit } from "@/lib/server/events";
 import { requireUser, syncClerkMetadata } from "@/lib/server/session";
-import { simulateFleet } from "@/lib/server/simulate";
+import { runDepartureAlerts } from "@/lib/server/departures";
+import { kickRelay } from "@/lib/server/relay";
+import { simulateOtherTrucks } from "@/lib/server/simulate";
 
 type Result = { ok: true; message: string } | { ok: false; error: string };
 
@@ -26,6 +28,8 @@ export async function setClockAction(form: FormData): Promise<Result> {
   const c = await writeClock({ at, running: p.data.running ? p.data.running === "1" : undefined, speed: p.data.speed });
   await db().transaction((tx) => audit(tx, { actorId: user.id, action: "demo.clock", entity: "clock", entityId: "clock", after: c }));
   const sim = await simulateOthers();
+  await runDepartureAlerts(); // vehicles due or late at the new time alert straight away
+  kickRelay();
   refresh();
   return {
     ok: true,
@@ -33,11 +37,7 @@ export async function setClockAction(form: FormData): Promise<Result> {
   };
 }
 
-/** Every truck except those driven by a driver account follows its plan up to the business clock. */
-async function simulateOthers() {
-  const drivers = await db().select({ vehicleId: t.users.vehicleId }).from(t.users).where(eq(t.users.role, "driver"));
-  return simulateFleet({ skipVehicleIds: drivers.map((d) => d.vehicleId).filter((v): v is string => !!v) });
-}
+const simulateOthers = simulateOtherTrucks;
 
 /** Judge panel: advance the other trucks to the current business time without moving the clock. */
 export async function simulateAction(): Promise<Result> {

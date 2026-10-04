@@ -46,9 +46,17 @@ function Listener({ channels, onChange }: { channels: string[]; onChange: () => 
   return null;
 }
 
-/** Re-renders the page's server data when its channels change (Convex push); polls when Convex is not configured. */
+/** With Convex connected, a slow poll still runs behind the push, so a missed signal can never leave a screen stale. */
+const SAFETY_POLL_SECONDS = 10;
+
+/** Re-renders the page's server data when its channels change (Convex push), and polls as a safety net; polls only when Convex is not configured. */
 export function RealtimeRefresh({ channels, fallbackSeconds = 15 }: { channels: string[]; fallbackSeconds?: number }) {
   const router = useRouter();
   if (!REALTIME) return <LiveRefresh seconds={fallbackSeconds} />;
-  return <SignalListener channels={channels} onChange={() => router.refresh()} />;
+  return (
+    <>
+      <SignalListener channels={channels} onChange={() => router.refresh()} />
+      <LiveRefresh seconds={SAFETY_POLL_SECONDS} />
+    </>
+  );
 }

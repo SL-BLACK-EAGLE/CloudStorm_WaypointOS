@@ -1,0 +1,12 @@
+.turbo
+node_modules
+.next
+seed-data
+.docker-data
+.dev.log
+*.log
+.env
+.env.*
+!.env.example
+.git
+__pycache__
