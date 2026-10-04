@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { TOWER_TOUR } from "@/lib/tours/dispatcher";
 import { Check, Circle, CircleDashed, Fuel, Play, Snowflake, Timer, Truck } from "lucide-react";
 import type { Metadata } from "next";
 import { RealtimeRefresh } from "@/components/wp/realtime";
@@ -122,13 +124,14 @@ export default async function ControlTowerPage() {
   return (
     <>
       <RealtimeRefresh channels={["orders"]} fallbackSeconds={60} />
+      <PageTour id="d01" steps={TOWER_TOUR} />
       <DispatchHeader
         title="Control tower"
         context={`${depot} · run for ${dayLabel(planning, true)}${cond.text ? ` · ${cond.text}` : ""}`}
         depot={depot}
       />
       <main className="space-y-6 p-6">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" data-tour="kpis">
           <Kpi
             label="Confirmed orders"
             value={int(orders.length)}
@@ -162,7 +165,7 @@ export default async function ControlTowerPage() {
         </div>
 
         {!plan && (
-          <Panel className="flex flex-wrap items-center justify-between gap-4 p-5">
+          <Panel className="flex flex-wrap items-center justify-between gap-4 p-5" data-tour="autoplan">
             <div>
               <h2 className="font-semibold">No plan for {dayLabel(planning)} yet</h2>
               <p className="text-sm text-muted-foreground">
@@ -176,7 +179,7 @@ export default async function ControlTowerPage() {
           </Panel>
         )}
 
-        <section className="space-y-3">
+        <section className="space-y-3" data-tour="resources">
           <div className="flex flex-wrap items-baseline gap-x-3">
             <h2 className="text-lg font-semibold">Demand against capacity, by limiting resource</h2>
             <p className="text-sm text-muted-foreground">
@@ -236,7 +239,7 @@ export default async function ControlTowerPage() {
         </section>
 
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-          <Panel className="overflow-hidden">
+          <Panel className="overflow-hidden" data-tour="districts">
             <PanelHeader title="Demand by district" aside="One brand and one district per trip" />
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -279,7 +282,7 @@ export default async function ControlTowerPage() {
             </div>
           </Panel>
 
-          <Panel className="flex flex-col">
+          <Panel className="flex flex-col" data-tour="tonight">
             <PanelHeader title="Tonight" />
             <ol className="flex-1 space-y-4 p-4">
               {checklist.map((c, i) => {

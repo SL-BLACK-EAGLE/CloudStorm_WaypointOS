@@ -66,7 +66,7 @@ export function DeferralReview({ planId, rows }: { planId: string; rows: ReviewR
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
       <Panel className="overflow-hidden">
-        <div role="tablist" className="flex gap-1.5 border-b p-3">
+        <div role="tablist" className="flex gap-1.5 border-b p-3" data-tour="classes">
           {(
             [
               ["all", `All ${rows.length}`],
@@ -87,7 +87,7 @@ export function DeferralReview({ planId, rows }: { planId: string; rows: ReviewR
             </button>
           ))}
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" data-tour="deferral-table">
           <table className="w-full text-sm">
             <thead className="text-left text-[13px] text-muted-foreground">
               <tr className="border-b">
@@ -204,7 +204,7 @@ function DecisionPanel({ planId, row }: { planId: string; row: ReviewRow }) {
   const p = option?.preview ?? null;
 
   return (
-    <Panel className="space-y-4 p-4">
+    <Panel className="space-y-4 p-4" data-tour="decision">
       <div>
         <div className="flex items-center gap-2">
           <BrandMark brand={row.brand} size={20} />

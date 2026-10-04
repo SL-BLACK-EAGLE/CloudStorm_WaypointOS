@@ -13,6 +13,8 @@ import { db, t } from "@/lib/server/db";
 import { requireUser } from "@/lib/server/session";
 import { cn } from "@/lib/utils";
 import { driveVehicleAction, resetDemoAction, setClockAction, simulateAction, storeOutletAction } from "./actions";
+import { PageTour, ReplayToursButton, TourButton } from "@/components/wp/tour";
+import { DEMO_TOUR } from "@/lib/tours/dispatcher";
 import { ClockForm } from "./clock-form";
 
 export const metadata: Metadata = { title: "Judge demo panel" };
@@ -64,12 +66,16 @@ export default async function DemoPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-6">
+      <PageTour id="demo" steps={DEMO_TOUR} />
       <header className="flex items-center gap-3">
         <WMark size={36} />
         <div className="flex-1">
           <h1 className="text-xl font-semibold">Judge demo panel</h1>
           <p className="text-sm text-muted-foreground">Move through the 22–23 Dec 2025 walkthrough without waiting for real time.</p>
         </div>
+        <span data-tour="help" className="inline-flex">
+          <TourButton />
+        </span>
         <Button asChild variant="outline" size="desk">
           <Link href={ROLE_HOME[user.role]}>
             <ArrowLeft /> Back to my workspace
@@ -83,7 +89,7 @@ export default async function DemoPage() {
           <p className="num text-3xl font-semibold">
             {dayLabel(clock.date, true)} · {hhmm(clock.minute)}
           </p>
-          <ul className="grid gap-2 sm:grid-cols-2">
+          <ul className="grid gap-2 sm:grid-cols-2" data-tour="presets">
             {PRESETS.map((p) => {
               const on = clock.iso.startsWith(p.at);
               return (
@@ -96,20 +102,22 @@ export default async function DemoPage() {
               );
             })}
           </ul>
-          <ClockForm key={clock.iso.slice(0, 16)} current={clock.iso.slice(0, 16)} running={clock.running} speed={clock.speed} />
+          <div data-tour="exact-time">
+            <ClockForm key={clock.iso.slice(0, 16)} current={clock.iso.slice(0, 16)} running={clock.running} speed={clock.speed} />
+          </div>
           <div className="flex flex-wrap items-center gap-3 border-t pt-4">
             <p className="flex-1 text-sm text-muted-foreground">
               Only the demo driver&apos;s phone records real events. Every other truck follows its plan up to the clock (with road drift, one long stop, and
               trucks with an undecided shortfall stay at the dock), so live operations and store tracking have a fleet to show. Runs each time the clock moves.
             </p>
-            <ActionButton action={simulateAction} variant="outline" size="desk">
+            <ActionButton action={simulateAction} variant="outline" size="desk" data-tour="simulate">
               <Truck /> Move the other trucks to now
             </ActionButton>
           </div>
         </div>
       </Panel>
 
-      <Panel>
+      <Panel data-tour="driver-vehicle">
         <PanelHeader title={<span className="flex items-center gap-2"><Truck className="size-4" /> Demo driver&apos;s vehicle</span>} aside={driver ? `${driver.name} drives ${driver.vehicleId ?? "nothing"}` : ""} />
         <div className="space-y-3 p-4">
           <p className="text-sm text-muted-foreground">
@@ -130,7 +138,7 @@ export default async function DemoPage() {
         </div>
       </Panel>
 
-      <Panel>
+      <Panel data-tour="store-outlet">
         <PanelHeader title={<span className="flex items-center gap-2"><Store className="size-4" /> Demo store&apos;s outlet</span>} aside={store ? `${store.name} manages ${store.outletId ?? "nothing"}` : ""} />
         <div className="space-y-3 p-4">
           <p className="text-sm text-muted-foreground">
@@ -150,16 +158,21 @@ export default async function DemoPage() {
         </div>
       </Panel>
 
-      <Panel>
+      <Panel data-tour="reset">
         <PanelHeader title={<span className="flex items-center gap-2"><RotateCcw className="size-4" /> Reset</span>} />
         <div className="flex flex-wrap items-center justify-between gap-3 p-4">
           <p className="text-sm text-muted-foreground">
             Restores the seeded day: order history, the 23 Dec queue (OUT006 not yet ordered), three vehicles in the workshop, weekly fuel, the forecast and the
             four demo accounts. Plans, loading and deliveries are cleared.
           </p>
-          <ActionButton action={resetDemoAction} variant="destructive" size="desk" confirm="Reset all demo data to Mon 22 Dec 14:30?">
-            <RotateCcw /> Reset demo data
-          </ActionButton>
+          <div className="flex flex-wrap gap-2">
+            <span data-tour="replay-tours" className="inline-flex">
+              <ReplayToursButton />
+            </span>
+            <ActionButton action={resetDemoAction} variant="destructive" size="desk" confirm="Reset all demo data to Mon 22 Dec 14:30?">
+              <RotateCcw /> Reset demo data
+            </ActionButton>
+          </div>
         </div>
       </Panel>
     </div>

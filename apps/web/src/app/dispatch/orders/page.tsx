@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { ORDERS_TOUR } from "@/lib/tours/dispatcher";
 import { Lock, LockOpen, Snowflake } from "lucide-react";
 import type { Metadata } from "next";
 import { RealtimeRefresh } from "@/components/wp/realtime";
@@ -58,10 +60,11 @@ export default async function OrderQueuePage() {
   return (
     <>
       <RealtimeRefresh channels={["orders"]} fallbackSeconds={60} />
+      <PageTour id="d02" steps={ORDERS_TOUR} />
       <DispatchHeader title="Order queue" context={`${depot} · run for ${dayLabel(planning, true)}`} depot={depot} />
       <div className="grid xl:grid-cols-[minmax(0,1fr)_340px]">
         <main className="min-w-0 space-y-4 p-6">
-          <div className="flex items-start gap-3 rounded-lg border bg-card p-4 text-sm">
+          <div className="flex items-start gap-3 rounded-lg border bg-card p-4 text-sm" data-tour="cutoff">
             {cutoffPassed ? <Lock className="mt-0.5 size-4 shrink-0" aria-hidden /> : <LockOpen className="mt-0.5 size-4 shrink-0" aria-hidden />}
             <p>
               {cutoffPassed ? (
@@ -79,7 +82,7 @@ export default async function OrderQueuePage() {
           </div>
           <QueueTable items={items} />
           {late.length > 0 && (
-            <Panel className="p-4">
+            <Panel className="p-4" data-tour="late-orders">
               <h2 className="text-sm font-semibold">
                 Received after the cutoff · for {dayLabel(nextRun)} ({late.length})
               </h2>
@@ -97,7 +100,7 @@ export default async function OrderQueuePage() {
             </Panel>
           )}
         </main>
-        <aside className="flex flex-col gap-4 border-l bg-card/40 p-6 xl:sticky xl:top-16 xl:h-[calc(100dvh-4rem)]">
+        <aside className="flex flex-col gap-4 border-l bg-card/40 p-6 xl:sticky xl:top-16 xl:h-[calc(100dvh-4rem)]" data-tour="requirements">
           <div>
             <p className="text-[13px] text-muted-foreground">Queue for {dayLabel(planning)}</p>
             <p className="num text-3xl font-semibold">{int(rows.length)} orders</p>
@@ -130,7 +133,7 @@ export default async function OrderQueuePage() {
             </p>
           )}
           <div className="mt-auto space-y-2">
-            <Button asChild size="desk" variant="secondary" className="w-full">
+            <Button asChild size="desk" variant="secondary" className="w-full" data-tour="to-plan">
               <Link href="/dispatch/plan">Open planning board</Link>
             </Button>
             <p className="text-center text-[12px] text-muted-foreground">Auto-plan checks rules 1–7, delivery windows and fuel</p>

@@ -1,5 +1,6 @@
 import { dayLabel, hhmm } from "@/lib/format";
 import { NotificationBell } from "@/components/wp/notification-bell";
+import { TourButton } from "@/components/wp/tour";
 import { now } from "@/lib/server/clock";
 import { cn } from "@/lib/utils";
 import { setDepot } from "../actions";
@@ -26,7 +27,7 @@ export async function DispatchHeader({
       </div>
       {actions}
       {depot && (
-        <form action={setDepot} className="flex rounded-lg border bg-card p-0.5" aria-label="Depot">
+        <form action={setDepot} className="flex rounded-lg border bg-card p-0.5" aria-label="Depot" data-tour="depot">
           {(["Peliyagoda", "Kandy"] as const).map((d) => (
             <button
               key={d}
@@ -43,10 +44,15 @@ export async function DispatchHeader({
           ))}
         </form>
       )}
-      <p className="num text-sm text-muted-foreground" title="Business clock (Asia/Colombo)">
+      <p className="num text-sm text-muted-foreground" title="Business clock (Asia/Colombo)" data-tour="clock">
         {dayLabel(clock.date)} · {hhmm(clock.minute)}
       </p>
-      <NotificationBell channels={["role:dispatcher"]} />
+      <span data-tour="help" className="inline-flex">
+        <TourButton />
+      </span>
+      <span data-tour="bell">
+        <NotificationBell channels={["role:dispatcher"]} />
+      </span>
     </header>
   );
 }

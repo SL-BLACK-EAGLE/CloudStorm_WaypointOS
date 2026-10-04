@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { FORECAST_TOUR } from "@/lib/tours/dispatcher";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ActionButton } from "@/components/wp/action-button";
@@ -30,9 +32,10 @@ export default async function ForecastPage({ searchParams }: PageProps<"/dispatc
 
   return (
     <>
-      <DispatchHeader title="Capacity forecast" context={`${range} · operating days Mon–Sat`} depot={depot} actions={<ForecastUpload variant="outline" />} />
+      <PageTour id="d07" steps={FORECAST_TOUR} />
+      <DispatchHeader title="Capacity forecast" context={`${range} · operating days Mon–Sat`} depot={depot} actions={<span data-tour="upload"><ForecastUpload variant="outline" /></span>} />
       <main className="space-y-5 p-6">
-        <div className="flex flex-wrap items-center gap-2 text-sm">
+        <div className="flex flex-wrap items-center gap-2 text-sm" data-tour="source">
           <span className="text-muted-foreground">Demand source</span>
           {(["datathon", "baseline"] as const).map((s) => (
             <Link
@@ -56,7 +59,7 @@ export default async function ForecastPage({ searchParams }: PageProps<"/dispatc
           )}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" data-tour="kpis">
           <Kpi
             label="Tightest reefer week"
             value={worst ? (worst.gap! >= 0 ? `+${worst.gap} trips` : `${worst.gap} trips`) : "—"}
@@ -73,7 +76,7 @@ export default async function ForecastPage({ searchParams }: PageProps<"/dispatc
         </div>
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-          <Panel>
+          <Panel data-tour="volume">
             <PanelHeader title="Weekly volume by brand" aside={f.source === "datathon" ? "Datathon Task 2A" : f.source === "baseline" ? "baseline · same week last year × growth" : undefined} />
             <div className="p-4">
               {f.weeks.length ? (
@@ -90,7 +93,7 @@ export default async function ForecastPage({ searchParams }: PageProps<"/dispatc
             </div>
           </Panel>
 
-          <Panel>
+          <Panel data-tour="supply">
             <PanelHeader title={`Supply per week · ${depot}`} aside="vehicles.csv" />
             <dl className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-3 p-4 text-sm">
               <dt>
@@ -123,7 +126,7 @@ export default async function ForecastPage({ searchParams }: PageProps<"/dispatc
           </Panel>
         </div>
 
-        <Panel className="overflow-hidden">
+        <Panel className="overflow-hidden" data-tour="reefer-need">
           <PanelHeader title="Reefer trips needed per week" aside={`need = forecast chilled orders ÷ ${n(f.perTrip.value, 1)} per reefer trip`} />
           <div className="overflow-x-auto">
             <table className="num w-full text-sm">
@@ -164,7 +167,7 @@ export default async function ForecastPage({ searchParams }: PageProps<"/dispatc
           </div>
         </Panel>
 
-        <Panel className="overflow-hidden">
+        <Panel className="overflow-hidden" data-tour="service-time">
           <PanelHeader title="Service time per stop" aside="observed = left − later of arrival and window open" />
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

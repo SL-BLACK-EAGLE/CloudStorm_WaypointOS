@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { LIVE_TOUR } from "@/lib/tours/dispatcher";
 import { ChevronDown, GitMerge, MessageSquare, SkipForward } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -68,6 +70,7 @@ export default async function LivePage() {
   return (
     <>
       <RealtimeRefresh channels={["ops"]} />
+      <PageTour id="d06" steps={LIVE_TOUR} />
       <DispatchHeader
         title="Live operations"
         context={
@@ -77,7 +80,7 @@ export default async function LivePage() {
         }
         depot={depot}
         actions={
-          <span className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span className="flex items-center gap-2 text-sm text-muted-foreground" data-tour="live-indicator">
             <span className="relative flex size-2">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-delivered opacity-60" />
               <span className="relative inline-flex size-2 rounded-full bg-delivered" />
@@ -96,7 +99,7 @@ export default async function LivePage() {
             to watch the run.
           </p>
         )}
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" data-tour="kpis">
           <Kpi label="Trips departed" value={`${kpi.departed} / ${kpi.trips}`} />
           <Kpi label="Stops delivered" value={`${kpi.delivered} / ${kpi.stops}`} />
           <Kpi label="Late risk" value={`${kpi.riskStops} stops`} sub={`${kpi.riskTrips} trips · under ${LATE_MARGIN} min to window close`} tone={kpi.riskStops ? "late-risk" : undefined} />
@@ -104,7 +107,7 @@ export default async function LivePage() {
         </div>
 
         {openConflicts > 0 && (
-          <Link href="/dispatch/live/conflicts" className="flex items-center gap-3 rounded-lg border border-conflict-border bg-conflict-bg p-4 text-conflict">
+          <Link href="/dispatch/live/conflicts" className="flex items-center gap-3 rounded-lg border border-conflict-border bg-conflict-bg p-4 text-conflict" data-tour="conflicts">
             <GitMerge className="size-5" />
             <span className="flex-1 font-medium">
               {openConflicts} conflict{openConflicts === 1 ? "" : "s"} after a vehicle came back online - decide in reconciliation
@@ -114,7 +117,7 @@ export default async function LivePage() {
         )}
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
-          <Panel className="overflow-hidden">
+          <Panel className="overflow-hidden" data-tour="trips">
             <div className="grid grid-cols-[minmax(120px,1fr)_84px_88px_118px_minmax(160px,1.6fr)_48px_minmax(104px,1fr)_16px] gap-3 border-b px-4 py-2 text-[13px] text-muted-foreground max-lg:hidden">
               <span>Trip · vehicle</span>
               <span>District</span>
@@ -147,7 +150,7 @@ export default async function LivePage() {
             </p>
           </Panel>
 
-          <Panel className="h-fit">
+          <Panel className="h-fit" data-tour="exceptions">
             <PanelHeader title="Exceptions" aside="Only what needs a person" />
             <ul className="divide-y">
               {exceptions.map((e) => (

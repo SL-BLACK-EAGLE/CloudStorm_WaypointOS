@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { DEFERRALS_TOUR } from "@/lib/tours/dispatcher";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -96,13 +98,14 @@ export default async function DeferralReviewPage() {
 
   return (
     <>
+      <PageTour id="d04" steps={DEFERRALS_TOUR} />
       <DispatchHeader
         title="Deferral review"
         context={`${depot} · run for ${dayLabel(planning, true)} · ${plan.status === "published" ? "Published" : "Draft"} ${plan.version}`}
         depot={depot}
       />
       <main className="space-y-5 p-6">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5" data-tour="kpis">
           <Kpi
             label="Skipped twice in a row"
             value={repeats.length}
@@ -125,7 +128,7 @@ export default async function DeferralReviewPage() {
             Checked against rules 1–7, delivery windows and fuel at planned times. Capacity deferrals had no legal slot on any vehicle; unavoidable ones had no
             eligible vehicle at all.
           </p>
-          <Button asChild size="desk" variant={decided.length < needs.length ? "outline" : "default"}>
+          <Button asChild size="desk" variant={decided.length < needs.length ? "outline" : "default"} data-tour="to-publish">
             <Link href="/dispatch/publish">
               Continue to publish{decided.length < needs.length ? ` · ${needs.length - decided.length} undecided` : ""}
             </Link>
