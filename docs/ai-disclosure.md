@@ -39,7 +39,7 @@ AI output was never accepted just because it compiled. A change counted as done 
 The app does **not** call an LLM at runtime today:
 
 - **Deferral explanations** ("why was my order moved?") come from deterministic templates filled with the planner's facts (`apps/web/src/lib/explain.ts`). Every sentence can be traced to a rule, a number or a dispatcher's recorded reason.
-- The **Neon AI Gateway** hook (`NEON_AI_GATEWAY_URL`, `AI_CHAT_MODEL`) is reserved for rewording those explanations. Its planned guardrail is that the model may only rephrase the template's facts and may not add new ones. It stays switched off until keys are configured, and the templates remain the fallback.
+
 - **Forecasts and service-time predictions** come from the separate Datathon models (Task 1, Task 2A), loaded as files and labelled as such on screen.
 
 ## Data

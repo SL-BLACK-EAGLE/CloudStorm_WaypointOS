@@ -11,6 +11,39 @@ One plan, from the 16:00 order cutoff to the signature at the store door, for Wa
 | Driver | Follows the run, records arrival and proof of delivery (signature, photo). Works offline for hours and syncs later | sunlight, phone (PWA) |
 | Store manager | Orders before 16:00, sees the arrival time or why the order moved, confirms what arrived | light, desktop/tablet |
 
+## For judges
+
+| What | Where |
+|---|---|
+| **Live app** | **https://cloudstorm-waypointos.vercel.app** - sign in with the [demo accounts](#demo-accounts) |
+| **Demo video** | _Link added at submission_ (5-8 min walkthrough of all four roles) |
+| **Source code** | https://github.com/SL-BLACK-EAGLE/CloudStorm_WaypointOS |
+| **Walkthrough** | [Judge walkthrough](#judge-walkthrough) - numbered steps, Mon 14:30 to Tue 09:00 |
+| **Run it yourself** | `docker compose up --build` - see [Run it with Docker](#run-it-with-docker-recommended) |
+| **Design delta** | [`DESIGN_DELTA.md`](DESIGN_DELTA.md), at the repository root |
+
+The live demo starts at **Mon 22 Dec 2025, 14:30** with no plan published, so the walkthrough can be followed from the store's order onwards. The demo panel at `/demo` moves the business clock, and **Reset demo data** returns to the start at any time.
+
+### Design delta - `DESIGN_DELTA.md` (repository root)
+
+As requested at the kick-off session, [`DESIGN_DELTA.md`](DESIGN_DELTA.md) records every place where the running app departs from the 39 Designathon screens, and why. Everything not listed follows the designs, including tokens, copy, layouts and the role-to-mode mapping. It has three parts:
+
+- **Added** - screens the designs did not include: sign-in, onboarding and approval; People and access; Fleet; the notification bell for every role; the store's Track and Receive tabs; printable load lists; the judge demo panel.
+- **Changed** - one row per screen, giving what the design showed, what the build does, and why (for example D-06 ETAs, D-07 demand, SM-01 next delivery, D-03 blocked moves, D-04 fairness).
+- **Realtime implementation note** - how the "live" screens are delivered.
+
+### Documentation - `docs/`
+
+| File | What it covers |
+|---|---|
+| [`docs/architecture.md`](docs/architecture.md) | Services in the cloud and in docker, a system diagram (mermaid), the outbox → Convex data flow, the planner and its improvement pass, the offline driver app, the business clock, demo reset, security |
+| [`docs/architecture-diagram.jpeg`](docs/architecture-diagram.jpeg) | The architecture as one picture: the four roles, the Next.js app, backend services, data and integrations, and how cloud and local deployments map |
+| [`docs/data-model.md`](docs/data-model.md) | The 33 Postgres tables in groups, an ER diagram (mermaid) and the invariants the code relies on |
+| [`docs/er-diagram.jpeg`](docs/er-diagram.jpeg) | Full entity-relationship diagram of every table, with keys and relations |
+| [`docs/api.md`](docs/api.md) | Route handlers (sync, uploads, files, notifications, jobs), the offline sync event shape, server actions by screen, realtime channels |
+| [`docs/delivery-planning-flowchart.md`](docs/delivery-planning-flowchart.md) | The team's planning algorithm (F1-F9) as flowcharts, the parameters fitted on the dataset, and 38 hand-checkable test cases |
+| [`docs/ai-disclosure.md`](docs/ai-disclosure.md) | AI tools used, what people did, what AI generated and how it was checked, AI inside the product, data handling |
+
 ## What's inside
 
 - **Next.js 16.3** (App Router, server actions, Turbopack) · **React 19** · **Tailwind CSS v4** · **shadcn/ui**
@@ -23,7 +56,7 @@ One plan, from the 16:00 order cutoff to the signature at the store door, for Wa
 - **Offline driver app**: Serwist service worker, IndexedDB outbox, UUIDv7 idempotent sync, conflict detection by stop version
 - **Docker**: the whole stack, including Convex, starts with one command
 
-Read more in [docs/architecture.md](docs/architecture.md), [docs/data-model.md](docs/data-model.md), [docs/api.md](docs/api.md), [docs/ai-disclosure.md](docs/ai-disclosure.md) and [DESIGN_DELTA.md](DESIGN_DELTA.md).
+Every document is listed under [For judges](#for-judges).
 
 ## Run it with Docker (recommended)
 
@@ -112,9 +145,10 @@ For development, point `DATABASE_URL` in `.env` at either the local Postgres (`l
 
 | Piece | Service | Configuration |
 |---|---|---|
-| App | Vercel | Root `apps/web`; every variable from `.env.example` |
+| App | Vercel | Root `apps/web`; build command `pnpm exec convex deploy --cmd 'pnpm build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL` (deploys the Convex functions and sets their URL); no S3 variables, so files go to Postgres |
 | Database | Neon | `DATABASE_URL` (pooled) and `DATABASE_URL_UNPOOLED`; run `pnpm db:migrate && pnpm db:seed` once (the seed also saves the demo baseline, so **Reset demo data** works without the CSVs) |
 | Realtime | Convex Cloud | `CONVEX_DEPLOY_KEY`, `NEXT_PUBLIC_CONVEX_URL`; `npx convex deploy` from `apps/web`; set `CONVEX_SERVER_SECRET` in the Convex environment |
+| One-shot setup | `scripts/deploy-cloud.mjs` | pushes the cloud keys from `.env` to Vercel (values via stdin, never printed), sets the Convex secret, migrates and seeds Neon; `--schedule <url>` creates the QStash relay schedule |
 | Redis, jobs | Upstash | `UPSTASH_REDIS_REST_*`, `QSTASH_*`; then `APP_URL=https://… pnpm --filter web jobs:schedule` |
 | Files | Postgres (default) or any S3 API | leave `S3_ENDPOINT` empty to store files in Postgres, or set the `S3_*` variables |
 
@@ -133,5 +167,6 @@ apps/web                Next.js app (all four roles), Convex functions (apps/web
 packages/planner        delivery planner (TypeScript port) + parity and flowchart tests
 packages/db             Drizzle schema, migrations, seed
 tools/planner-oracle    the team's Python planner (oracle for parity tests)
-docs/                   architecture, data model, API, AI disclosure, video script, planning flowchart
+docs/                   architecture (+ diagram), data model (+ ER diagram), API, planning flowchart, AI disclosure
+DESIGN_DELTA.md         where the build departs from the Designathon screens, and why
 ```
