@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { TRACK_TOUR } from "@/lib/tours/store";
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -21,9 +23,10 @@ export default async function TrackPage() {
   for (const o of orders) byDate.set(o.runDate, [...(byDate.get(o.runDate) ?? []), o]);
   return (
     <main className="space-y-4">
-      <h1 className="text-xl font-semibold">Your orders</h1>
+      <PageTour id="sm-track" steps={TRACK_TOUR} />
+      <h1 className="text-xl font-semibold" data-tour="track-title">Your orders</h1>
       {[...byDate].map(([date, os]) => (
-        <Panel key={date}>
+        <Panel key={date} data-tour="track-day">
           <h2 className="border-b px-4 py-2.5 text-sm font-semibold">{dayLabel(date, true)}</h2>
           <ul className="divide-y">
             {os.map((o) => (

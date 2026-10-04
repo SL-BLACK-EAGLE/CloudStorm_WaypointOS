@@ -10,6 +10,7 @@ This file records where the running app departs from the Designathon screens (39
 | People and access (`/dispatch/users`) | Approve or decline requests, change role and scope, disable accounts. Every change is audited. |
 | Fleet (`/dispatch/fleet`) | Workshop status per vehicle and date, fuel against the weekly quota, and trips. The design only showed workshop vehicles as a count on D-01. |
 | Notification bell for every role (top right) | Anything missed while offline or away from the screen can be found again: the latest 30 notifications, with unread markers and click-through. |
+| Guided tours on every screen, with a ? button to replay them | A first-time user (or a judge) learns what each section is for and how to use it on the screen itself. A step is skipped when its section is not on screen, and a screen with nothing to explain yet waits until it has. |
 | Store "Track" and "Receive" tabs | SM-03 and SM-05 were designed for a single order. The tabs list every order and every delivery to confirm. |
 | Printable load lists (`/dispatch/print/{plan}`) | A paper backup for the dock. |
 | Judge demo panel (`/demo`) | Moves the business clock through the 22–23 Dec walkthrough, picks the driver's vehicle and the store's outlet, simulates the other trucks and resets the data. The seeded operation is in the past, so without this panel judges could not watch a live run. |

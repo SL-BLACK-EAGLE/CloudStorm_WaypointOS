@@ -5,6 +5,8 @@ import { Panel, PanelHeader } from "@/components/wp/panel";
 import { colombo, dayLabel, hhmm, kg } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { storeAnswerAction } from "../../actions";
+import { PageTour } from "@/components/wp/tour";
+import { ASK_TOUR } from "@/lib/tours/store";
 
 export interface OrderMessage {
   id: string;
@@ -29,7 +31,8 @@ export function StoreAsk({
 }) {
   return (
     <main className="mx-auto grid max-w-4xl gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <Panel className="space-y-4 border-conflict-border p-6">
+      <PageTour id="dg03" steps={ASK_TOUR} />
+      <Panel className="space-y-4 border-conflict-border p-6" data-tour="ask">
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex h-7 items-center gap-1.5 rounded-full border border-conflict-border bg-conflict-bg px-2.5 text-[13px] font-semibold text-conflict">
             <RotateCcw className="size-3.5" /> En route again
@@ -42,7 +45,7 @@ export function StoreAsk({
           We told you it would move to {dayLabel(ask.next)} because we had lost contact with the truck. {ask.vehicleId} still has your order
           {order.temp === "chilled" ? ", kept cold," : ""} and is about 5 minutes away.
         </p>
-        <dl className="grid gap-3 sm:grid-cols-3">
+        <dl className="grid gap-3 sm:grid-cols-3" data-tour="ask-facts">
           <div className="rounded-lg border p-3">
             <dt className="text-[13px] text-muted-foreground">Arrives about</dt>
             <dd className="num text-3xl font-semibold">{hhmm(ask.ask.eta)}</dd>
@@ -64,7 +67,7 @@ export function StoreAsk({
           </div>
         </dl>
         <p className="text-[13px] text-muted-foreground">The driver is parked and waiting for your answer.</p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" data-tour="ask-buttons">
           <ActionButton action={storeAnswerAction} fields={{ conflictId: ask.conflictId, accept: "0" }} size="desk" variant="outline">
             Keep it for {dayLabel(ask.next).split(" ")[0]}
           </ActionButton>
@@ -73,7 +76,9 @@ export function StoreAsk({
           </ActionButton>
         </div>
       </Panel>
-      <OrderMessages messages={messages} />
+      <div className="min-w-0" data-tour="messages">
+        <OrderMessages messages={messages} />
+      </div>
     </main>
   );
 }

@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { LOAD_LIST_TOUR } from "@/lib/tours/loader";
 import { Check, ChevronLeft, TriangleAlert } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -32,7 +34,8 @@ export default async function LoadListPage({ params }: PageProps<"/dock/[tripId]
 
   return (
     <main className="space-y-3 p-4">
-      <div className="flex items-start gap-3">
+      <PageTour id="l02" steps={LOAD_LIST_TOUR} large />
+      <div className="flex items-start gap-3" data-tour="trip-head">
         <Link href="/dock" className="mt-1 rounded-md border-2 border-foreground p-2" aria-label="Back to dock queue">
           <ChevronLeft className="size-6" />
         </Link>
@@ -49,15 +52,15 @@ export default async function LoadListPage({ params }: PageProps<"/dock/[tripId]
           <p className="num text-3xl font-bold">{hhmm(trip.departureMin)}</p>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3" data-tour="progress">
         <TempTag temp={chilled ? "chilled" : "ambient"} size="lg" />
         <p className="num text-lg font-semibold">
           {handled} of {stops.length} stops · {doneUnits} of {allUnits} units
         </p>
       </div>
-      <p className="text-base font-medium">Last stop goes in first. Stop 1 goes in last, by the door.</p>
+      <p className="text-base font-medium" data-tour="rule">Last stop goes in first. Stop 1 goes in last, by the door.</p>
 
-      <ol className="space-y-2">
+      <ol className="space-y-2" data-tour="stops">
         {reversed.map((s, i) => {
           const isLoaded = loaded.has(s.orderId);
           const short = flagged.get(s.orderId);
@@ -106,7 +109,7 @@ export default async function LoadListPage({ params }: PageProps<"/dock/[tripId]
                 </div>
               </div>
               {isCurrent && (
-                <div className="grid gap-2 border-t-2 p-3 sm:grid-cols-2">
+                <div className="grid gap-2 border-t-2 p-3 sm:grid-cols-2" data-tour="check-stop">
                   <ActionButton action={markLoadedAction} fields={{ tripId, orderId: s.orderId, loaded: "1" }} size="hero">
                     <Check /> All {s.units} loaded
                   </ActionButton>
@@ -131,7 +134,7 @@ export default async function LoadListPage({ params }: PageProps<"/dock/[tripId]
         {kg(stops.reduce((n, s) => n + s.kg, 0))} · {m3(stops.reduce((n, s) => n + s.m3, 0))} on a {trip.capKg.toLocaleString("en-US")} kg / {trip.capM3} m³{" "}
         {trip.vType}
       </p>
-      <Button asChild size="hero" variant={handled === stops.length ? "default" : "outline"}>
+      <Button asChild size="hero" variant={handled === stops.length ? "default" : "outline"} data-tour="to-signoff">
         <Link href={`/dock/${tripId}/sign-off`}>{signed ? "Signed off · view" : handled === stops.length ? "Sign off" : `Sign off · load all ${stops.length} stops first`}</Link>
       </Button>
     </main>

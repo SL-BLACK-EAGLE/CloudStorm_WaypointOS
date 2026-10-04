@@ -64,7 +64,8 @@ export function resetTours() {
 }
 
 const visible = (el: Element | null): el is HTMLElement => !!el && el instanceof HTMLElement && el.getClientRects().length > 0;
-const find = (el: string) => document.querySelector(`[data-tour="${el}"]`);
+/** First visible element with this marker (a section can exist twice, e.g. top nav on desktop and bottom nav on phones). */
+const find = (el: string) => [...document.querySelectorAll(`[data-tour="${el}"]`)].find(visible) ?? null;
 
 /** Markers every screen of a role has (header, rail). A tour only auto-starts once its own content is on screen. */
 const CHROME = new Set(["help", "bell", "rail", "depot", "clock"]);

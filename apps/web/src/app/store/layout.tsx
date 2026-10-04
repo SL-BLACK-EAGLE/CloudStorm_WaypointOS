@@ -1,5 +1,6 @@
 import { UserButton } from "@clerk/nextjs";
 import { NotificationBell } from "@/components/wp/notification-bell";
+import { TourButton } from "@/components/wp/tour";
 import { RealtimeRefresh } from "@/components/wp/realtime";
 import { notFound } from "next/navigation";
 import { BrandMark, WMark } from "@/components/wp/chips";
@@ -20,7 +21,7 @@ export default async function StoreLayout({ children }: LayoutProps<"/store">) {
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
           <WMark size={32} className="hidden md:inline-grid" />
           <BrandMark brand={outlet.brand} size={28} />
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1" data-tour="outlet">
             <p className="truncate font-semibold">
               Waypoint {outlet.brand} · <span className="num">{outlet.id}</span>
             </p>
@@ -30,7 +31,12 @@ export default async function StoreLayout({ children }: LayoutProps<"/store">) {
             </p>
           </div>
           <StoreNav variant="top" />
-          <NotificationBell channels={[`outlet:${user.outletId}`, `user:${user.id}`]} />
+          <span data-tour="help" className="inline-flex">
+            <TourButton />
+          </span>
+          <span data-tour="bell" className="inline-flex">
+            <NotificationBell channels={[`outlet:${user.outletId}`, `user:${user.id}`]} />
+          </span>
           <RealtimeRefresh channels={[`outlet:${user.outletId}`]} fallbackSeconds={30} />
           <UserButton />
         </div>

@@ -13,6 +13,8 @@ import { pendingStoreAsk } from "@/lib/server/live";
 import { orderingRun, outletInfo, stageOf, storeOrders, type StoreOrder } from "@/lib/server/store";
 import { and, eq } from "@waypoint/db/orm";
 import { cn } from "@/lib/utils";
+import { PageTour } from "@/components/wp/tour";
+import { HOME_TOUR } from "@/lib/tours/store";
 import { StagePill } from "./stage-pill";
 
 export const metadata: Metadata = { title: "SM-01 Home" };
@@ -43,7 +45,8 @@ export default async function StoreHome() {
 
   return (
     <main className="grid gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-      <Panel className="p-5">
+      <PageTour id="sm01" steps={HOME_TOUR} />
+      <Panel className="p-5" data-tour="next-delivery">
         <div className="flex items-center justify-between gap-3">
           <h2 className="font-semibold">Next delivery · {dayLabel(day)}</h2>
           {next && <StagePill order={next} />}
@@ -67,7 +70,7 @@ export default async function StoreHome() {
         )}
       </Panel>
 
-      <Panel className="flex flex-col gap-3 p-5">
+      <Panel className="flex flex-col gap-3 p-5" data-tour="cutoff">
         <h2 className="font-semibold">Order cutoff</h2>
         <p className="text-sm">
           Orders for <strong>{dayLabel(ordering.runDate)}</strong> close at <strong className="num">16:00</strong>
@@ -91,7 +94,7 @@ export default async function StoreHome() {
       </Panel>
 
       {asks.map(({ o, ask }) => (
-        <Link key={`ask-${o.id}`} href={`/store/orders/${o.id}`} className="flex items-center gap-3 rounded-lg border border-conflict-border bg-conflict-bg p-4 text-conflict lg:col-span-2">
+        <Link key={`ask-${o.id}`} data-tour="ask" href={`/store/orders/${o.id}`} className="flex items-center gap-3 rounded-lg border border-conflict-border bg-conflict-bg p-4 text-conflict lg:col-span-2">
           <RotateCcw className="size-5 shrink-0" />
           <span className="flex-1">
             <strong>Your {o.temp === "chilled" ? "chilled" : "dry"} order can come today after all</strong>
@@ -106,6 +109,7 @@ export default async function StoreHome() {
       {deferredToday.map((o) => (
         <Link
           key={o.id}
+          data-tour="moved"
           href={`/store/orders/${o.id}`}
           className="flex items-center gap-3 rounded-lg border border-deferred-border bg-deferred-bg p-4 text-deferred lg:col-span-2"
         >
@@ -120,7 +124,9 @@ export default async function StoreHome() {
         </Link>
       ))}
 
-      <OrdersTable title={`Orders · ${dayLabel(day)}`} orders={today} />
+      <div className="min-w-0 lg:col-span-2" data-tour="orders">
+        <OrdersTable title={`Orders · ${dayLabel(day)}`} orders={today} />
+      </div>
       {earlier.length > 0 && <OrdersTable title={`Earlier today · ${dayLabel(active)}`} orders={earlier} />}
       {upcoming.length > 0 && <OrdersTable title={`Orders · ${dayLabel(ordering.runDate)}`} orders={upcoming} />}
     </main>

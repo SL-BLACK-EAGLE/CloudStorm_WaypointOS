@@ -15,6 +15,8 @@ import { ackNoticeAction } from "../../actions";
 import { MessageDispatcher } from "../../message-dispatcher";
 import { StagePill } from "../../stage-pill";
 import { OrderMessages, StoreAsk } from "./store-ask";
+import { PageTour } from "@/components/wp/tour";
+import { NOTICE_TOUR, TRACKING_TOUR } from "@/lib/tours/store";
 
 export const metadata: Metadata = { title: "SM-03 Order tracking" };
 
@@ -38,7 +40,8 @@ export default async function OrderPage({ params }: PageProps<"/store/orders/[id
     const sib = siblings.find((x) => x.requestedDate === o.requestedDate);
     return (
       <main className="mx-auto max-w-2xl space-y-4">
-        <Panel className="space-y-4 p-6">
+        <PageTour id="sm04" steps={NOTICE_TOUR} />
+        <Panel className="space-y-4 p-6" data-tour="notice">
           <div className="flex items-center gap-2">
             <span className="inline-flex h-7 items-center gap-1.5 rounded-full border border-deferred-border bg-deferred-bg px-2.5 text-[13px] font-semibold text-deferred">
               <SkipForward className="size-3.5" /> Deferred
@@ -52,7 +55,7 @@ export default async function OrderPage({ params }: PageProps<"/store/orders/[id
           <p className="num text-sm text-muted-foreground">
             {o.id} · {kg(o.weightKg)} · {m3(o.volumeM3, 3)}
           </p>
-          <dl className="grid gap-3 sm:grid-cols-3">
+          <dl className="grid gap-3 sm:grid-cols-3" data-tour="notice-facts">
             <div className="rounded-lg border p-3">
               <dt className="text-[13px] text-muted-foreground">New delivery</dt>
               <dd className="font-semibold">{o.deferral.newRunDate ? dayLabel(o.deferral.newRunDate) : "Next run"}</dd>
@@ -71,7 +74,7 @@ export default async function OrderPage({ params }: PageProps<"/store/orders/[id
               <dd className="text-[13px] text-muted-foreground">{sib?.stop ? `${dayLabel(sib.runDate)}, planned ${hhmm(sib.stop.plannedArrive)}` : ""}</dd>
             </div>
           </dl>
-          <section>
+          <section data-tour="why">
             <h2 className="font-semibold">Why</h2>
             <p className="text-sm">{o.deferral.explanation}</p>
             <p className="mt-2 text-[13px] text-muted-foreground">
@@ -84,7 +87,7 @@ export default async function OrderPage({ params }: PageProps<"/store/orders/[id
               . No need to reorder.
             </p>
           </section>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" data-tour="notice-actions">
             <ActionButton action={ackNoticeAction} fields={{ orderId: o.id }} size="desk">
               Got it
             </ActionButton>
@@ -144,7 +147,8 @@ export default async function OrderPage({ params }: PageProps<"/store/orders/[id
   const eta = s ? (s.status === "delivered" ? s.arrivedMin : (s.etaMin ?? s.plannedArrive)) : null;
   return (
     <main className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <Panel>
+      <PageTour id="sm03" steps={TRACKING_TOUR} />
+      <Panel data-tour="timeline">
         <PanelHeader title={`${o.temp === "chilled" ? "Chilled" : "Dry"} order ${o.id}`} aside={<StagePill order={o} />} />
         <p className="num px-4 pt-3 text-sm text-muted-foreground">
           {o.units} units · {kg(o.weightKg)} · {m3(o.volumeM3, 3)} · for {dayLabel(o.runDate)}
@@ -170,7 +174,7 @@ export default async function OrderPage({ params }: PageProps<"/store/orders/[id
       </Panel>
       <aside className="space-y-4">
         {s && (
-          <Panel className="space-y-2 p-4">
+          <Panel className="space-y-2 p-4" data-tour="eta">
             <p className="text-sm text-muted-foreground">
               {s.status === "delivered" ? "Arrived at" : stage === "en_route" && s.seq ? "Expected around" : "Planned arrival"}
             </p>
@@ -205,8 +209,12 @@ export default async function OrderPage({ params }: PageProps<"/store/orders/[id
             <Link href={`/store/receive/${o.id}`}>{o.receipt ? "View receipt" : "Confirm what arrived"}</Link>
           </Button>
         )}
-        <MessageDispatcher orderId={o.id} />
-        <OrderMessages messages={messages} />
+        <div data-tour="message">
+          <MessageDispatcher orderId={o.id} />
+        </div>
+        <div data-tour="messages">
+          <OrderMessages messages={messages} />
+        </div>
       </aside>
     </main>
   );

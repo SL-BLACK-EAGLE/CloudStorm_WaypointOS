@@ -20,7 +20,7 @@ export function StoreNav({ variant }: { variant: "top" | "bottom" }) {
       : path === t.href || path.startsWith(`${t.href}/`) || (t.href === "/store/track" && path.startsWith("/store/orders"));
   if (variant === "top")
     return (
-      <nav aria-label="Store" className="hidden gap-1 md:flex">
+      <nav aria-label="Store" className="hidden gap-1 md:flex" data-tour="nav">
         {TABS.map((t) => (
           <Link
             key={t.href}
@@ -37,7 +37,7 @@ export function StoreNav({ variant }: { variant: "top" | "bottom" }) {
       </nav>
     );
   return (
-    <nav aria-label="Store" className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 border-t bg-background md:hidden">
+    <nav aria-label="Store" className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 border-t bg-background md:hidden" data-tour="nav">
       {TABS.map((t) => {
         const Icon = t.icon;
         return (
