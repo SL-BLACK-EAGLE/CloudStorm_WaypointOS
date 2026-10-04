@@ -12,6 +12,8 @@ import { dayLabel, hhmm, kg } from "@/lib/format";
 import { downscale, uploadImage } from "@/lib/image";
 import { cn } from "@/lib/utils";
 import { confirmReceiptAction } from "../../actions";
+import { PageTour } from "@/components/wp/tour";
+import { RECEIVE_TOUR } from "@/lib/tours/store";
 
 type Kind = "damaged" | "missing" | "wrong_item" | "temperature";
 
@@ -126,6 +128,7 @@ export function ReceiveForm({
 
   return (
     <main className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <PageTour id="sm05" steps={RECEIVE_TOUR} />
       <Panel className="space-y-5 p-5">
         <div>
           <h1 className="text-xl font-semibold">Receive {order.temp === "chilled" ? "chilled" : "dry"} order</h1>
@@ -140,9 +143,9 @@ export function ReceiveForm({
             {driver?.eta ? ` - expected around ${hhmm(driver.eta)}` : ""}. You can confirm once it arrives.
           </p>
         )}
-        <section className="space-y-2">
+        <section className="space-y-2" data-tour="units">
           <h2 className="font-semibold">1 · Units received</h2>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button size="icon-lg" variant="outline" onClick={() => changeUnits(units - 1)} aria-label="One less">
               <Minus />
             </Button>
@@ -150,7 +153,7 @@ export function ReceiveForm({
               value={units}
               onChange={(e) => changeUnits(Number(e.target.value) || 0)}
               inputMode="numeric"
-              className="num h-12 w-28 rounded-md border text-center text-2xl font-semibold"
+              className="num h-12 w-24 min-w-0 rounded-md border text-center text-2xl font-semibold sm:w-28"
               aria-label="Units received"
             />
             <Button size="icon-lg" variant="outline" onClick={() => changeUnits(units + 1)} aria-label="One more">
@@ -159,7 +162,7 @@ export function ReceiveForm({
             <span className="text-sm">of {order.units} expected</span>
           </div>
         </section>
-        <section className="space-y-2">
+        <section className="space-y-2" data-tour="anything-wrong">
           <h2 className="font-semibold">2 · Anything wrong?</h2>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -241,6 +244,7 @@ export function ReceiveForm({
         )}
         <Button
           size="field"
+          data-tour="confirm"
           disabled={
             !delivered ||
             pending ||
@@ -258,7 +262,7 @@ export function ReceiveForm({
       </Panel>
 
       <aside className="space-y-4">
-        <Panel>
+        <Panel data-tour="driver-record">
           <PanelHeader title="Driver's record" aside={delivered ? <StatusPill status="delivered" /> : undefined} />
           {driver ? (
             <dl className="grid grid-cols-[7rem_1fr] gap-y-2 p-4 text-sm">

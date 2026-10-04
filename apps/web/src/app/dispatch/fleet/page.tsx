@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { FLEET_TOUR } from "@/lib/tours/dispatcher";
 import { Snowflake, Wrench } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -27,9 +29,10 @@ export default async function FleetPage() {
 
   return (
     <>
+      <PageTour id="fleet" steps={FLEET_TOUR} />
       <DispatchHeader title="Fleet" context={`${depot} · availability for ${dayLabel(f.planning, true)}`} depot={depot} />
       <main className="space-y-5 p-6">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" data-tour="kpis">
           <Kpi label="Vehicles" value={f.vehicles.length} sub={`${reefers.length} reefers · ${f.vehicles.filter((v) => v.type === "van").length} vans`} />
           <Kpi label="In the workshop" value={workshop.length} sub={workshop.map((v) => v.id).join(", ") || "none"} tone={workshop.length ? "deferred" : undefined} />
           <Kpi label="Available reefers" value={reefers.length - workshop.filter((v) => v.temp === "reefer").length} sub={`of ${reefers.length}`} />
@@ -52,7 +55,7 @@ export default async function FleetPage() {
           </p>
         )}
 
-        <Panel className="overflow-hidden">
+        <Panel className="overflow-hidden" data-tour="fleet-table">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="text-left text-[13px] text-muted-foreground">
@@ -61,8 +64,8 @@ export default async function FleetPage() {
                   <th className="px-3 py-2 font-medium">Capacity</th>
                   <th className="px-3 py-2 font-medium">{dayLabel(f.planning).split(" ")[0]} trips (draft)</th>
                   <th className="px-3 py-2 font-medium">Running now</th>
-                  <th className="w-56 px-3 py-2 font-medium">Fuel this week</th>
-                  <th className="px-4 py-2 text-right font-medium">{dayLabel(f.planning)}</th>
+                  <th className="w-56 px-3 py-2 font-medium" data-tour="fuel">Fuel this week</th>
+                  <th className="px-4 py-2 text-right font-medium" data-tour="workshop">{dayLabel(f.planning)}</th>
                 </tr>
               </thead>
               <tbody>

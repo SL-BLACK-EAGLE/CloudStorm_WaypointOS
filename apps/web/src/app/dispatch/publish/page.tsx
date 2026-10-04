@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { PUBLISH_TOUR } from "@/lib/tours/dispatcher";
 import { Ban, Check, Package, Printer, Send, Smartphone, Store, TriangleAlert } from "lucide-react";
 import type { Metadata } from "next";
 import { RULE_TEXT } from "@waypoint/planner";
@@ -78,6 +80,7 @@ export default async function PublishPage({ searchParams }: PageProps<"/dispatch
 
   return (
     <>
+      <PageTour id="d05" steps={PUBLISH_TOUR} />
       <DispatchHeader
         title="Publish plan"
         context={`${depot} · run for ${dayLabel(planning, true)} · ${published ? `Plan v${plan.version} (published)` : `Draft ${plan.version} → Plan v${plan.version}`}`}
@@ -85,7 +88,7 @@ export default async function PublishPage({ searchParams }: PageProps<"/dispatch
       />
       <main className="grid gap-5 p-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-5">
-          <Panel>
+          <Panel data-tour="checks">
             <PanelHeader title="Pre-publish checks" aside={`${checklist.filter((c) => c.ok).length} pass${risky.length ? ` · ${Math.min(risky.length, 99)} late risk watched` : ""}`} />
             <ul className="space-y-3 p-4">
               {checklist.map((c) => (
@@ -112,7 +115,7 @@ export default async function PublishPage({ searchParams }: PageProps<"/dispatch
             </ul>
           </Panel>
 
-          <Panel>
+          <Panel data-tour="recipients">
             <PanelHeader title="What each role receives" />
             <div className="grid gap-4 p-4 lg:grid-cols-3">
               <div className="space-y-1.5 text-sm">
@@ -145,7 +148,7 @@ export default async function PublishPage({ searchParams }: PageProps<"/dispatch
             </div>
           </Panel>
 
-          <div className="grid gap-4 sm:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-4" data-tour="totals">
             <Kpi label="Served" value={stops.length} />
             <Kpi label="Deferred" value={deferred.length} tone={deferred.length ? "deferred" : undefined} />
             <Kpi label="Trips" value={trips.length} />
@@ -155,7 +158,7 @@ export default async function PublishPage({ searchParams }: PageProps<"/dispatch
 
         <aside className="space-y-4">
           {preview && (
-            <Panel>
+            <Panel data-tour="loader-preview">
               <PanelHeader title={`Loader preview · ${preview.code}`} aside={`${preview.vehicleId} · dep ${hhmm(preview.departureMin)}`} />
               <p className="px-4 pt-3 text-[13px] text-muted-foreground">Load first = last stop</p>
               <ol className="divide-y px-4 pb-3">
@@ -191,17 +194,17 @@ export default async function PublishPage({ searchParams }: PageProps<"/dispatch
             </p>
           )}
           {published ? (
-            <Button asChild size="field">
+            <Button asChild size="field" data-tour="publish">
               <Link href="/dispatch/live">
                 <Send /> Published · watch live operations
               </Link>
             </Button>
           ) : (
-            <ActionButton action={publishAction} fields={{ planId: plan.id }} size="field" disabled={blocked}>
+            <ActionButton action={publishAction} fields={{ planId: plan.id }} size="field" disabled={blocked} data-tour="publish">
               <Send /> {blocked ? (undecided ? `Decide ${undecided} deferral(s) first` : "Fix rule violations first") : `Publish plan v${plan.version}`}
             </ActionButton>
           )}
-          <Button asChild size="desk" variant="outline" className="w-full">
+          <Button asChild size="desk" variant="outline" className="w-full" data-tour="print">
             <Link href={`/dispatch/print/${plan.id}`} target="_blank">
               <Printer /> Print backup run sheets
             </Link>

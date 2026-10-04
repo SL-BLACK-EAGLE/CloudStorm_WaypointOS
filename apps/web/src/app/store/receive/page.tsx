@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { RECEIVE_LIST_TOUR } from "@/lib/tours/store";
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -35,8 +37,9 @@ export default async function ReceiveListPage() {
   );
   return (
     <main className="space-y-4">
+      <PageTour id="sm05-list" steps={RECEIVE_LIST_TOUR} />
       <h1 className="text-xl font-semibold">Receive and confirm</h1>
-      <Panel>
+      <Panel data-tour="to-confirm">
         <h2 className="border-b px-4 py-2.5 text-sm font-semibold">Delivered · confirm what arrived ({toConfirm.length})</h2>
         <ul className="divide-y">
           {toConfirm.map((o) => row(o, <StatusPill status="delivered">{`Delivered ${hhmm(o.stop?.leftMin ?? null)}`}</StatusPill>))}

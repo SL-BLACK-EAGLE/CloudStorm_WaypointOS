@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { RECONCILE_TOUR } from "@/lib/tours/dispatcher";
 import { ArrowLeft, Check, GitMerge, Truck, UserRound } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -31,6 +33,7 @@ export default async function ReconciliationPage() {
   return (
     <>
       <RealtimeRefresh channels={["ops"]} fallbackSeconds={20} />
+      <PageTour id="dg02" steps={RECONCILE_TOUR} />
       <DispatchHeader
         title="Reconciliation"
         context={`${depot} · ${open.length} open conflict${open.length === 1 ? "" : "s"}`}
@@ -66,7 +69,7 @@ export default async function ReconciliationPage() {
                   {tr.district} · last heard from {hhmm(tr.lastSeenMin)}
                 </p>
               </div>
-              <p className="flex flex-wrap gap-x-4 gap-y-1 rounded-lg border bg-card px-4 py-3 text-sm">
+              <p className="flex flex-wrap gap-x-4 gap-y-1 rounded-lg border bg-card px-4 py-3 text-sm" data-tour="sync-summary">
                 <span>
                   <strong className="num">{tr.received}</strong> records received
                 </span>
@@ -79,7 +82,7 @@ export default async function ReconciliationPage() {
                 </span>
               </p>
               <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-                <Panel>
+                <Panel data-tour="timeline">
                   <PanelHeader title="What happened on the trip" aside="as the driver recorded it" />
                   <ol className="divide-y">
                     {tr.stops.map((s) => {
@@ -156,7 +159,7 @@ function Conflict({ c }: { c: ConflictCard }) {
   const ask = (c.detail as { storeAsk?: { askedMin: number; eta: number } }).storeAsk ?? null;
   const driver = typeof c.detail.driver === "string" ? c.detail.driver : "The driver";
   return (
-    <Panel className="border-conflict-border">
+    <Panel className="border-conflict-border" data-tour="conflict">
       <div className="flex items-center justify-between gap-3 border-b border-conflict-border bg-conflict-bg px-4 py-3 text-conflict">
         <span className="flex items-center gap-2 font-semibold">
           <GitMerge className="size-4" />
@@ -164,7 +167,7 @@ function Conflict({ c }: { c: ConflictCard }) {
         </span>
         <span className="text-[13px]">{KIND[c.kind] ?? c.kind}</span>
       </div>
-      <div className="grid gap-px bg-border sm:grid-cols-2">
+      <div className="grid gap-px bg-border sm:grid-cols-2" data-tour="compare">
         <div className="space-y-1 bg-card p-4">
           <p className="flex items-center gap-2 text-[13px] text-muted-foreground">
             <UserRound className="size-4" /> Your change{c.deferral?.decidedAt ? ` · ${colombo(c.deferral.decidedAt)}` : ""}
@@ -215,7 +218,7 @@ function Conflict({ c }: { c: ConflictCard }) {
         {moved ? (
           <>
             <p className="text-sm font-medium">Decide</p>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2" data-tour="decide">
               <div className="rounded-lg border p-3 text-[13px]">
                 <p className="font-medium">Deliver today</p>
                 <p className="text-muted-foreground">

@@ -26,7 +26,7 @@ export function OptimizerNote({ metrics }: { metrics: unknown }) {
   const litres = Math.round((o.litres - o.baseLitres) * 10) / 10;
   const sign = (n: number) => (n > 0 ? `+${n}` : `${n}`);
   return (
-    <details className="group mx-6 mt-4 rounded-lg border bg-card text-sm">
+    <details className="group mx-6 mt-4 rounded-lg border bg-card text-sm" data-tour="optimizer">
       <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5">
         <Sparkles className="size-4 text-muted-foreground" />
         <span className="font-medium">Improvement pass</span>

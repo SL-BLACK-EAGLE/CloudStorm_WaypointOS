@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { hhmm } from "@/lib/format";
 import { downscale, uploadImage } from "@/lib/image";
+import { PageTour } from "@/components/wp/tour";
+import { SHORTFALL_TOUR } from "@/lib/tours/loader";
 import { cn } from "@/lib/utils";
 import { flagShortfallAction } from "../../actions";
 
@@ -69,6 +71,7 @@ export function ShortfallForm({
 
   return (
     <main className="mx-auto max-w-2xl space-y-5 p-4">
+      <PageTour id="l03" steps={SHORTFALL_TOUR} large />
       <div>
         <h1 className="text-2xl font-bold">Flag a problem</h1>
         <p className="num text-lg">
@@ -79,10 +82,10 @@ export function ShortfallForm({
         </p>
       </div>
 
-      <section className="space-y-2">
+      <section className="space-y-2" data-tour="count">
         <h2 className="text-lg font-semibold">Units on the dock</h2>
-        <div className="flex items-center gap-3">
-          <Button size="icon-lg" variant="outline" className="size-16 border-2 border-foreground" onClick={() => setCount((c) => Math.max(0, c - 1))} aria-label="One less">
+        <div className="flex flex-wrap items-center gap-3">
+          <Button size="icon-lg" variant="outline" className="size-16 shrink-0 border-2 border-foreground" onClick={() => setCount((c) => Math.max(0, c - 1))} aria-label="One less">
             <Minus className="size-7" />
           </Button>
           <input
@@ -90,20 +93,20 @@ export function ShortfallForm({
             inputMode="numeric"
             value={count}
             onChange={(e) => setCount(Math.max(0, Math.min(stop.units * 2, Number(e.target.value) || 0)))}
-            className="num h-16 w-32 rounded-lg border-2 border-foreground bg-card text-center text-4xl font-bold"
+            className="num h-16 w-28 min-w-0 rounded-lg border-2 border-foreground bg-card text-center text-4xl font-bold sm:w-32"
             aria-label="Units on the dock"
           />
-          <Button size="icon-lg" variant="outline" className="size-16 border-2 border-foreground" onClick={() => setCount((c) => c + 1)} aria-label="One more">
+          <Button size="icon-lg" variant="outline" className="size-16 shrink-0 border-2 border-foreground" onClick={() => setCount((c) => c + 1)} aria-label="One more">
             <Plus className="size-7" />
           </Button>
-          <p className="text-lg">
+          <p className="basis-full text-lg sm:basis-auto">
             of <span className="num font-bold">{stop.units}</span> on the load list
           </p>
         </div>
         {short > 0 && <p className="num text-xl font-bold text-exception">{short} short</p>}
       </section>
 
-      <section className="space-y-2">
+      <section className="space-y-2" data-tour="cause">
         <h2 className="text-lg font-semibold">What&apos;s wrong</h2>
         <div className="grid grid-cols-3 gap-2" role="radiogroup">
           {(
@@ -126,7 +129,7 @@ export function ShortfallForm({
         </div>
       </section>
 
-      <section className="space-y-2">
+      <section className="space-y-2" data-tour="photo">
         <input ref={input} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => onPhoto(e.target.files?.[0])} />
         {photo ? (
           <div className="flex items-center gap-3">
@@ -144,7 +147,7 @@ export function ShortfallForm({
         <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note (optional)" rows={2} className="text-base" />
       </section>
 
-      <section className="rounded-lg border-2 border-dashed p-4 text-base">
+      <section className="rounded-lg border-2 border-dashed p-4 text-base" data-tour="next">
         <h2 className="font-semibold">What happens next</h2>
         <p className="mt-1">Orders are never split. The dispatcher decides one of two things:</p>
         <ul className="mt-2 list-disc space-y-1 pl-6">
@@ -162,7 +165,7 @@ export function ShortfallForm({
         <Button asChild size="hero" variant="outline" className="border-2 border-foreground">
           <Link href={`/dock/${tripId}`}>Cancel</Link>
         </Button>
-        <Button size="hero" onClick={submit} disabled={!valid || pending || uploading}>
+        <Button size="hero" onClick={submit} disabled={!valid || pending || uploading} data-tour="submit">
           {pending && <Loader2 className="animate-spin" />}
           {cause === "missing" ? (short > 0 ? `Flag ${short} short` : "Count matches - nothing short") : `Flag ${cause === "damaged" ? "damaged" : "not cold"}`}
         </Button>

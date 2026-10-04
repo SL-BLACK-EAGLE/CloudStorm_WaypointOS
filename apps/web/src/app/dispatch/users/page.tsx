@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { PEOPLE_TOUR } from "@/lib/tours/dispatcher";
 import type { Metadata } from "next";
 import { ActionButton } from "@/components/wp/action-button";
 import { Panel, PanelHeader } from "@/components/wp/panel";
@@ -25,9 +27,10 @@ export default async function PeoplePage() {
 
   return (
     <>
+      <PageTour id="people" steps={PEOPLE_TOUR} />
       <DispatchHeader title="People and access" context={`${pending.length} waiting · ${active.length} active`} />
       <main className="space-y-5 p-6">
-        <Panel>
+        <Panel data-tour="requests">
           <PanelHeader title="Access requests" aside="New sign-ups choose a role; you approve the role and its scope" />
           <ul className="divide-y">
             {pending.map((u) => (
@@ -71,7 +74,7 @@ export default async function PeoplePage() {
           </ul>
         </Panel>
 
-        <Panel className="overflow-hidden">
+        <Panel className="overflow-hidden" data-tour="accounts">
           <PanelHeader title="Active accounts" aside="Authorization is checked on the server for every page and action" />
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

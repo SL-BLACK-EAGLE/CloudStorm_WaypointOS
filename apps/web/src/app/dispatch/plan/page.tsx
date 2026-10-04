@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { PLAN_EMPTY_TOUR, PLAN_TOUR } from "@/lib/tours/dispatcher";
 import type { Metadata } from "next";
 import { Play } from "lucide-react";
 import { ActionButton } from "@/components/wp/action-button";
@@ -27,9 +29,10 @@ export default async function PlanningBoardPage() {
   if (!plan) {
     return (
       <>
+        <PageTour id="d03-empty" steps={PLAN_EMPTY_TOUR} />
         <DispatchHeader title="Planning board" context={`${depot} · run for ${dayLabel(planning, true)}`} depot={depot} />
         <main className="p-6">
-          <Panel className="flex flex-wrap items-center justify-between gap-4 p-6">
+          <Panel className="flex flex-wrap items-center justify-between gap-4 p-6" data-tour="autoplan">
             <div>
               <h2 className="font-semibold">No plan for {dayLabel(planning)} yet</h2>
               <p className="text-sm text-muted-foreground">Run the planner, then adjust it here by dragging orders between trips.</p>
@@ -47,6 +50,7 @@ export default async function PlanningBoardPage() {
 
   return (
     <>
+      <PageTour id="d03" steps={PLAN_TOUR} />
       <DispatchHeader
         title="Planning board"
         context={

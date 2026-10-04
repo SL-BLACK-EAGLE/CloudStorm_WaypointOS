@@ -45,7 +45,7 @@ export function QueueTable({ items }: { items: QueueItem[] }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2" data-tour="filters">
         <div role="tablist" aria-label="District" className="flex flex-wrap gap-1.5">
           {[["All", items.length] as const, ...districts].map(([d, n]) => (
             <button
@@ -68,7 +68,7 @@ export function QueueTable({ items }: { items: QueueItem[] }) {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border bg-card">
+      <div className="overflow-x-auto rounded-lg border bg-card" data-tour="queue">
         <table className="w-full text-sm">
           <thead className="text-left text-[13px] text-muted-foreground">
             <tr className="border-b">

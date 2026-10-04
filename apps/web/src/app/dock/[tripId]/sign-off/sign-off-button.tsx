@@ -12,7 +12,7 @@ export function SignOffButton({ tripId, vehicleId, reefer, blockedReason }: { tr
   const [sealed, setSealed] = useState(!reefer);
   const [pending, start] = useTransition();
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" data-tour="signoff">
       {reefer && (
         <label className={cn("flex min-h-16 cursor-pointer items-center gap-3 rounded-lg border-2 border-foreground p-3 text-lg font-semibold", sealed && "bg-muted")}>
           <input type="checkbox" checked={sealed} onChange={(e) => setSealed(e.target.checked)} className="size-7 accent-current" />

@@ -16,11 +16,12 @@ One plan, from the 16:00 order cutoff to the signature at the store door, for Wa
 | What | Where |
 |---|---|
 | **Live app** | **https://cloudstorm-waypointos.vercel.app** - sign in with the [demo accounts](#demo-accounts) |
-| **Demo video** | _Link added at submission_ (5-8 min walkthrough of all four roles) |
+| **Demo video** | **https://youtu.be/OE2vsV0q5PA** - 5-minute walkthrough of all four roles (also in the submission form) |
 | **Source code** | https://github.com/SL-BLACK-EAGLE/CloudStorm_WaypointOS |
 | **Walkthrough** | [Judge walkthrough](#judge-walkthrough) - numbered steps, Mon 14:30 to Tue 09:00 |
 | **Run it yourself** | `docker compose up --build` - see [Run it with Docker](#run-it-with-docker-recommended) |
 | **Design delta** | [`DESIGN_DELTA.md`](DESIGN_DELTA.md), at the repository root |
+| **Guided tours** | Every screen explains itself the first time it opens: what each section is and how to use it. Press **?** in the header to replay it, or **Show the guided tours again** on `/demo` |
 
 The live demo starts at **Mon 22 Dec 2025, 14:30** with no plan published, so the walkthrough can be followed from the store's order onwards. The demo panel at `/demo` moves the business clock, and **Reset demo data** returns to the start at any time.
 
@@ -142,6 +143,8 @@ For development, point `DATABASE_URL` in `.env` at either the local Postgres (`l
 | `pnpm --filter @waypoint/db inspect` | Row counts per table |
 
 ## Cloud deployment
+
+The live deployment above is already set up with these steps; nothing more is needed to use it. If required, we can share the real deployment keys separately.
 
 | Piece | Service | Configuration |
 |---|---|---|

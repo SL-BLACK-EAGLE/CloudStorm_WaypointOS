@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { QUEUE_TOUR } from "@/lib/tours/loader";
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -37,10 +39,11 @@ export default async function DockQueuePage({ searchParams }: PageProps<"/dock">
 
   return (
     <main className="space-y-3 p-4">
+      <PageTour id="l01" steps={QUEUE_TOUR} large />
       <p className="text-sm text-muted-foreground">
         {plan ? `Plan v${plan.version} for ${dayLabel(runDate)} · ${trips.length} load lists, ordered by departure` : `No published plan for ${dayLabel(runDate)} yet.`}
       </p>
-      <nav className="grid grid-cols-3 overflow-hidden rounded-lg border-2 border-foreground" aria-label="Queue">
+      <nav className="grid grid-cols-3 overflow-hidden rounded-lg border-2 border-foreground" aria-label="Queue" data-tour="queue-tabs">
         {(
           [
             ["next", `Next 90 min · ${next.length}`],
@@ -58,7 +61,7 @@ export default async function DockQueuePage({ searchParams }: PageProps<"/dock">
           </Link>
         ))}
       </nav>
-      <ul className="space-y-2">
+      <ul className="space-y-2" data-tour="load-lists">
         {shown.map((t) => (
           <li key={t.id}>
             <Link

@@ -11,6 +11,8 @@ import { Panel } from "@/components/wp/panel";
 import { DOCK_LABEL, dayLabel, duration, hhmm } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { placeOrdersAction, type PlaceResult } from "../actions";
+import { PageTour } from "@/components/wp/tour";
+import { ORDER_DONE_TOUR, ORDER_LINES_TOUR, ORDER_REVIEW_TOUR } from "@/lib/tours/store";
 
 type Item = {
   sku: string;
@@ -82,7 +84,8 @@ export function OrderWizard({
 
   if (step === "done" && result) {
     return (
-      <Panel className="mx-auto max-w-xl space-y-4 p-6">
+      <Panel className="mx-auto max-w-xl space-y-4 p-6" data-tour="confirmation">
+        <PageTour id="sm02-done" steps={ORDER_DONE_TOUR} />
         <CheckCircle2 className="size-8 text-delivered" />
         <h1 className="text-2xl font-semibold">
           {result.orders.length} order{result.orders.length === 1 ? "" : "s"} received
@@ -128,7 +131,7 @@ export function OrderWizard({
   const header = (
     <div className="flex flex-wrap items-end justify-between gap-3">
       <div>
-        <ol className="mb-2 flex gap-3 text-[13px] text-muted-foreground">
+        <ol className="mb-2 flex gap-3 text-[13px] text-muted-foreground" data-tour="steps">
           {["Order lines", "Review", "Confirmation"].map((s, i) => (
             <li
               key={s}
@@ -144,7 +147,7 @@ export function OrderWizard({
         <h1 className="text-2xl font-semibold">Orders for {dayLabel(runDate)}</h1>
       </div>
       <div className="text-right">
-        <p className="text-[13px] text-muted-foreground">{afterCutoff ? "Cutoff passed - these go to" : "Cutoff 16:00 today"}</p>
+        <p className="text-[13px] text-muted-foreground" data-tour="countdown">{afterCutoff ? "Cutoff passed - these go to" : "Cutoff 16:00 today"}</p>
         <p className="num text-lg font-semibold">{afterCutoff ? dayLabel(runDate) : `${duration(minsToCutoff)} left`}</p>
       </div>
     </div>
@@ -167,14 +170,15 @@ export function OrderWizard({
     ].filter((o) => o.t.lines > 0);
     return (
       <main className="space-y-5">
+        <PageTour id="sm02-review" steps={ORDER_REVIEW_TOUR} />
         {header}
         {orders.length > 1 && (
-          <p className="rounded-lg border bg-card p-4 text-sm">
+          <p className="rounded-lg border bg-card p-4 text-sm" data-tour="two-orders">
             <strong>These are two separate orders.</strong> Chilled goods need a refrigerated vehicle and dry goods don&apos;t, so they may arrive on different
             trucks. If refrigerated space runs out, the chilled order can move to the next run - you&apos;ll hear why the evening before, not at the door.
           </p>
         )}
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2" data-tour="review">
           {orders.map((o) => (
             <Panel key={o.temp} className="space-y-2 p-4">
               <div className="flex items-center justify-between">
@@ -212,6 +216,7 @@ export function OrderWizard({
           </Button>
           <Button
             size="desk"
+            data-tour="submit"
             disabled={pending}
             onClick={() =>
               start(async () => {
@@ -236,11 +241,12 @@ export function OrderWizard({
 
   return (
     <main className="space-y-5">
+      <PageTour id="sm02" steps={ORDER_LINES_TOUR} />
       {header}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <Panel className="overflow-hidden">
           {fresh && (
-            <div role="tablist" className="grid grid-cols-2 border-b">
+            <div role="tablist" className="grid grid-cols-2 border-b" data-tour="order-tabs">
               {(["ambient", "chilled"] as const).map((k) => {
                 const tt = k === "ambient" ? dry : cold;
                 return (
@@ -258,7 +264,7 @@ export function OrderWizard({
               })}
             </div>
           )}
-          <div className="flex flex-wrap items-center gap-2 border-b p-3">
+          <div className="flex flex-wrap items-center gap-2 border-b p-3" data-tour="search">
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -272,7 +278,7 @@ export function OrderWizard({
               <Sparkles /> Typical order
             </Button>
           </div>
-          <ul className="divide-y">
+          <ul className="divide-y" data-tour="lines">
             {shown.map((c) => {
               const n = qty[c.sku] ?? 0;
               return (
@@ -309,7 +315,7 @@ export function OrderWizard({
           </ul>
           <p className="border-t p-3 text-[12px] text-muted-foreground">Item names are illustrative; the planner uses the weight and volume they add up to.</p>
         </Panel>
-        <aside className="space-y-3">
+        <aside className="space-y-3" data-tour="totals">
           {[
             {
               k: "ambient" as const,
@@ -341,7 +347,7 @@ export function OrderWizard({
               Chilled items land in the chilled order by themselves, so they can&apos;t end up on a truck with no refrigeration.
             </p>
           )}
-          <Button size="desk" className="w-full" disabled={dry.units + cold.units === 0} onClick={() => setStep("review")}>
+          <Button size="desk" className="w-full" disabled={dry.units + cold.units === 0} onClick={() => setStep("review")} data-tour="to-review">
             Continue to review
           </Button>
           <Button asChild size="desk" variant="ghost" className="w-full">

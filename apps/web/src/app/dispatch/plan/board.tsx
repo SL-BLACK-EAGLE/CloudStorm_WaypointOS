@@ -108,7 +108,7 @@ export function PlanningBoard({ data, rerun }: { data: BoardData; rerun: React.R
 
   return (
     <div className="flex min-h-[calc(100dvh-4rem)] flex-col">
-      <div className="flex flex-wrap items-center gap-3 border-b px-6 py-3">
+      <div className="flex flex-wrap items-center gap-3 border-b px-6 py-3" data-tour="toolbar">
         {rerun}
         <div className="relative w-56">
           <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -151,6 +151,7 @@ export function PlanningBoard({ data, rerun }: { data: BoardData; rerun: React.R
             if (id && !deferredIds.has(id)) setDeferFor(id);
           }}
           aria-label="Deferred orders"
+          data-tour="deferred-column"
         >
           <h2 className="font-semibold">
             {data.planStatus === "published" ? "Deferred" : "Deferred in draft"} · {data.deferrals.length}
@@ -196,7 +197,7 @@ export function PlanningBoard({ data, rerun }: { data: BoardData; rerun: React.R
         </aside>
 
         {/* ── lanes */}
-        <div className="min-w-0 overflow-x-auto px-4 py-3">
+        <div className="min-w-0 overflow-x-auto px-4 py-3" data-tour="lanes">
           <table className="w-full min-w-[680px] table-fixed text-sm">
             <colgroup>
               <col className="w-[170px]" />
@@ -304,7 +305,7 @@ export function PlanningBoard({ data, rerun }: { data: BoardData; rerun: React.R
         </div>
 
         {/* ── right panel */}
-        <aside className="border-l p-4">
+        <aside className="border-l p-4" data-tour="detail">
           {selection?.kind === "trip" ? (
             <TripPanel
               board={board}
@@ -465,7 +466,7 @@ function TripPanel({
           {v.id} · {v.temp} {v.type} · {f.outlet.district} · dep {hhmm(trip.departureMin)}
         </p>
       </div>
-      <div>
+      <div data-tour="feasibility">
         <h3 className="num mb-2 text-[12px] tracking-widest text-muted-foreground uppercase">
           Feasibility · {rules.filter((r) => r.ok).length} of {rules.length} pass
         </h3>
@@ -489,7 +490,7 @@ function TripPanel({
           {d.outboundMin} travel + {orders.length - 1} × {d.interStopMin} inter-stop + {handling} handling = {tMin}
         </p>
       </div>
-      <div>
+      <div data-tour="stops">
         <h3 className="mb-1 text-sm font-semibold">Stops in driving order</h3>
         <ol className="space-y-1">
           {arrivals.map(({ o, at }, i) => (

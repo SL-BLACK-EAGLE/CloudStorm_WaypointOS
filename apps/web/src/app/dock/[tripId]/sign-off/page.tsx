@@ -1,3 +1,5 @@
+import { PageTour } from "@/components/wp/tour";
+import { SIGNOFF_TOUR } from "@/lib/tours/loader";
 import { Ban, Check, ChevronLeft, Clock } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -41,6 +43,7 @@ export default async function SignOffPage({ params }: PageProps<"/dock/[tripId]/
 
   return (
     <main className="mx-auto max-w-2xl space-y-4 p-4">
+      <PageTour id="l04" steps={SIGNOFF_TOUR} large />
       <div className="flex items-start gap-3">
         <Link href={`/dock/${tripId}`} className="mt-1 rounded-md border-2 border-foreground p-2" aria-label="Back to load list">
           <ChevronLeft className="size-6" />
@@ -57,7 +60,7 @@ export default async function SignOffPage({ params }: PageProps<"/dock/[tripId]/
         </div>
       </div>
 
-      <ul className="space-y-2">
+      <ul className="space-y-2" data-tour="checks">
         <Row ok={notHandled.length === 0 && openShorts.length === 0} title={`${complete.length} of ${stops.length} stops fully loaded, last stop first`}>
           {complete.map((s) => s.outletId).join(", ")} · {complete.reduce((n, s) => n + s.units, 0)} units
         </Row>
@@ -99,7 +102,7 @@ export default async function SignOffPage({ params }: PageProps<"/dock/[tripId]/
       </ul>
 
       {undecided.length > 0 && (
-        <div className="flex gap-3 rounded-lg border-2 border-dashed p-4 text-base">
+        <div className="flex gap-3 rounded-lg border-2 border-dashed p-4 text-base" data-tour="waiting">
           <Clock className="mt-0.5 size-6 shrink-0" />
           <p>
             <strong>Waiting for the dispatcher.</strong> They will either hold {trip.vehicleId} until the units are found, or send it now and warn the store.

@@ -31,6 +31,8 @@ import type { PackStop, PackTrip, RunPack } from "@/lib/offline/types";
 import { useDriver } from "@/lib/offline/use-driver";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/wp/notification-bell";
+import { PageTour, TourButton } from "@/components/wp/tour";
+import { DELIVER_TOUR, OUTBOX_TOUR, PROBLEM_TOUR, RUN_TOUR, STOP_TOUR } from "@/lib/tours/driver";
 import { SignalListener } from "@/components/wp/realtime";
 import { SignaturePad, type SignatureHandle } from "./signature-pad";
 import { ackDriverNoticeAction, canDeliverAction } from "./actions";
@@ -160,8 +162,14 @@ function TopBar({ pack, online, queued, onOutbox, userId }: { pack: RunPack; onl
           {dayLabel(pack.runDate)} · {pack.vehicle?.depot} depot
         </p>
       </div>
-      <NotificationBell className="ml-auto size-11 shrink-0 rounded-full border-2 border-foreground" channels={[`user:${userId}`, "role:driver"]} />
+      <span data-tour="help" className="ml-auto inline-flex">
+        <TourButton className="size-11 rounded-full border-2 border-foreground" />
+      </span>
+      <span data-tour="bell" className="inline-flex">
+        <NotificationBell className="size-11 shrink-0 rounded-full border-2 border-foreground" channels={[`user:${userId}`, "role:driver"]} />
+      </span>
       <button
+        data-tour="sync"
         onClick={onOutbox}
         className={cn(
           "inline-flex h-11 items-center gap-2 rounded-full border-2 px-3 text-base font-semibold",
@@ -182,7 +190,7 @@ function Notices({ notices, online }: { notices: NonNullable<RunPack["notices"]>
   const shown = notices.filter((n) => !hidden.includes(n.id));
   if (!shown.length) return null;
   return (
-    <section className="m-4 space-y-3" aria-label="From the dispatcher">
+    <section className="m-4 space-y-3" aria-label="From the dispatcher" data-tour="notices">
       {shown.map((n) => (
         <div
           key={n.id}
@@ -217,7 +225,7 @@ function Notices({ notices, online }: { notices: NonNullable<RunPack["notices"]>
 function PlanChanged({ stops, online, waiting }: { stops: PackStop[]; online: boolean; waiting: string[] }) {
   const [sentNow, setSent] = useState<string | null>(null);
   return (
-    <section className="m-4 space-y-3 rounded-lg border-2 border-conflict-border bg-conflict-bg p-4 text-conflict">
+    <section className="m-4 space-y-3 rounded-lg border-2 border-conflict-border bg-conflict-bg p-4 text-conflict" data-tour="plan-changed">
       <p className="flex items-center gap-2 text-lg font-bold">
         <GitMerge className="size-5" /> Plan changed while you had no signal
       </p>
@@ -267,7 +275,8 @@ function RunView({ pack, now, online, onOpen, record }: { pack: RunPack; now: nu
 
   return (
     <main className="space-y-4 p-4">
-      <section className="flex gap-3 rounded-lg bg-delivered-bg p-4 text-delivered">
+      <PageTour id="dr-run" steps={RUN_TOUR} large />
+      <section className="flex gap-3 rounded-lg bg-delivered-bg p-4 text-delivered" data-tour="offline-ready">
         <CircleCheck className="mt-0.5 size-7 shrink-0" />
         <div>
           <p className="text-xl font-bold">Offline ready</p>
@@ -278,7 +287,7 @@ function RunView({ pack, now, online, onOpen, record }: { pack: RunPack; now: nu
         </div>
       </section>
 
-      <section className="space-y-2 rounded-lg border-2 border-foreground p-4">
+      <section className="space-y-2 rounded-lg border-2 border-foreground p-4" data-tour="trip-card">
         <div className="flex items-center gap-2">
           <BrandMark brand={active.brand} size={24} />
           <p className="num text-xl font-bold">
@@ -302,7 +311,7 @@ function RunView({ pack, now, online, onOpen, record }: { pack: RunPack; now: nu
         <p className="text-base">{active.signedOff ? "Loaded and signed off at the dock" : "Waiting for dock sign-off"}</p>
       </section>
 
-      <ol className="overflow-hidden rounded-lg border-2 border-foreground">
+      <ol className="overflow-hidden rounded-lg border-2 border-foreground" data-tour="stops">
         {active.stops.map((s, i) => (
           <li key={s.stopId} className={cn("border-b-2 last:border-0", s.status === "skipped" && "opacity-60")}>
             <button onClick={() => onOpen(s.stopId)} className="flex w-full items-center gap-3 px-3 py-3 text-left active:bg-muted">
@@ -332,7 +341,7 @@ function RunView({ pack, now, online, onOpen, record }: { pack: RunPack; now: nu
       </ol>
 
       {!departed ? (
-        <div className="space-y-2">
+        <div className="space-y-2" data-tour="start">
           <p className="text-center text-base">
             Planned departure <span className="num font-bold">{hhmm(active.departureMin)}</span>
           </p>
@@ -424,7 +433,8 @@ function NextStopView({
       <p className="text-base text-muted-foreground">
         Stop {idx + 1} of {trip.stops.length} · {trip.code}
       </p>
-      <section className="space-y-3 rounded-lg border-2 border-foreground p-4">
+      <PageTour id="dr-stop" steps={STOP_TOUR} large />
+      <section className="space-y-3 rounded-lg border-2 border-foreground p-4" data-tour="stop-card">
         <p className="text-sm font-semibold tracking-widest uppercase">Next stop</p>
         <p className="num text-[44px] leading-none font-bold">{stop.outletId}</p>
         <p className="text-base">
@@ -463,17 +473,18 @@ function NextStopView({
           </p>
         )}
       </section>
-      <button onClick={onProblem} className="text-base font-semibold underline underline-offset-4">
+      <button onClick={onProblem} className="text-base font-semibold underline underline-offset-4" data-tour="problem">
         Problem at this stop?
       </button>
       <div className="grid gap-2">
-        <Button asChild size="hero" variant="outline" className="border-2 border-foreground">
+        <Button asChild size="hero" variant="outline" className="border-2 border-foreground" data-tour="navigate">
           <a href={maps} target="_blank" rel="noreferrer">
             <MapPin /> Navigate in Google Maps
           </a>
         </Button>
         <Button
           size="hero"
+          data-tour="arrive"
           disabled={stop.status === "delivered" || stop.status === "skipped" || (stop.status === "planned" && !hasDeparted(trip))}
           onClick={async () => {
             if (stop.status === "planned") await record({ type: "stop.arrive", tripId: trip.tripId, stopId: stop.stopId, baseVersion: stop.version });
@@ -575,13 +586,14 @@ function DeliverView({
           Stop {trip.stops.findIndex((s) => s.stopId === stop.stopId) + 1} of {trip.stops.length} · {DOCK_LABEL[stop.dock]}
         </p>
       </div>
-      <div className="grid grid-cols-3 overflow-hidden rounded-lg border-2 border-foreground text-center text-base font-semibold">
+      <PageTour id="dr-deliver" steps={DELIVER_TOUR} large />
+      <div className="grid grid-cols-3 overflow-hidden rounded-lg border-2 border-foreground text-center text-base font-semibold" data-tour="pod-steps">
         <span className="bg-foreground py-2 text-background">Arrived {hhmm(arrived)}</span>
         <span className="border-x-2 border-foreground py-2">Unloaded</span>
         <span className={cn("py-2", proofOk && "bg-foreground text-background")}>Proof</span>
       </div>
 
-      <section className="space-y-2">
+      <section className="space-y-2" data-tour="units">
         <p className="text-lg font-semibold">Units handed over</p>
         <div className="flex items-center gap-3">
           <Button size="icon-lg" variant="outline" className="size-16 shrink-0 border-2 border-foreground" onClick={() => setUnits((u) => Math.max(0, u - 1))} aria-label="One less">
@@ -602,13 +614,13 @@ function DeliverView({
       </section>
 
       {stop.temp === "chilled" && (
-        <label className="flex min-h-14 items-center gap-3 rounded-lg border-2 border-foreground p-3 text-lg font-semibold">
+        <label className="flex min-h-14 items-center gap-3 rounded-lg border-2 border-foreground p-3 text-lg font-semibold" data-tour="cold">
           <input type="checkbox" checked={cold} onChange={(e) => setCold(e.target.checked)} className="size-7" />
           Chilled goods handed over cold
         </label>
       )}
 
-      <section className="space-y-2">
+      <section className="space-y-2" data-tour="proof">
         <label htmlFor="recv" className="text-lg font-semibold">
           Received by
         </label>
@@ -638,11 +650,12 @@ function DeliverView({
         )}
       </section>
       <p className="text-base">The time is added automatically when you tap Complete.</p>
-      <button onClick={onProblem} className="text-base font-semibold underline underline-offset-4">
+      <button onClick={onProblem} className="text-base font-semibold underline underline-offset-4" data-tour="problem">
         Something is wrong at this stop
       </button>
       <Button
         size="hero"
+        data-tour="complete"
         disabled={saving || !proofOk || !name.trim() || (stop.temp === "chilled" && !cold)}
         onClick={async () => {
           setSaving(true);
@@ -722,8 +735,9 @@ function ExceptionView({
           It is {hhmm(now)}. The window closed at {hhmm(stop.close)}.
         </p>
       )}
+      <PageTour id="dr-problem" steps={PROBLEM_TOUR} large />
       <p className="text-lg font-semibold">What happened at this stop?</p>
-      <div className="space-y-2" role="radiogroup">
+      <div className="space-y-2" role="radiogroup" data-tour="kinds">
         {EXCEPTIONS.map((e) => (
           <button
             key={e.id}
@@ -819,8 +833,9 @@ function OutboxView({ outbox, online, lastSync, pack, onBack, onSync }: { outbox
       <button onClick={onBack} className="inline-flex items-center gap-1 text-base font-semibold">
         <ArrowLeft className="size-5" /> Run
       </button>
+      <PageTour id="dr-outbox" steps={OUTBOX_TOUR} large />
       <h1 className="text-2xl font-bold">Outbox</h1>
-      <section className={cn("rounded-lg border-2 p-4 text-base", online ? "border-foreground" : "border-dashed border-foreground")}>
+      <section className={cn("rounded-lg border-2 p-4 text-base", online ? "border-foreground" : "border-dashed border-foreground")} data-tour="sync-status">
         <p className="flex items-center gap-2 text-lg font-bold">
           {online ? <Wifi className="size-5" /> : <CloudOff className="size-5" />}
           {online ? (waiting.length ? `Sending ${waiting.length}` : "Everything is sent") : "No signal"}
@@ -829,7 +844,7 @@ function OutboxView({ outbox, online, lastSync, pack, onBack, onSync }: { outbox
           {waiting.length} record{waiting.length === 1 ? "" : "s"} saved on this phone.{lastSync ? ` Last synced ${new Date(lastSync).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}.` : ""}
         </p>
       </section>
-      <ol className="divide-y-2 overflow-hidden rounded-lg border-2 border-foreground">
+      <ol className="divide-y-2 overflow-hidden rounded-lg border-2 border-foreground" data-tour="records">
         {rows.map((o) => {
           const s = o.stopId ? stops.get(o.stopId) : null;
           return (
@@ -866,7 +881,7 @@ function OutboxView({ outbox, online, lastSync, pack, onBack, onSync }: { outbox
         Records send by themselves, oldest first, when there&apos;s signal - with the times they happened, not the time they were sent. If the dispatcher
         changed a stop in the meantime, you&apos;ll be asked. Nothing is overwritten silently.
       </p>
-      <Button size="field" variant="outline" className="border-2 border-foreground" disabled={!online || !waiting.length} onClick={() => void onSync()}>
+      <Button size="field" variant="outline" className="border-2 border-foreground" data-tour="send-now" disabled={!online || !waiting.length} onClick={() => void onSync()}>
         <RefreshCw /> Send now
       </Button>
     </main>
